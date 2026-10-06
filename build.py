@@ -144,7 +144,7 @@ TEMPLATE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>প্রশ্নব্যাংক</title>
+<title>পড়াশোনা</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700&family=Hind+Siliguri:wght@400;500;600&display=swap">
@@ -175,7 +175,6 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
 .wrap{max-width:980px;margin:0 auto;padding:0 20px 64px}
 
 .top{padding-block:40px 24px;border-bottom:1px solid var(--line);margin-bottom:28px}
-.kicker{font-size:12px;letter-spacing:.12em;color:var(--accent);font-weight:600;margin:0 0 10px}
 h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,40px);line-height:1.25;margin:0}
 .lede{color:var(--muted);margin:10px 0 0;max-width:56ch}
 .meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin:18px 0 0;font-size:14px;color:var(--muted)}
@@ -219,8 +218,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:va
 <body>
 <div class="wrap">
   <header class="top">
-    <p class="kicker">শিক্ষক নিবন্ধন প্রস্তুতি</p>
-    <h1>প্রশ্নব্যাংক</h1>
+    <h1>পড়াশোনা</h1>
     <p class="lede">বিষয় বেছে নিন, তারপর যে ফাইলটি পড়তে চান তার নামে ক্লিক করুন। প্রতিটি ফাইলে অনুশীলন মোড আছে।</p>
     <p class="meta">{{META}}</p>
   </header>
