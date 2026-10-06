@@ -8,7 +8,8 @@ Usage (run inside this folder):
 
 What it does:
   1. Lists every .html file in math/, gk/, bengali/ and english/ on index.html.
-  2. Adds a "← হোম" link to any question page that does not have one yet.
+  2. Adds the home button to every question page, or brings an existing one
+     up to the current design.
 
 Files are listed in file-name order. To control the order, start the file
 name with a number, e.g. "01 বীজগণিত.html", "02 জ্যামিতি.html".
@@ -30,15 +31,36 @@ SUBJECTS = [
 
 HOME_START = "<!-- home-link -->"
 HOME_END = "<!-- /home-link -->"
-# Pages built like the existing ones get a chip in their sticky top bar;
-# anything else gets a plain link at the top of the body.
-HOME_CHIP = HOME_START + '<a class="chip" href="../index.html">← হোম</a>' + HOME_END
-HOME_PLAIN = (
-    HOME_START
-    + '<p style="margin:16px 20px 0;font:600 14px/1.4 sans-serif">'
-    + '<a href="../index.html" style="color:var(--accent,#14624A);text-decoration:none">← হোম</a></p>'
-    + HOME_END
+# The home button carries its own styles, so it looks the same on every page.
+# It uses the page's colour tokens (light and dark) and falls back to the
+# site's green on pages that don't define them.
+HOME_STYLE = (
+    "<style>"
+    ".home-link{display:inline-flex;align-items:center;gap:6px;padding:5px 14px 5px 11px;"
+    "border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none;"
+    "color:var(--accent,#14624A);background:var(--accent-soft,#E4EFE7);"
+    "border:1px solid var(--accent,#14624A);"
+    "border-color:color-mix(in srgb,var(--accent,#14624A) 35%,transparent);"
+    "transition:background .15s,color .15s}"
+    ".home-link:hover{background:var(--accent,#14624A);color:var(--card,#fff);"
+    "border-color:var(--accent,#14624A)}"
+    ".home-link:focus-visible{outline:2px solid var(--accent,#14624A);outline-offset:2px}"
+    ".home-link svg{width:15px;height:15px;flex:none}"
+    ".home-sep{width:1px;height:22px;background:var(--line,#D9E3DB);margin-inline:2px}"
+    "</style>"
 )
+HOME_ICON = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>'
+)
+HOME_LINK = f'<a class="home-link" href="../index.html">{HOME_ICON}<span>হোম</span></a>'
+# Pages built like the existing ones get the button first in their sticky top
+# bar, with a divider before the section chips; anything else gets it at the
+# top of the body.
+HOME_CHIP = HOME_START + HOME_STYLE + HOME_LINK + '<span class="home-sep" aria-hidden="true"></span>' + HOME_END
+HOME_PLAIN = HOME_START + HOME_STYLE + '<p style="margin:16px 20px 0">' + HOME_LINK + "</p>" + HOME_END
+HOME_BLOCK = re.compile(re.escape(HOME_START) + ".*?" + re.escape(HOME_END), re.S)
 
 BN_DIGITS = str.maketrans("0123456789", "০১২৩৪৫৬৭৮৯")
 
@@ -69,17 +91,23 @@ def read_page(path):
 
 
 def add_home_link(path, text):
-    if not text or HOME_START in text:
-        return False
-    if '<div class="bar-row">' in text:
-        text = text.replace('<div class="bar-row">', '<div class="bar-row">' + HOME_CHIP, 1)
+    """Insert the home button, or replace an older one. Returns what changed."""
+    if not text:
+        return None
+    block = HOME_CHIP if '<div class="bar-row">' in text else HOME_PLAIN
+    if HOME_START in text:
+        new, status = HOME_BLOCK.sub(lambda _: block, text, count=1), "updated"
+    elif '<div class="bar-row">' in text:
+        new, status = text.replace('<div class="bar-row">', '<div class="bar-row">' + block, 1), "added"
     else:
         m = re.search(r"<body[^>]*>", text, re.I)
         if not m:
-            return False
-        text = text[: m.end()] + HOME_PLAIN + text[m.end() :]
-    path.write_bytes(text.encode("utf-8"))
-    return True
+            return None
+        new, status = text[: m.end()] + block + text[m.end() :], "added"
+    if new == text:
+        return None
+    path.write_bytes(new.encode("utf-8"))
+    return status
 
 
 def page_info(path, text):
@@ -119,8 +147,9 @@ def main():
         files = []
         for path in sorted(d.glob("*.html"), key=natural_key):
             text = read_page(path)
-            if add_home_link(path, text):
-                linked.append(f"{folder}/{path.name}")
+            status = add_home_link(path, text)
+            if status:
+                linked.append(f"{status}: {folder}/{path.name}")
             title, detail, q = page_info(path, text)
             files.append((f"{folder}/{path.name}", title, detail))
             total_q += q
@@ -134,8 +163,8 @@ def main():
     page = TEMPLATE.replace("{{META}}", meta).replace("{{SECTIONS}}", "\n".join(sections))
     (ROOT / "index.html").write_text(page, encoding="utf-8")
 
-    for name in linked:
-        print(f"  + home link added: {name}")
+    for change in linked:
+        print(f"  home button {change}")
     print(f"index.html updated: {total_files} file(s)")
 
 
