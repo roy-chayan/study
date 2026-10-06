@@ -64,12 +64,13 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,40px);lin
 .empty{margin:0;padding:16px;text-align:center;font-size:14px;color:var(--muted);
   border:1px dashed var(--line);border-radius:8px}
 
-.foot{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.foot{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:14px;
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
 .foot p{margin:0}
-.author{margin-top:10px!important}
-.author b{color:var(--ink);font-weight:600}
-code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--accent-soft);
-  color:var(--ink);padding:1px 6px;border-radius:4px}
+.author{color:var(--ink);font-weight:600}
+/* Reminder for the maintainer: the command that rebuilds this page. */
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:var(--muted);
+  background:var(--accent-soft);padding:1px 7px;border-radius:4px}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 @media (max-width:420px){.subject{padding:14px}.file{padding-inline:8px}}
 </style>
@@ -91,8 +92,8 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background
   </main>
 
   <footer class="foot">
-    <p>নতুন ফাইল যোগ করতে: ফাইলটি সঠিক ফোল্ডারে রাখুন, তারপর এই ফোল্ডারে <code>python3 build.py</code> চালান।</p>
-    <p class="author">তৈরি করেছেন <b>Chayan Roy</b></p>
+    <p class="author">Chayan Roy</p>
+    <code>python3 build.py</code>
   </footer>
 </div>
 </body>
