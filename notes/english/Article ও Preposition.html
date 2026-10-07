@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Article ও Preposition</title>
+<meta name="description" content="২৪টি article-এর নিয়ম, ৫৯টি appropriate preposition, সাধারণ ভুল ও ১৬টি অনুশীলনী">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700&family=Hind+Siliguri:wght@400;500;600&display=swap">
+<style>
+/* Notes layout (same design as the math notes): rules as tables and cards, a searchable list of
+   appropriate prepositions, common mistakes, then exercises with hidden answers. */
+:root{
+  --paper:#F5F8F4; --card:#FFFFFF; --ink:#18231C; --muted:#5B6D61;
+  --accent:#14624A; --accent-soft:#E4EFE7; --gold:#8A6212; --gold-soft:#F6EFDD;
+  --bad:#A3412E; --bad-soft:#F8EAE6;
+  --line:#D9E3DB; --shadow:0 1px 2px rgba(20,60,45,.06),0 8px 22px rgba(20,60,45,.05);
+  --display:"Noto Serif Bengali",Georgia,serif;
+  --body:"Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1411; --card:#151E19; --ink:#E5EDE7; --muted:#95A89C;
+  --accent:#63C49A; --accent-soft:#18271F; --gold:#D6A94A; --gold-soft:#241F13;
+  --bad:#E58B78; --bad-soft:#2A1915;
+  --line:#26332B; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.28);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E1411; --card:#151E19; --ink:#E5EDE7; --muted:#95A89C;
+  --accent:#63C49A; --accent-soft:#18271F; --gold:#D6A94A; --gold-soft:#241F13;
+  --bad:#E58B78; --bad-soft:#2A1915;
+  --line:#26332B; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.28);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.65;-webkit-text-size-adjust:100%}
+p{margin:0}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px 72px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Header */
+.top{padding-block:40px 24px}
+.kicker{font-size:12px;letter-spacing:.12em;color:var(--gold);font-weight:600;margin-bottom:10px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,7vw,46px);line-height:1.2;margin:0}
+.lede{color:var(--muted);margin-top:10px;max-width:58ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-size:14px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+
+/* Sticky bar: one row, so it never covers the page on phones. Home stays on the
+   left and the mode button on the right; the section chips between them scroll sideways. */
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-block:1px solid var(--line);padding-block:8px}
+.bar-row{display:flex;gap:8px;align-items:center}
+.bar-row>*{flex:none}
+.bar-row>.bar-scroll{flex:1 1 auto;min-width:0;display:flex;gap:8px;overflow-x:auto;
+  padding:3px 2px;scrollbar-width:none}
+.bar-scroll::-webkit-scrollbar{display:none}
+.bar-scroll>*{flex:none}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink);text-decoration:none;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip-n{color:var(--muted)}
+.mode{margin-left:auto;font-family:inherit;font-size:13px;font-weight:600;color:var(--card);
+  background:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:6px 14px;cursor:pointer}
+.mode[aria-pressed="true"]{background:var(--gold-soft);color:var(--gold);border-color:var(--gold)}
+
+/* Sections */
+.sec{padding-top:44px}
+.sec-head{margin-bottom:20px}
+.eyebrow{font-size:12px;letter-spacing:.1em;color:var(--gold);font-weight:600;margin-bottom:2px}
+h2{font-family:var(--display);font-size:clamp(24px,4.5vw,30px);font-weight:700;line-height:1.3;margin:0}
+.sec-sub{color:var(--muted);margin-top:4px;max-width:62ch}
+h3{font-family:var(--display);font-size:19px;font-weight:700;line-height:1.35;margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:20px}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:14px;align-items:start}
+.note{font-size:14.5px;color:var(--muted);margin-top:10px}
+.tip{margin-top:14px;padding:10px 14px;border-radius:8px;background:var(--gold-soft);
+  border-left:3px solid var(--gold);font-size:15px}
+.tip b{color:var(--gold)}
+.warn{margin-top:14px;padding:10px 14px;border-radius:8px;background:var(--bad-soft);
+  border-left:3px solid var(--bad);font-size:15px}
+.warn b{color:var(--bad)}
+.eq{font-family:var(--display);font-weight:700;font-size:19px;line-height:1.5}
+
+/* Concept */
+.hero{text-align:center;background:var(--accent-soft);border-color:transparent;box-shadow:none;padding:30px 20px}
+.hero-f{font-family:var(--display);font-weight:700;font-size:clamp(21px,5vw,30px);line-height:1.45}
+.hero-f .op{color:var(--accent)}
+.hero-sub{margin-top:10px;color:var(--muted);font-size:15px}
+.f-tag{font-size:12.5px;font-weight:600;color:var(--accent);letter-spacing:.02em;margin-bottom:6px}
+.star{color:var(--gold)}
+
+/* Worked examples */
+.q{background:var(--gold-soft);border-radius:8px;padding:10px 14px;font-size:15.5px}
+.q-tag{font-size:12px;font-weight:600;color:var(--gold);margin-right:6px}
+.work{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:4px;font-size:15.5px}
+.work li{position:relative;padding-left:18px}
+.work li::before{content:"";position:absolute;left:4px;top:.72em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.work .res{font-weight:600}
+.work .res b{color:var(--accent)}
+.ex-head{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.badge{font-size:12px;font-weight:600;color:var(--card);background:var(--accent);border-radius:999px;padding:2px 10px}
+.types{display:grid;gap:14px}
+.methods{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px;margin-top:12px}
+.method{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.method-h{font-weight:600;color:var(--accent);font-size:14.5px}
+.method .work{margin-top:6px}
+.formula{margin-top:12px;padding:10px 14px;border-radius:8px;border:1px dashed var(--accent);
+  background:var(--accent-soft);font-size:15px}
+.formula b{color:var(--accent)}
+
+/* Summary table */
+.sum{width:100%;border-collapse:collapse;font-size:15.5px}
+.sum th{text-align:left;font-size:12.5px;letter-spacing:.04em;color:var(--muted);font-weight:600;
+  padding:0 14px 10px;border-bottom:1px solid var(--line)}
+.sum td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.sum tr:last-child td{border-bottom:0}
+.sum td:first-child{font-weight:600;width:38%}
+.sum td:last-child{font-family:var(--display);font-weight:700;color:var(--accent)}
+.table-card{padding:16px 6px 6px}
+
+/* Exercises */
+.exgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:12px}
+.ex{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+  display:flex;flex-direction:column;gap:10px}
+.ex-q{display:flex;gap:10px;align-items:baseline;font-size:15.5px}
+.ex-n{color:var(--accent);font-weight:700;min-width:1.5em;flex:none}
+.sol{border-top:1px dashed var(--line);padding-top:4px}
+.sol .work{font-size:14.5px;color:var(--muted);margin-top:6px}
+.ans{margin-top:10px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.ans b{font-family:var(--display);font-size:18px;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:0 10px;border-radius:6px}
+.hint{font-size:13.5px;color:var(--muted);margin-top:6px}
+.hint .x{color:var(--bad);font-weight:600}
+.reveal{display:none;align-self:flex-start;font-family:inherit;font-size:13px;font-weight:600;color:var(--accent);
+  background:var(--accent-soft);border:1px dashed var(--accent);border-radius:8px;padding:5px 12px;cursor:pointer}
+.practice .ex:not(.shown) .sol{display:none}
+.practice .ex:not(.shown) .reveal{display:inline-flex}
+
+@media (max-width:420px){.card:not(.table-card){padding:16px}.sum td,.sum th{padding-inline:10px}}
+
+/* Exam tags: confirmed past-exam appearances */
+.xt{display:inline-block;font-family:var(--body);font-size:11.5px;font-weight:600;color:var(--accent);background:var(--accent-soft);
+  border:1px solid var(--line);border-radius:999px;padding:0 8px;margin-left:6px;white-space:nowrap;line-height:1.75;vertical-align:1px}
+.en s{color:var(--bad);text-decoration-thickness:1.5px}
+
+/* a / an word chips */
+.wgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:14px}
+.wlist{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.w{display:flex;flex-direction:column;align-items:flex-start;gap:1px;border:1px solid var(--line);border-radius:10px;padding:6px 11px;background:var(--paper)}
+.w b{color:var(--accent)}
+.w small{color:var(--muted);font-size:12.5px}
+.w .xt{margin:3px 0 0}
+
+/* Rule tables: two or three columns that wrap instead of scrolling */
+.rt{width:100%;border-collapse:collapse;font-size:15px}
+.rt th{text-align:left;font-size:12.5px;letter-spacing:.04em;color:var(--muted);font-weight:600;padding:0 14px 10px;border-bottom:1px solid var(--line)}
+.rt td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.rt tr:last-child td{border-bottom:0}
+.rt td:first-child{width:42%;font-weight:500}
+.rt b{color:var(--accent)}
+.rt3 td:first-child{width:auto}
+.pp{font-family:var(--display);font-weight:700;color:var(--accent);white-space:nowrap}
+@media (max-width:560px){
+  .rt thead{display:none}
+  .rt tr{display:block;padding:10px 12px;border-bottom:1px solid var(--line)}
+  .rt tr:last-child{border-bottom:0}
+  .rt td{display:block;padding:0;border:0;width:auto!important}
+  .rt td+td{margin-top:4px;color:var(--muted)}
+  .rt td.en{color:var(--ink)}
+}
+
+/* Preposition list */
+.find{width:100%;font:inherit;font-size:15px;color:var(--ink);background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:10px 14px;margin-bottom:12px}
+.find:focus{outline:2px solid var(--accent);outline-offset:1px}
+.find-n{font-size:13px;color:var(--muted);margin:-4px 0 12px}
+.plist{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:10px}
+.pi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 14px}
+.pw{font-size:16px;font-weight:600}
+.pw b{color:var(--accent);font-family:var(--display)}
+.pm{font-size:14px;color:var(--muted)}
+.pe{font-size:14px;margin-top:4px;font-style:italic}
+.pi .xt{margin:6px 6px 0 0}
+
+/* Pairs and mistakes */
+.pc h3{font-size:17px;color:var(--accent)}
+.pc p{font-size:15px;margin-top:6px}
+.pc b{color:var(--accent)}
+.mlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:12px}
+.m{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.m .bad{color:var(--bad);text-decoration:line-through;text-decoration-thickness:1px}
+.m .good{color:var(--accent);font-weight:600;margin-top:2px}
+.m .bad::before{content:"✗ ";text-decoration:none;display:inline-block}
+.m .good::before{content:"✓ "}
+.m .why{font-size:13.5px;color:var(--muted);margin-top:4px}
+.dlist{display:grid;gap:8px;margin-top:8px}
+.dlist p{font-size:15px}
+
+/* Link to the MCQ page */
+.cta{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:44px;text-decoration:none;color:inherit}
+.cta:hover{border-color:var(--accent)}
+.cta h3{color:var(--accent)}
+.cta .arrow{font-size:22px;color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="kicker">ইংরেজি · গ্রামার · নোট</p>
+    <h1>Article ও Preposition</h1>
+    <p class="lede">a না an, কোথায় the বসে আর কোথায় বসে না, কোন শব্দের পরে কোন preposition — সব নিয়ম উদাহরণসহ, সঙ্গে সাধারণ ভুল আর শেষে অনুশীলনী। সবুজ ট্যাগ মানে সেই নিয়ম থেকে বিগত বিসিএস বা শিক্ষক নিবন্ধনে প্রশ্ন এসেছে (দুটি আলাদা উৎসে যাচাই করা)।</p>
+    <p class="meta"><span>Article-এর নিয়ম <b>২৪</b></span><span>Preposition তালিকা <b>৫৯</b></span><span>অর্থভেদ <b>১৪</b></span><span>অনুশীলনী <b>১৬</b></span><span>বিষয় <b>ইংরেজি</b></span></p>
+  </header>
+
+  <nav class="bar" aria-label="অংশ"><div class="bar-row"><!-- home-link --><style>.home-link{display:inline-flex;align-items:center;gap:6px;padding:5px 14px 5px 11px;border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none;color:var(--accent,#14624A);background:var(--accent-soft,#E4EFE7);border:1px solid var(--accent,#14624A);border-color:color-mix(in srgb,var(--accent,#14624A) 35%,transparent);transition:background .15s,color .15s}.home-link:hover{background:var(--accent,#14624A);color:var(--card,#fff);border-color:var(--accent,#14624A)}.home-link:focus-visible{outline:2px solid var(--accent,#14624A);outline-offset:2px}.home-link svg{width:15px;height:15px;flex:none}.home-sep{width:1px;height:22px;background:var(--line,#D9E3DB);margin-inline:2px}</style><a class="home-link" href="../../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg><span>হোম</span></a><span class="home-sep" aria-hidden="true"></span><!-- /home-link -->
+      <div class="bar-scroll">
+        <a class="chip" href="#article">Article</a>
+        <a class="chip" href="#an">a / an</a>
+        <a class="chip" href="#the">the</a>
+        <a class="chip" href="#noart">article নেই</a>
+        <a class="chip" href="#prep">Preposition</a>
+        <a class="chip" href="#time">সময়</a>
+        <a class="chip" href="#place">স্থান</a>
+        <a class="chip" href="#list">তালিকা</a>
+        <a class="chip" href="#pairs">অর্থভেদ</a>
+        <a class="chip" href="#mistakes">ভুল</a>
+        <a class="chip" href="#practice">অনুশীলনী <span class="chip-n">১৬</span></a>
+      </div>
+      <button class="mode" id="mode" type="button" aria-pressed="false">অনুশীলন মোড</button>
+    </div></nav>
+
+  <section class="sec" id="article">
+    <header class="sec-head"><p class="eyebrow">অংশ ১</p><h2>Article এক নজরে</h2>
+      <p class="sec-sub">ইংরেজিতে article তিনটি — a, an আর the। এরা আসলে adjective: বিশেষ্যকে নির্দিষ্ট বা অনির্দিষ্ট করে।</p></header>
+    <div class="card hero"><p class="hero-f en">a / an <span class="op">=</span> <span style="font-family:var(--body)">যেকোনো একটি</span> &nbsp;·&nbsp; the <span class="op">=</span> <span style="font-family:var(--body)">নির্দিষ্টটি</span></p>
+      <p class="hero-sub">a ও an — indefinite article · the — definite article</p></div>
+  </section>
+
+  <section class="sec" id="an">
+    <header class="sec-head"><p class="eyebrow">অংশ ২</p><h2>a না an</h2>
+      <p class="sec-sub">বানানের প্রথম অক্ষর নয়, উচ্চারণের প্রথম ধ্বনি দেখুন। স্বরধ্বনি হলে an, ব্যঞ্জনধ্বনি হলে a।</p></header>
+    <div class="wgrid">
+      <div class="card"><p class="f-tag">an — উচ্চারণ স্বরধ্বনি দিয়ে শুরু</p><div class="wlist"><span class="w"><span class="en"><b>an</b> hour</span><small>আওয়ার — h নীরব</small></span><span class="w"><span class="en"><b>an</b> honest</span><small>অনেস্ট — h নীরব</small></span><span class="w"><span class="en"><b>an</b> honour</span><small>অনার</small></span><span class="w"><span class="en"><b>an</b> heir</span><small>এয়ার</small></span><span class="w"><span class="en"><b>an</b> M.A.</span><small>এম-এ</small></span><span class="w"><span class="en"><b>an</b> FBI analyst</span><small>এফ-বি-আই</small><span class="xt">৪৭তম বিসিএস</span></span><span class="w"><span class="en"><b>an</b> X-ray</span><small>এক্স-রে</small></span><span class="w"><span class="en"><b>an</b> umbrella</span><small>আমব্রেলা</small></span><span class="w"><span class="en"><b>an</b> M.P.</span><small>এম-পি</small></span><span class="w"><span class="en"><b>an</b> S.S.C. examinee</span><small>এস-এস-সি</small></span></div></div>
+      <div class="card"><p class="f-tag">a — উচ্চারণ ব্যঞ্জনধ্বনি দিয়ে শুরু</p><div class="wlist"><span class="w"><span class="en"><b>a</b> university</span><small>ইউনিভার্সিটি — y-ধ্বনি</small></span><span class="w"><span class="en"><b>a</b> European</span><small>ইউরোপিয়ান</small></span><span class="w"><span class="en"><b>a</b> one-eyed man</span><small>ওয়ান — w-ধ্বনি</small><span class="xt">৩৭তম বিসিএস</span></span><span class="w"><span class="en"><b>a</b> unique case</span><small>ইউনিক</small><span class="xt">২৮তম বিসিএস</span></span><span class="w"><span class="en"><b>a</b> union</span><small>ইউনিয়ন</small></span><span class="w"><span class="en"><b>a</b> useful book</span><small>ইউসফুল</small></span><span class="w"><span class="en"><b>a</b> ewe</span><small>ইউ</small></span><span class="w"><span class="en"><b>a</b> one-taka note</span><small>ওয়ান</small></span><span class="w"><span class="en"><b>a</b> Hindu</span><small>h উচ্চারিত</small></span><span class="w"><span class="en"><b>a</b> heart attack</span><small>h উচ্চারিত</small><span class="xt">৩৯তম বিসিএস</span></span></div></div>
+    </div>
+    <p class="tip"><b>ফাঁদ চিনুন:</b> h নীরব হলে an (an hour), উচ্চারিত হলে a (a Hindu)। u বা eu ‘ইউ’ উচ্চারণে a (a university), one ‘ওয়ান’ উচ্চারণে a। আর সংক্ষিপ্ত রূপ বর্ণ ধরে পড়া হয় — M, F, X, S ‘এ’-ধ্বনিতে শুরু, তাই an M.A., an FBI analyst।</p>
+  </section>
+
+  <section class="sec" id="the">
+    <header class="sec-head"><p class="eyebrow">অংশ ৩</p><h2>যেখানে the বসে</h2>
+      <p class="sec-sub">মূল কথা: শ্রোতা বুঝতে পারে কোনটির কথা বলা হচ্ছে — তখনই the।</p></header>
+    <div class="card table-card"><table class="rt"><thead><tr><th>কখন the বসে</th><th>উদাহরণ</th></tr></thead><tbody><tr><td>আগে উল্লেখ করা বা বক্তা-শ্রোতা দুজনেরই জানা জিনিস</td><td class="en">I saw a king. <b>The</b> king was kind.</td></tr><tr><td>of-phrase বা clause যোগে নির্দিষ্ট হলে — abstract ও material noun-ও</td><td class="en"><b>The</b> water of this pond is clear. · <b>The</b> ink in my pen is red.<span class="xt">১১তম নিবন্ধন</span><span class="xt">১৭তম নিবন্ধন</span></td></tr><tr><td>অদ্বিতীয় বস্তু</td><td class="en"><b>the</b> sun, <b>the</b> sky, <b>the</b> earth</td></tr><tr><td>নদী, সাগর, উপসাগর, মহাসাগর, পর্বতমালা</td><td class="en"><b>the</b> Padma, <b>the</b> Bay of Bengal, <b>the</b> Himalayas</td></tr><tr><td>সংবাদপত্র, ধর্মগ্রন্থ, জাহাজ</td><td class="en"><b>The</b> Daily Star, <b>the</b> Quran, <b>the</b> Titanic</td></tr><tr><td>superlative ও ordinal-এর আগে</td><td class="en"><b>the</b> best student, <b>the</b> first man</td></tr><tr><td>adjective-এর আগে বসে পুরো শ্রেণি বোঝালে</td><td class="en"><b>the</b> rich, <b>the</b> poor · None but <b>the</b> brave deserve <b>the</b> fair.<span class="xt">১৭তম নিবন্ধন</span></td></tr><tr><td>common noun গুণবাচক অর্থে</td><td class="en"><b>The</b> mother arose in her. · Check <b>the</b> beast in you.<span class="xt">১৬তম নিবন্ধন</span></td></tr><tr><td>বাদ্যযন্ত্র (খেলা নয়)</td><td class="en">play <b>the</b> guitar — কিন্তু play football</td></tr><tr><td>the + comparative …, the + comparative</td><td class="en"><b>The</b> more you read, <b>the</b> more you learn.</td></tr><tr><td>তুলনায় proper noun</td><td class="en">Kalidas is <b>the</b> Shakespeare of India.</td></tr><tr><td>only, same-এর আগে</td><td class="en">He is <b>the</b> only son.</td></tr><tr><td>both / all-এর পরে (আগে নয়)</td><td class="en">on both <b>the</b> sides — <s>the both sides</s><span class="xt">৪৬তম বিসিএস</span></td></tr></tbody></table></div>
+  </section>
+
+  <section class="sec" id="noart">
+    <header class="sec-head"><p class="eyebrow">অংশ ৪</p><h2>যেখানে article বসে না</h2>
+      <p class="sec-sub">সাধারণ অর্থে কথা বললে article লাগে না — নির্দিষ্ট হলেই the চলে আসে।</p></header>
+    <div class="card table-card"><table class="rt"><thead><tr><th>কখন article বসে না</th><th>উদাহরণ</th></tr></thead><tbody><tr><td>সাধারণ অর্থে abstract noun</td><td class="en">Honesty is the best policy.</td></tr><tr><td>সাধারণ অর্থে material noun</td><td class="en">Gold is a precious metal.</td></tr><tr><td>খেলা</td><td class="en">We play football.</td></tr><tr><td>ভাষা</td><td class="en">He speaks English. (কিন্তু the English language)</td></tr><tr><td>খাবার</td><td class="en">We had breakfast at eight.</td></tr><tr><td>man = মানবজাতি</td><td class="en">Man is mortal.</td></tr><tr><td>ব্যক্তি, শহর, অধিকাংশ দেশ, মাস ও দিনের নাম</td><td class="en">Rahim, Dhaka, Bangladesh, in July, on Friday</td></tr><tr><td>by + যানবাহন</td><td class="en">by bus, by train</td></tr><tr><td>মূল উদ্দেশ্যে hospital, school, bed, prison</td><td class="en">Rahim went to hospital as patient.<span class="xt">১০ম নিবন্ধন</span><span class="xt">৩৯তম বিসিএস</span></td></tr><tr><td>pronoun-এর আগে</td><td class="en"><s>the he</s>, <s>a she</s> হয় না<span class="xt">১৪তম নিবন্ধন</span></td></tr><tr><td>একক পর্বতশৃঙ্গ (পর্বতমালায় the বসে)</td><td class="en">Mount Everest — কিন্তু the Himalayas<span class="xt">১৫তম নিবন্ধন</span></td></tr></tbody></table></div>
+    <div class="pair">
+      <div class="card"><p class="f-tag">মূল উদ্দেশ্যে — article নেই</p><p class="en">He went to hospital. (রোগী হিসেবে)</p><p class="en">The children go to school. (পড়তে)</p></div>
+      <div class="card"><p class="f-tag">অন্য কাজে — the</p><p class="en">He went to the hospital. (রোগী দেখতে)</p><p class="en">Father went to the school. (মিটিংয়ে)</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="prep">
+    <header class="sec-head"><p class="eyebrow">অংশ ৫</p><h2>Preposition কী ও কত প্রকার</h2>
+      <p class="sec-sub">noun বা pronoun-এর আগে বসে বাক্যের অন্য শব্দের সঙ্গে তার সম্পর্ক দেখায় — pre (আগে) + position। পরে pronoun বসলে objective রূপ: between you and me।</p></header>
+    <div class="card table-card"><table class="rt rt3"><thead><tr><th>প্রকার</th><th>উদাহরণ</th><th>চেনার উপায়</th></tr></thead><tbody><tr><td>Simple</td><td class="en">in, on, at, by, for, of, to, with, from</td><td>একটি শব্দ</td></tr><tr><td>Compound</td><td class="en">into, upon, within, without, across, beside, between</td><td>দুটি অংশ জুড়ে এক শব্দ</td></tr><tr><td>Phrase</td><td class="en">in spite of, according to, because of, instead of, in front of</td><td>কয়েকটি শব্দ মিলে</td></tr><tr><td>Participle</td><td class="en">concerning, regarding, during, considering</td><td>-ing রূপ থেকে আসা</td></tr></tbody></table></div>
+    <p class="tip"><b>পরীক্ষার প্রিয় প্রশ্ন:</b> একই শব্দ কোন বাক্যে preposition? পরে noun বা pronoun থাকলে preposition, পরে clause থাকলে conjunction, একা বসলে adverb।</p>
+    <div class="pair"><article class="card pc"><h3 class="en">like<span class="xt">৪৬তম বিসিএস</span></h3><p class="en">He climbed the tree <b>like</b> a cat.</p><p class="note"><b>কেন preposition:</b> ‘মতো’ অর্থে, পরে noun</p><p class="note">অন্য পদ হিসেবে: <span class="en">He laughs like his father does. — পরে clause, তাই conjunction</span></p></article><article class="card pc"><h3 class="en">past<span class="xt">৪০তম বিসিএস</span></h3><p class="en">She’s <b>past</b> her prime.</p><p class="note"><b>কেন preposition:</b> noun-এর আগে, সম্পর্ক দেখাচ্ছে</p><p class="note">অন্য পদ হিসেবে: <span class="en">a thing of the past — noun · he ran past — adverb</span></p></article><article class="card pc"><h3 class="en">but<span class="xt">৪১তম বিসিএস</span></h3><p class="en">What can we do <b>but</b> sit and wait?</p><p class="note"><b>কেন preposition:</b> but = except (ছাড়া)</p><p class="note">অন্য পদ হিসেবে: <span class="en">It is but right — adverb · tried hard, but failed — conjunction</span></p></article></div>
+  </section>
+
+  <section class="sec" id="time">
+    <header class="sec-head"><p class="eyebrow">অংশ ৬</p><h2>সময়ের preposition</h2>
+      <p class="sec-sub">at ঘড়ির কাঁটায়, on দিনে, in মাস-সালে; since শুরুর বিন্দু, for ব্যাপ্তি।</p></header>
+    <div class="card table-card"><table class="rt rt3"><thead><tr><th>Preposition</th><th>কখন</th><th>উদাহরণ</th></tr></thead><tbody><tr><td class="pp">at</td><td>ঘড়ির সময়, night, weekend (ব্রিটিশ)</td><td class="en">at 9 o’clock · at night · <b>at</b> the weekend<span class="xt">১৫তম বিসিএস</span><span class="xt">৪৪তম বিসিএস</span></td></tr><tr><td class="pp">on</td><td>দিন ও তারিখ</td><td class="en">on Monday · on 16 December</td></tr><tr><td class="pp">in</td><td>মাস, সাল, ঋতু, দিনের অংশ</td><td class="en">in July · in 1971 · in the morning · <b>in</b> course of time<span class="xt">১৭তম নিবন্ধন</span></td></tr><tr><td class="pp">since</td><td>শুরুর বিন্দু থেকে এখন পর্যন্ত (perfect tense)</td><td class="en">ill <b>since</b> Friday last · living in Dhaka <b>since</b> 2000<span class="xt">১১তম বিসিএস</span><span class="xt">২৬তম বিসিএস</span><span class="xt">৩৬তম বিসিএস</span></td></tr><tr><td class="pp">for</td><td>সময়ের ব্যাপ্তি</td><td class="en">ill <b>for</b> three months<span class="xt">২৮তম বিসিএস</span></td></tr><tr><td class="pp">by</td><td>সময়সীমা; ঘড়ি অনুযায়ী</td><td class="en">by tomorrow · the time <b>by</b> your watch<span class="xt">১২তম বিসিএস</span></td></tr><tr><td class="pp">during</td><td>কোনো ঘটনা চলাকালীন</td><td class="en">He slept during the film.</td></tr><tr><td class="pp">till / until</td><td>কোনো সময় পর্যন্ত</td><td class="en">We waited till evening.</td></tr><tr><td class="pp">within</td><td>নির্দিষ্ট সময়ের ভেতরে</td><td class="en">He will return within a week.</td></tr><tr><td class="pp">at (হার)</td><td>গতি বা হার</td><td class="en">running <b>at</b> forty miles an hour<span class="xt">৪৫তম বিসিএস</span></td></tr></tbody></table></div>
+    <div class="pair">
+      <div class="card"><p class="f-tag">since — শুরুর বিন্দু</p><p class="eq en">since 2000 · since Monday · since morning</p></div>
+      <div class="card"><p class="f-tag">for — সময়ের ব্যাপ্তি</p><p class="eq en">for ten years · for three months · for an hour</p></div>
+    </div>
+    <p class="warn"><b>ভুল:</b> <span class="en">He has been ill <s>from</s> Monday.</span> — perfect tense-এ শুরুর বিন্দু বোঝাতে from নয়, since।</p>
+  </section>
+
+  <section class="sec" id="place">
+    <header class="sec-head"><p class="eyebrow">অংশ ৭</p><h2>স্থান ও দিকের preposition</h2>
+      <p class="sec-sub">at বিন্দুতে, in ভেতরে, on ওপরে; নড়াচড়া করে ভেতরে গেলে into, গন্তব্যে to।</p></header>
+    <div class="card table-card"><table class="rt rt3"><thead><tr><th>Preposition</th><th>কখন</th><th>উদাহরণ</th></tr></thead><tbody><tr><td class="pp">at</td><td>নির্দিষ্ট ছোট স্থান বা বিন্দু</td><td class="en">at the bus stop · at the station</td></tr><tr><td class="pp">in</td><td>ভেতরে; বড় শহর বা দেশ</td><td class="en">in Dhaka · contained <b>in</b> the pot<span class="xt">১৬তম নিবন্ধন</span></td></tr><tr><td class="pp">on</td><td>ওপরে, ছুঁয়ে; সঙ্গে থাকা</td><td class="en">Bangladesh <b>on</b> the map · any money <b>on</b> you<span class="xt">৪২তম বিসিএস</span><span class="xt">৪৩তম বিসিএস</span></td></tr><tr><td class="pp">into</td><td>বাইরে থেকে ভেতরের দিকে গতি</td><td class="en">He fell <b>into</b> a trap. · jumped into the river<span class="xt">১৭তম নিবন্ধন</span></td></tr><tr><td class="pp">to</td><td>গন্তব্যের দিকে</td><td class="en">get <b>to</b> the centre before 9 AM<span class="xt">৫০তম বিসিএস</span></td></tr><tr><td class="pp">across</td><td>এপার থেকে ওপারে</td><td class="en">a coffee shop <b>across</b> the street<span class="xt">৪৬তম বিসিএস</span></td></tr><tr><td class="pp">over</td><td>ওপর দিয়ে</td><td class="en">The bird flew over the house.</td></tr><tr><td class="pp">beyond</td><td>সীমার বাইরে</td><td class="en">live <b>beyond</b> the margins of society<span class="xt">২০তম বিসিএস</span></td></tr><tr><td class="pp">between</td><td>দুজন বা দুটির মধ্যে</td><td class="en">divided the money <b>between</b> the two children<span class="xt">২১তম বিসিএস</span><span class="xt">২৬তম বিসিএস</span><span class="xt">৪৫তম বিসিএস</span></td></tr><tr><td class="pp">among</td><td>দুইয়ের বেশির মধ্যে</td><td class="en">Among is used when <b>more than two</b> are involved.<span class="xt">৩৮তম বিসিএস</span></td></tr></tbody></table></div>
+    <p class="tip"><b>enter:</b> ঘরে ঢোকা — <span class="en">entered the room</span> (preposition নেই<span class="xt">৪১তম বিসিএস</span>); চুক্তি বা আলোচনায় — <span class="en">entered into an agreement</span><span class="xt">১৩তম বিসিএস</span>।</p>
+  </section>
+
+  <section class="sec" id="list">
+    <header class="sec-head"><p class="eyebrow">অংশ ৮</p><h2>Appropriate preposition — কোন শব্দের পরে কোনটি</h2>
+      <p class="sec-sub">বিসিএসে এই অংশ থেকেই সবচেয়ে বেশি প্রশ্ন আসে। শব্দ, preposition বা বাংলা অর্থ লিখে খুঁজুন।</p></header>
+    <input class="find" id="find" type="search" placeholder="যেমন: devoid, to, মেনে চলা" aria-label="তালিকায় খুঁজুন" autocomplete="off">
+    <p class="find-n" id="find-n" aria-live="polite">৫৯টি শব্দ</p>
+    <div class="plist" id="plist"><div class="pi"><p class="pw en">abide <b>by</b></p><p class="pm">মেনে চলা</p><p class="pe en">We must abide by the law.</p></div><div class="pi"><p class="pw en">absent <b>from</b></p><p class="pm">অনুপস্থিত</p><p class="pe en">He was absent from the meeting.</p></div><div class="pi"><p class="pw en">accuse <b>of</b></p><p class="pm">অভিযুক্ত করা</p><p class="pe en">He was accused of theft.</p></div><div class="pi"><p class="pw en">accustomed <b>to</b></p><p class="pm">অভ্যস্ত</p><p class="pe en">He is accustomed to hard work.</p></div><div class="pi"><p class="pw en">acquit <b>of</b></p><p class="pm">খালাস দেওয়া</p><p class="pe en">The judge acquitted him of the charge.</p></div><div class="pi"><p class="pw en">adhere <b>to</b></p><p class="pm">মেনে চলা</p><p class="pe en">He does not adhere to any principle.</p><span class="xt">৪৫তম বিসিএস</span></div><div class="pi"><p class="pw en">admit <b>of</b></p><p class="pm">সুযোগ রাখা</p><p class="pe en">Your conduct admits of no excuse.</p><span class="xt">২৯তম বিসিএস</span></div><div class="pi"><p class="pw en">afraid <b>of</b></p><p class="pm">ভীত</p><p class="pe en">He is afraid of dogs.</p></div><div class="pi"><p class="pw en">alternative <b>to</b></p><p class="pm">বিকল্প</p><p class="pe en">There is no alternative to training.</p><span class="xt">২৮তম বিসিএস</span></div><div class="pi"><p class="pw en">ambition <b>for</b></p><p class="pm">উচ্চাকাঙ্ক্ষা</p><p class="pe en">The prince has no ambition for the throne.</p><span class="xt">১৭তম নিবন্ধন</span></div><div class="pi"><p class="pw en">angry <b>about</b></p><p class="pm">কোনো বিষয়ে রাগ</p><p class="pe en">What are you so angry about?</p><span class="xt">২৫তম বিসিএস</span></div><div class="pi"><p class="pw en">angry <b>with</b></p><p class="pm">কারও ওপর রাগ</p><p class="pe en">I am angry with you.</p></div><div class="pi"><p class="pw en">argue <b>with</b></p><p class="pm">কারও সঙ্গে তর্ক</p><p class="pe en">She argued with me about the marriage.</p><span class="xt">১৪তম নিবন্ধন</span></div><div class="pi"><p class="pw en">assure <b>of</b></p><p class="pm">আশ্বস্ত করা</p><p class="pe en">He has assured me of safety.</p><span class="xt">১১তম বিসিএস</span></div><div class="pi"><p class="pw en">aware <b>of</b></p><p class="pm">সচেতন</p><p class="pe en">Are you aware of the danger?</p></div><div class="pi"><p class="pw en">bad / good <b>at</b></p><p class="pm">দক্ষতা</p><p class="pe en">I am not bad at tennis. · good at Mathematics</p><span class="xt">১০ম বিসিএস</span><span class="xt">৩৬তম বিসিএস</span></div><div class="pi"><p class="pw en">capable <b>of</b></p><p class="pm">সক্ষম</p><p class="pe en">He is capable of doing it.</p></div><div class="pi"><p class="pw en">charge <b>with</b></p><p class="pm">অভিযোগ আনা</p><p class="pe en">He was charged with theft.</p></div><div class="pi"><p class="pw en">comply <b>with</b></p><p class="pm">মেনে নেওয়া</p><p class="pe en">He complied with her request.</p></div><div class="pi"><p class="pw en">concerned <b>in</b></p><p class="pm">(অপরাধে) জড়িত</p><p class="pe en">Eight men were concerned in the plot.</p><span class="xt">৩৮তম বিসিএস</span></div><div class="pi"><p class="pw en">congratulate <b>on</b></p><p class="pm">অভিনন্দন জানানো</p><p class="pe en">I congratulated him on his success.</p></div><div class="pi"><p class="pw en">consist <b>of</b></p><p class="pm">গঠিত হওয়া</p><p class="pe en">Water consists of hydrogen and oxygen.</p></div><div class="pi"><p class="pw en">credit <b>to</b></p><p class="pm">অ্যাকাউন্টে জমা</p><p class="pe en">Credit Tk 5000 to my account.</p><span class="xt">৩৬তম বিসিএস</span><span class="xt">১৫তম নিবন্ধন</span></div><div class="pi"><p class="pw en">depend / rely <b>on</b></p><p class="pm">নির্ভর করা</p><p class="pe en">Children depend on their parents.</p></div><div class="pi"><p class="pw en">devoid <b>of</b></p><p class="pm">বর্জিত</p><p class="pe en">He is devoid of commonsense.</p><span class="xt">২৬তম বিসিএস</span></div><div class="pi"><p class="pw en">different <b>from</b></p><p class="pm">ভিন্ন</p><p class="pe en">Your pen is different from mine.</p></div><div class="pi"><p class="pw en">discuss <b>—</b></p><p class="pm">preposition বসে না</p><p class="pe en">He discussed the matter.</p><span class="xt">৪৫তম বিসিএস</span></div><div class="pi"><p class="pw en">enter <b>—</b></p><p class="pm">ঘরে প্রবেশ: preposition নেই</p><p class="pe en">When Ushashi entered the room…</p><span class="xt">৪১তম বিসিএস</span></div><div class="pi"><p class="pw en">enter <b>into</b></p><p class="pm">চুক্তি বা আলোচনায় প্রবেশ</p><p class="pe en">We entered into an agreement.</p><span class="xt">১৩তম বিসিএস</span></div><div class="pi"><p class="pw en">entitled <b>to</b></p><p class="pm">অধিকারী</p><p class="pe en">I am entitled to a share of the profit.</p><span class="xt">১৪তম নিবন্ধন</span></div><div class="pi"><p class="pw en">entrust <b>to</b></p><p class="pm">কারও তত্ত্বাবধানে দেওয়া</p><p class="pe en">The children were entrusted to the care of their uncle.</p><span class="xt">২৪তম বিসিএস</span></div><div class="pi"><p class="pw en">escape <b>from</b></p><p class="pm">রেহাই</p><p class="pe en">Man has no escape from death.</p><span class="xt">১৩তম নিবন্ধন</span></div><div class="pi"><p class="pw en">fantasize <b>about</b></p><p class="pm">কল্পনা করা</p><p class="pe en">He fantasized about winning the lottery.</p><span class="xt">২১তম বিসিএস</span></div><div class="pi"><p class="pw en">feel <b>like</b></p><p class="pm">ইচ্ছা হওয়া</p><p class="pe en">The family doesn’t feel like going outing. · if you feel like it</p><span class="xt">৩৭তম বিসিএস</span><span class="xt">৪০তম বিসিএস</span></div><div class="pi"><p class="pw en">fond <b>of</b></p><p class="pm">অনুরাগী</p><p class="pe en">She is fond of music.</p></div><div class="pi"><p class="pw en">guilty <b>of</b></p><p class="pm">দোষী</p><p class="pe en">He was found guilty of murder.</p></div><div class="pi"><p class="pw en">hanker <b>after</b></p><p class="pm">লালায়িত হওয়া</p><p class="pe en">I don’t hanker after wealth.</p><span class="xt">১০ম নিবন্ধন</span></div><div class="pi"><p class="pw en">hand <b>in</b></p><p class="pm">in hand = হাতে আছে</p><p class="pe en">I have no money in hand.</p><span class="xt">১১তম নিবন্ধন</span></div><div class="pi"><p class="pw en">harmony <b>in … with</b></p><p class="pm">মিলেমিশে</p><p class="pe en">We should live in harmony with others.</p><span class="xt">১৫তম নিবন্ধন</span></div><div class="pi"><p class="pw en">identical <b>with</b></p><p class="pm">হুবহু এক</p><p class="pe en">Your opinion is identical with mine.</p><span class="xt">৪৪তম বিসিএস</span></div><div class="pi"><p class="pw en">independent <b>of</b></p><p class="pm">স্বাবলম্বী</p><p class="pe en">He is independent of his parents.</p></div><div class="pi"><p class="pw en">insist <b>on</b></p><p class="pm">জোর দেওয়া</p><p class="pe en">Do not insist on his going there.</p><span class="xt">১১তম নিবন্ধন</span></div><div class="pi"><p class="pw en">interest <b>in</b></p><p class="pm">আগ্রহ</p><p class="pe en">My brother has no interest in music.</p><span class="xt">২৬তম বিসিএস</span></div><div class="pi"><p class="pw en">introduce <b>to</b></p><p class="pm">পরিচয় করানো</p><p class="pe en">Wordsworth introduced the readers to a new kind of poetry.</p><span class="xt">৩১তম বিসিএস</span></div><div class="pi"><p class="pw en">junior / senior <b>to</b></p><p class="pm">than নয়</p><p class="pe en">He is senior to me.</p></div><div class="pi"><p class="pw en">lecturer <b>in</b></p><p class="pm">বিষয়ের শিক্ষক</p><p class="pe en">a Lecturer in English</p><span class="xt">১৫তম নিবন্ধন</span></div><div class="pi"><p class="pw en">look <b>into</b></p><p class="pm">তদন্ত করা</p><p class="pe en">The police is looking into the case.</p><span class="xt">২৬তম বিসিএস</span></div><div class="pi"><p class="pw en">look down <b>upon</b></p><p class="pm">হেয় করা</p><p class="pe en">The rich should not look down upon the poor.</p></div><div class="pi"><p class="pw en">married <b>to</b></p><p class="pm">with নয়</p><p class="pe en">She was married to a rich man.</p><span class="xt">৪৭তম বিসিএস</span></div><div class="pi"><p class="pw en">obstacle <b>to</b></p><p class="pm">বাধা</p><p class="pe en">Ignorance is obstacle to progress.</p><span class="xt">১৭তম নিবন্ধন</span></div><div class="pi"><p class="pw en">penalty <b>for</b></p><p class="pm">অপরাধের জন্য শাস্তি</p><p class="pe en">He paid the penalty for his crimes with five years in prison.</p><span class="xt">২২তম বিসিএস</span></div><div class="pi"><p class="pw en">prefer <b>to</b></p><p class="pm">than নয়</p><p class="pe en">Many prefer donating money to distributing clothes.</p><span class="xt">২৮তম বিসিএস</span></div><div class="pi"><p class="pw en">prevent <b>from</b></p><p class="pm">বাধা দেওয়া</p><p class="pe en">Rain prevented us from going out.</p></div><div class="pi"><p class="pw en">proud <b>of</b></p><p class="pm">গর্বিত</p><p class="pe en">We are proud of our language.</p></div><div class="pi"><p class="pw en">repute <b>of</b></p><p class="pm">of repute = খ্যাতিমান</p><p class="pe en">Professor Razzak was a scholar of repute.</p><span class="xt">৩৬তম বিসিএস</span></div><div class="pi"><p class="pw en">responsible <b>for</b></p><p class="pm">কোনো কাজের জন্য দায়ী</p><p class="pe en">Who is responsible for this?</p></div><div class="pi"><p class="pw en">similar <b>to</b></p><p class="pm">সদৃশ</p><p class="pe en">Your bag is similar to mine.</p></div><div class="pi"><p class="pw en">superior / inferior <b>to</b></p><p class="pm">than নয়</p><p class="pe en">He is better than and superior to me.</p><span class="xt">১৫তম নিবন্ধন</span></div><div class="pi"><p class="pw en">taste <b>for</b></p><p class="pm">কোনো কিছুর প্রতি ঝোঁক</p><p class="pe en">She has no taste for music.</p><span class="xt">১৬তম নিবন্ধন</span></div></div>
+  </section>
+
+  <section class="sec" id="pairs">
+    <header class="sec-head"><p class="eyebrow">অংশ ৯</p><h2>অর্থভেদে ভিন্ন preposition</h2>
+      <p class="sec-sub">একই শব্দ, আলাদা preposition, আলাদা অর্থ — অপশনে দুটোই থাকে, তাই পার্থক্যটা জানা চাই।</p></header>
+    <div class="pair"><article class="card pc"><h3 class="en">die of / die from<span class="xt">২৫তম বিসিএস</span></h3><p>die <b>of</b> — রোগে মৃত্যু: He died of cholera.</p><p>die <b>from</b> — অন্য কারণে: The man died from over eating.</p></article><article class="card pc"><h3 class="en">made of / made from<span class="xt">১৬তম নিবন্ধন</span></h3><p>made <b>of</b> — উপাদান চেনা যায়: made of wood.</p><p>made <b>from</b> — উপাদান রূপ বদলায়: Curd is made from milk.</p></article><article class="card pc"><h3 class="en">part from / part with<span class="xt">২৪তম বিসিএস</span><span class="xt">১৫তম নিবন্ধন</span></h3><p>part <b>from</b> — ব্যক্তির কাছ থেকে বিদায়: He parted from his friends in tears.</p><p>part <b>with</b> — জিনিস হাতছাড়া: He had to part with his car.</p></article><article class="card pc"><h3 class="en">angry with / angry about<span class="xt">২৫তম বিসিএস</span></h3><p>angry <b>with</b> — ব্যক্তির ওপর: I am angry with you.</p><p>angry <b>about</b> — বিষয় নিয়ে: What are you so angry about?</p></article><article class="card pc"><h3 class="en">agree with / agree to</h3><p>agree <b>with</b> — ব্যক্তির সঙ্গে একমত।</p><p>agree <b>to</b> — প্রস্তাবে সম্মতি।</p></article><article class="card pc"><h3 class="en">compare to / compare with<span class="xt">৪৫তম বিসিএস</span></h3><p>compare <b>to</b> — উপমা: Anger may be compared to fire.</p><p>compare <b>with</b> — মিলিয়ে দেখা: Compare your answer with his.</p></article><article class="card pc"><h3 class="en">between / among<span class="xt">২১তম বিসিএস</span><span class="xt">২৬তম বিসিএস</span><span class="xt">৪৫তম বিসিএস</span><span class="xt">৩৮তম বিসিএস</span></h3><p><b>between</b> — দুজনের মধ্যে।</p><p><b>among</b> — দুইয়ের বেশির মধ্যে।</p></article><article class="card pc"><h3 class="en">by / with<span class="xt">১৪তম বিসিএস</span><span class="xt">২৫তম বিসিএস</span></h3><p><b>by</b> — কর্তা বা মাধ্যম: villages are lit by electricity.</p><p><b>with</b> — যন্ত্র বা হাতিয়ার: killed the fly with a newspaper.</p></article><article class="card pc"><h3 class="en">in time / on time</h3><p><b>in time</b> — দেরি হওয়ার আগেই: in time to catch the train.</p><p><b>on time</b> — ঠিক নির্ধারিত সময়ে।</p></article><article class="card pc"><h3 class="en">beside / besides</h3><p><b>beside</b> — পাশে: He sat beside me.</p><p><b>besides</b> — তা ছাড়াও: Besides English, he knows French.</p></article><article class="card pc"><h3 class="en">look into / look after<span class="xt">২৬তম বিসিএস</span></h3><p>look <b>into</b> — তদন্ত করা।</p><p>look <b>after</b> — দেখাশোনা করা।</p></article><article class="card pc"><h3 class="en">admit of / admit to<span class="xt">২৯তম বিসিএস</span></h3><p>admit <b>of</b> — সুযোগ রাখা: admits of no excuse.</p><p>admit <b>to</b> — স্বীকার করা।</p></article><article class="card pc"><h3 class="en">entrust to / entrust with<span class="xt">২৪তম বিসিএস</span></h3><p>entrust something <b>to</b> someone — কারও হাতে দেওয়া।</p><p>entrust someone <b>with</b> something — কাউকে দায়িত্ব দেওয়া।</p></article><article class="card pc"><h3 class="en">consist of / consist in</h3><p>consist <b>of</b> — গঠিত হওয়া।</p><p>consist <b>in</b> — নিহিত থাকা।</p></article></div>
+  </section>
+
+  <section class="sec" id="mistakes">
+    <header class="sec-head"><p class="eyebrow">অংশ ১০</p><h2>সাধারণ ভুল</h2>
+      <p class="sec-sub">‘Choose the correct sentence’ প্রশ্নের বেশিরভাগই এই তালিকা থেকে — অপ্রয়োজনীয় বা ভুল preposition।</p></header>
+    <div class="mlist"><div class="m"><p class="bad en">He discussed about the matter.</p><p class="good en">He discussed the matter.</p><p class="why">discuss নিজেই transitive।<span class="xt">৪৫তম বিসিএস</span></p></div><div class="m"><p class="bad en">She entered into the room.</p><p class="good en">She entered the room.</p><p class="why">ঘরে ঢোকা — preposition নেই; চুক্তিতে enter into।<span class="xt">৪১তম বিসিএস</span></p></div><div class="m"><p class="bad en">The walls were painted with green.</p><p class="good en">The walls were painted green.</p><p class="why">রঙের নামের আগে preposition বসে না।<span class="xt">১৪তম বিসিএস</span></p></div><div class="m"><p class="bad en">He is better and superior than me.</p><p class="good en">He is better than and superior to me.</p><p class="why">দুটি তুলনা একসঙ্গে — প্রত্যেকটির নিজের preposition।<span class="xt">১৫তম নিবন্ধন</span></p></div><div class="m"><p class="bad en">I prefer tea than coffee.</p><p class="good en">I prefer tea to coffee.</p><p class="why">prefer A to B।<span class="xt">২৮তম বিসিএস</span></p></div><div class="m"><p class="bad en">She was married with a doctor.</p><p class="good en">She was married to a doctor.</p><p class="why">married to।<span class="xt">৪৭তম বিসিএস</span></p></div><div class="m"><p class="bad en">He has been ill from Monday.</p><p class="good en">He has been ill since Monday.</p><p class="why">perfect tense-এ শুরুর বিন্দু — since।<span class="xt">১১তম বিসিএস</span><span class="xt">২৬তম বিসিএস</span></p></div><div class="m"><p class="bad en">We reached at Dhaka.</p><p class="good en">We reached Dhaka.</p><p class="why">reach transitive; arrive at / arrive in।</p></div><div class="m"><p class="bad en">The book comprises of ten chapters.</p><p class="good en">The book comprises ten chapters.</p><p class="why">comprise-এর পরে of নেই; consist of।</p></div><div class="m"><p class="bad en">He resembles with his father.</p><p class="good en">He resembles his father.</p><p class="why">resemble-এর পরে preposition নেই।</p></div><div class="m"><p class="bad en">He ordered for a cup of tea.</p><p class="good en">He ordered a cup of tea.</p><p class="why">order (চাওয়া) — for নেই।</p></div><div class="m"><p class="bad en">He is senior than me.</p><p class="good en">He is senior to me.</p><p class="why">senior, junior, superior, inferior, prior — to।</p></div><div class="m"><p class="bad en">between you and I</p><p class="good en">between you and me</p><p class="why">preposition-এর পরে objective case।</p></div></div>
+    <div class="warn"><b>উত্তর নিয়ে দ্বিমত আছে যেসব প্রশ্নে</b><div class="dlist"><p><b class="en">at / on the weekend:</b> ব্রিটিশ ইংরেজিতে at, আমেরিকানে on — দুটিই শুদ্ধ; পরীক্ষার উত্তর at (১৫তম ও ৪৪তম বিসিএস)।</p><p><b class="en">taste for / taste in:</b> no taste for music (ঝোঁক নেই) আর good taste in music (রুচিবোধ) — অপশনে দুটো থাকলে প্রশ্নের অর্থ দেখুন; পরীক্ষার উত্তর for।</p><p><b class="en">hanker after / for:</b> দুটিই অভিধানে আছে; ১০ম নিবন্ধনের উত্তর after।</p><p><b class="en">reclining on / in the couch:</b> ১৩তম নিবন্ধনে এসেছিল, কিন্তু দুটিই চলে বলে প্রশ্নটি বাতিল করা হয়।</p><p><b class="en">sweet ___ the taste:</b> শুদ্ধ রূপ ‘sweet to the taste’; ১১তম নিবন্ধনের উত্তরপত্রে by ধরা হয়েছিল — অপশনে to থাকলে to দিন।</p></div></div>
+  </section>
+
+  <section class="sec" id="practice">
+    <header class="sec-head"><p class="eyebrow">অংশ ১১</p><h2>অনুশীলনী</h2>
+      <p class="sec-sub">সবগুলোই বিগত পরীক্ষার প্রশ্ন। “অনুশীলন মোড” চালু করলে উত্তর লুকিয়ে যাবে।</p></header>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">১</span><span class="en">He has been ill ___ Friday last.<span class="xt">১১তম বিসিএস</span><span class="xt">২৬তম বিসিএস</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">since</b></p><p class="hint">নির্দিষ্ট দিন থেকে এখন পর্যন্ত — since।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২</span><span class="en">He divided the money ___ the two children.<span class="xt">২১তম বিসিএস</span><span class="xt">২৬তম বিসিএস</span><span class="xt">৪৫তম বিসিএস</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">between</b></p><p class="hint">দুজনের মধ্যে — between।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩</span><span class="en">I saw ___ one-eyed man.<span class="xt">৩৭তম বিসিএস</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">a</b></p><p class="hint">one-এর উচ্চারণ ‘ওয়ান’ — ব্যঞ্জনধ্বনি।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪</span><span class="en">She works as ___ FBI analyst.<span class="xt">৪৭তম বিসিএস</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">an</b></p><p class="hint">FBI-এর উচ্চারণ ‘এফ’ — স্বরধ্বনি।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫</span><span class="en">The man died ___ over eating.<span class="xt">২৫তম বিসিএস</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">from</b></p><p class="hint">রোগ নয়, অন্য কারণে মৃত্যু — die from।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৬</span><span class="en">Curd is made ___ milk.<span class="xt">১৬তম নিবন্ধন</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">from</b></p><p class="hint">দুধ রূপ বদলে দই হয় — made from।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৭</span><span class="en">When Ushashi entered ___ the room everybody stopped talking.<span class="xt">৪১তম বিসিএস</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">no preposition</b></p><p class="hint">enter the room — preposition লাগে না।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৮</span><span class="en">There is no alternative ___ training.<span class="xt">২৮তম বিসিএস</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">to</b></p><p class="hint">alternative to।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৯</span><span class="en">Your conduct admits ___ no excuse.<span class="xt">২৯তম বিসিএস</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">of</b></p><p class="hint">admit of = সুযোগ রাখা।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১০</span><span class="en">At the scene, ___ mother arose in her.<span class="xt">১৬তম নিবন্ধন</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">the</b></p><p class="hint">mother গুণবাচক অর্থে (মাতৃত্ববোধ)।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১১</span><span class="en">___ Mount Everest is the highest peak in the Himalayas.<span class="xt">১৫তম নিবন্ধন</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">No article</b></p><p class="hint">একক পর্বতশৃঙ্গে the বসে না।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১২</span><span class="en">He went to ___ hospital because he had ___ heart attack.<span class="xt">৩৯তম বিসিএস</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">no article, a</b></p><p class="hint">চিকিৎসার উদ্দেশ্যে hospital; heart ব্যঞ্জনধ্বনি।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৩</span><span class="en">Many prefer donating money ___ distributing clothes.<span class="xt">২৮তম বিসিএস</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">to</b></p><p class="hint">prefer A to B।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৪</span><span class="en">She was married ___ a rich man.<span class="xt">৪৭তম বিসিএস</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">to</b></p><p class="hint">married to — with নয়।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৫</span><span class="en">Anger may be compared ___ fire.<span class="xt">৪৫তম বিসিএস</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">to</b></p><p class="hint">উপমা দিতে compare to।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৬</span><span class="en">Which ‘but’ is a preposition? (a) It is but right (b) What can we do but sit and wait? (c) tried hard, but failed<span class="xt">৪১তম বিসিএস</span></span></p><div class="sol"><p class="ans">উত্তর <b class="en">(b)</b></p><p class="hint">but = except — preposition।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article></div>
+    <a class="card cta" href="../../english/Article%20ও%20Preposition%20—%20২০০%20MCQ.html"><div><p class="f-tag">আরও অনুশীলন</p><h3>Article ও Preposition — ২০০ MCQ</h3><p class="note" style="margin-top:4px">বিগত বিসিএস ও শিক্ষক নিবন্ধনের প্রশ্নসহ, প্রতিটির ব্যাখ্যা।</p></div><span class="arrow" aria-hidden="true">→</span></a>
+  </section>
+</div>
+
+<script>
+(function(){
+  var btn = document.getElementById('mode');
+  function set(on){
+    document.body.classList.toggle('practice', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.textContent = on ? 'উত্তর দেখান' : 'অনুশীলন মোড';
+    if(!on){
+      var s = document.querySelectorAll('.ex.shown');
+      for(var i = 0; i < s.length; i++){ s[i].classList.remove('shown'); }
+    }
+    try{ localStorage.setItem('ap-notes-practice', on ? '1' : '0'); }catch(e){}
+  }
+  btn.addEventListener('click', function(){
+    set(!document.body.classList.contains('practice'));
+  });
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.reveal') : null;
+    if(b){ b.closest('.ex').classList.add('shown'); }
+  });
+  try{ if(localStorage.getItem('ap-notes-practice') === '1'){ set(true); } }catch(e){}
+
+  // Filter the preposition list as the reader types.
+  var find = document.getElementById('find'), out = document.getElementById('find-n');
+  var items = document.querySelectorAll('#plist .pi');
+  var digits = '০১২৩৪৫৬৭৮৯';
+  function bn(n){ return String(n).replace(/[0-9]/g, function(d){ return digits[d]; }); }
+  find.addEventListener('input', function(){
+    var t = find.value.trim().toLowerCase(), n = 0;
+    for(var i = 0; i < items.length; i++){
+      var hit = !t || items[i].textContent.toLowerCase().indexOf(t) !== -1;
+      items[i].hidden = !hit; if(hit) n++;
+    }
+    out.textContent = n ? bn(n) + 'টি শব্দ' : 'কিছু পাওয়া যায়নি';
+  });
+})();
+</script>
+</body>
+</html>
