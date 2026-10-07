@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>লগারিদম</title>
+<meta name="description" content="সব সূত্র, কৌশল ও ৩৩টি সমাধান করা অনুশীলনী">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700&family=Hind+Siliguri:wght@400;500;600&display=swap">
+<style>
+/* Notes layout: concept up top, a formula sheet, method cards, then solved exercises in a grid. */
+:root{
+  --paper:#F5F8F4; --card:#FFFFFF; --ink:#18231C; --muted:#5B6D61;
+  --accent:#14624A; --accent-soft:#E4EFE7; --gold:#8A6212; --gold-soft:#F6EFDD;
+  --bad:#A3412E; --bad-soft:#F8EAE6;
+  --line:#D9E3DB; --shadow:0 1px 2px rgba(20,60,45,.06),0 8px 22px rgba(20,60,45,.05);
+  --display:"Noto Serif Bengali",Georgia,serif;
+  --body:"Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;
+  --math:"Noto Serif Bengali",Georgia,"Times New Roman",serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1411; --card:#151E19; --ink:#E5EDE7; --muted:#95A89C;
+  --accent:#63C49A; --accent-soft:#18271F; --gold:#D6A94A; --gold-soft:#241F13;
+  --bad:#E58B78; --bad-soft:#2A1915;
+  --line:#26332B; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.28);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E1411; --card:#151E19; --ink:#E5EDE7; --muted:#95A89C;
+  --accent:#63C49A; --accent-soft:#18271F; --gold:#D6A94A; --gold-soft:#241F13;
+  --bad:#E58B78; --bad-soft:#2A1915;
+  --line:#26332B; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.28);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.65;-webkit-text-size-adjust:100%}
+p{margin:0}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px 72px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Header */
+.top{padding-block:40px 24px}
+.kicker{font-size:12px;letter-spacing:.12em;color:var(--gold);font-weight:600;margin-bottom:10px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,7vw,46px);line-height:1.2;margin:0}
+.lede{color:var(--muted);margin-top:10px;max-width:58ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-size:14px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+
+/* Sticky bar: one row, so it never covers the page on phones. Home stays on the
+   left and the mode button on the right; the section chips between them scroll sideways. */
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-block:1px solid var(--line);padding-block:8px}
+.bar-row{display:flex;gap:8px;align-items:center}
+.bar-row>*{flex:none}
+.bar-row>.bar-scroll{flex:1 1 auto;min-width:0;display:flex;gap:8px;overflow-x:auto;
+  padding:3px 2px;scrollbar-width:none}
+.bar-scroll::-webkit-scrollbar{display:none}
+.bar-scroll>*{flex:none}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink);text-decoration:none;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip-n{color:var(--muted)}
+.mode{margin-left:auto;font-family:inherit;font-size:13px;font-weight:600;color:var(--card);
+  background:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:6px 14px;cursor:pointer}
+.mode[aria-pressed="true"]{background:var(--gold-soft);color:var(--gold);border-color:var(--gold)}
+
+/* Sections */
+.sec{padding-top:44px}
+.sec-head{margin-bottom:20px}
+.eyebrow{font-size:12px;letter-spacing:.1em;color:var(--gold);font-weight:600;margin-bottom:2px}
+h2{font-family:var(--display);font-size:clamp(24px,4.5vw,30px);font-weight:700;line-height:1.3;margin:0}
+.sec-sub{color:var(--muted);margin-top:4px;max-width:62ch}
+h3{font-family:var(--display);font-size:19px;font-weight:700;line-height:1.35;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:20px}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:14px;align-items:start}
+.note{font-size:14.5px;color:var(--muted);margin-top:10px}
+.tip{margin-top:12px;padding:8px 12px;border-radius:8px;background:var(--gold-soft);
+  border-left:3px solid var(--gold);font-size:14.5px}
+.tip b{color:var(--gold)}
+
+/* Maths: serif, with real superscripts and subscripts that don't disturb line spacing. */
+.m{font-family:var(--math)}
+.m sub,.m sup{font-size:.68em;line-height:0;position:relative;vertical-align:baseline}
+.m sup{top:-.55em}
+.m sub{bottom:-.3em}
+.big{font-size:20px;line-height:1.7}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;
+  margin-inline:.2em;line-height:1.3}
+.frac>span+span{border-top:1.5px solid currentColor;padding-top:2px}
+.warn{font-style:normal;font-family:var(--body);font-size:.8em;font-weight:600;color:var(--bad);margin-left:8px}
+.st{font-style:normal;font-family:var(--body);font-size:12px;font-weight:600;color:var(--gold);margin-right:6px}
+
+/* Concept */
+.hero{text-align:center;background:var(--accent-soft);border-color:transparent;box-shadow:none;padding:30px 20px}
+.hero-f{font-size:clamp(22px,5.5vw,30px);line-height:1.5}
+.hero-f .if{font-family:var(--body);font-size:.62em;color:var(--muted);margin-inline:.4em}
+.legend{list-style:none;display:flex;justify-content:center;flex-wrap:wrap;gap:6px 20px;
+  padding:0;margin:14px 0 0;font-size:14.5px;color:var(--muted)}
+.legend b{color:var(--accent);margin-right:6px;font-size:17px}
+.hero-ex{margin-top:14px;font-size:15px}
+
+/* Formula sheet */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:12px}
+.f{padding:16px 18px}
+.f-tag{font-size:12.5px;font-weight:600;color:var(--accent);letter-spacing:.02em;margin-bottom:8px}
+.f-eq{font-size:18.5px;line-height:1.55}
+.f-note{font-size:14px;color:var(--muted);margin-top:8px}
+
+/* Methods */
+.choose{display:grid;grid-template-columns:1fr 1fr;padding:0;overflow:hidden;margin-bottom:14px}
+.choose>div{padding:16px 18px}
+.choose>div+div{border-left:1px solid var(--line)}
+.choose-h{font-weight:600;color:var(--accent);margin-bottom:4px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
+.steps{margin:0;padding-left:1.3em;display:grid;gap:4px;font-size:15px}
+.method .work{margin-top:12px;background:var(--paper);border-radius:8px;padding:10px 14px}
+.work{display:flex;flex-direction:column;gap:2px}
+.work>span{display:block}
+
+/* Exercises */
+.group{display:flex;align-items:baseline;gap:10px;margin:28px 0 12px;font-size:18px}
+.group:first-of-type{margin-top:0}
+.group-n{font-family:var(--body);font-size:13px;font-weight:500;color:var(--muted)}
+.exgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,255px),1fr));gap:12px}
+.ex{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+  display:flex;flex-direction:column;gap:10px}
+.ex-q{display:flex;gap:10px;align-items:baseline;font-size:17px}
+.ex-n{color:var(--accent);font-weight:700;min-width:1.5em;font-family:var(--body);font-size:15px;flex:none}
+.sol{border-top:1px dashed var(--line);padding-top:10px}
+.ex .work{font-size:15px;color:var(--muted)}
+.ans{margin-top:10px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.ans b{font-family:var(--display);font-size:18px;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:0 10px;border-radius:6px}
+.check{font-size:13.5px;color:var(--muted);margin-top:6px}
+.check .ok{color:var(--accent);font-weight:700}
+.reveal{display:none;align-self:flex-start;font-family:inherit;font-size:13px;font-weight:600;color:var(--accent);
+  background:var(--accent-soft);border:1px dashed var(--accent);border-radius:8px;padding:5px 12px;cursor:pointer}
+.practice .ex:not(.shown) .sol{display:none}
+.practice .ex:not(.shown) .reveal{display:inline-flex}
+
+/* Mistakes */
+.lists{display:grid;grid-template-columns:3fr 2fr;gap:14px;align-items:start}
+.list ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.list li{position:relative;padding-left:24px;font-size:15px}
+.list li::before{position:absolute;left:0;top:0;font-weight:700}
+.bad{background:var(--bad-soft);border-color:transparent;box-shadow:none}
+.bad h3{color:var(--bad)}
+.bad li::before{content:"✗";color:var(--bad)}
+.good h3{color:var(--accent)}
+.good li::before{content:"✓";color:var(--accent)}
+
+@media (max-width:640px){
+  .lists{grid-template-columns:1fr}
+  .choose{grid-template-columns:1fr}
+  .choose>div+div{border-left:0;border-top:1px solid var(--line)}
+}
+@media (max-width:420px){.card:not(.choose){padding:16px}.f{padding:14px 16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="kicker">NTRCA গণিত · নোট</p>
+    <h1>লগারিদম</h1>
+    <p class="lede">লগের সংজ্ঞা থেকে শিকল সূত্র পর্যন্ত — সব সূত্র, কোন প্রশ্নে কোন কৌশল, ৩৩টি সমাধান করা অনুশীলনী আর পরীক্ষায় যেসব ভুল হয়।</p>
+    <p class="meta"><span>সূত্র <b>৮</b></span><span>কৌশল <b>৪</b></span><span>অনুশীলনী <b>৩৩</b></span><span>বিষয় <b>গণিত</b></span></p>
+  </header>
+
+  <nav class="bar" aria-label="অংশ"><div class="bar-row"><!-- home-link --><style>.home-link{display:inline-flex;align-items:center;gap:6px;padding:5px 14px 5px 11px;border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none;color:var(--accent,#14624A);background:var(--accent-soft,#E4EFE7);border:1px solid var(--accent,#14624A);border-color:color-mix(in srgb,var(--accent,#14624A) 35%,transparent);transition:background .15s,color .15s}.home-link:hover{background:var(--accent,#14624A);color:var(--card,#fff);border-color:var(--accent,#14624A)}.home-link:focus-visible{outline:2px solid var(--accent,#14624A);outline-offset:2px}.home-link svg{width:15px;height:15px;flex:none}.home-sep{width:1px;height:22px;background:var(--line,#D9E3DB);margin-inline:2px}</style><a class="home-link" href="../../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg><span>হোম</span></a><span class="home-sep" aria-hidden="true"></span><!-- /home-link -->
+      <div class="bar-scroll">
+        <a class="chip" href="#concept">ধারণা</a>
+        <a class="chip" href="#formulas">সূত্র</a>
+        <a class="chip" href="#methods">কৌশল</a>
+        <a class="chip" href="#practice">অনুশীলনী <span class="chip-n">৩৩</span></a>
+        <a class="chip" href="#mistakes">ভুল এড়াও</a>
+      </div>
+      <button class="mode" id="mode" type="button" aria-pressed="false">অনুশীলন মোড</button>
+    </div></nav>
+
+  <!-- ১. মূল ধারণা -->
+  <section class="sec" id="concept">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ১</p>
+      <h2>মূল ধারণা</h2>
+      <p class="sec-sub">লগ হলো ঘাতের উল্টো প্রশ্ন: “ভিত্তির কত ঘাত দিলে সংখ্যাটি হয়?”</p>
+    </header>
+    <div class="card hero">
+      <p class="hero-f m">a<sup>x</sup> = N<span class="if">হলে</span>x = log<sub>a</sub> N</p>
+      <ul class="legend">
+        <li><b class="m">a</b>ভিত্তি</li>
+        <li><b class="m">N</b>সংখ্যা</li>
+        <li><b class="m">x</b>ঘাত</li>
+      </ul>
+      <p class="hero-ex">উদাহরণ: <span class="m">2<sup>3</sup> = 8</span> হলে <span class="m">log<sub>2</sub> 8 = 3</span></p>
+    </div>
+    <div class="pair">
+      <div class="card">
+        <h3>শর্ত</h3>
+        <p class="m big">a &gt; 0, &nbsp;a ≠ 1, &nbsp;N &gt; 0</p>
+        <p class="note">ঋণাত্মক সংখ্যা বা শূন্যের লগ হয় না।</p>
+      </div>
+      <div class="card">
+        <h3>বিশেষ মান</h3>
+        <p class="m big">log<sub>a</sub> a = 1</p>
+        <p class="m big">log<sub>a</sub> 1 = 0</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ২. সূত্র -->
+  <section class="sec" id="formulas">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ২</p>
+      <h2>সব সূত্র</h2>
+      <p class="sec-sub">প্রথম তিনটি সূত্রে সব লগের ভিত্তি একই থাকতে হবে।</p>
+    </header>
+    <div class="fgrid">
+      <div class="card f">
+        <p class="f-tag">গুণ → যোগ</p>
+        <p class="f-eq m">log (m × n) = log m + log n</p>
+      </div>
+      <div class="card f">
+        <p class="f-tag">ভাগ → বিয়োগ</p>
+        <p class="f-eq m">log (m ÷ n) = log m − log n</p>
+      </div>
+      <div class="card f">
+        <p class="f-tag">ঘাত → গুণ</p>
+        <p class="f-eq m">log (m<sup>n</sup>) = n × log m</p>
+      </div>
+      <div class="card f">
+        <p class="f-tag">ভিত্তি পরিবর্তন</p>
+        <p class="f-eq m">log<sub>a</sub> b = <span class="frac"><span>log<sub>c</sub> b</span><span>log<sub>c</sub> a</span></span></p>
+        <p class="tip"><b>মনে রাখো:</b> সংখ্যা উপরে, ভিত্তি নিচে, নতুন ভিত্তি (c) দুটোতেই বসে।</p>
+      </div>
+      <div class="card f">
+        <p class="f-tag">উল্টো রূপ</p>
+        <p class="f-eq m">log<sub>a</sub> b × log<sub>b</sub> a = 1</p>
+        <p class="f-note">অর্থাৎ <span class="m">log<sub>a</sub> b = 1 ÷ log<sub>b</sub> a</span></p>
+      </div>
+      <div class="card f">
+        <p class="f-tag">শিকল সূত্র</p>
+        <p class="f-eq m">log<sub>a</sub> b × log<sub>b</sub> c = log<sub>a</sub> c</p>
+        <p class="f-note">মাঝের b কেটে যায়।</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ৩. কৌশল -->
+  <section class="sec" id="methods">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ৩</p>
+      <h2>কৌশল</h2>
+      <p class="sec-sub">কোন ধরনের প্রশ্নে কোন পথে এগোতে হবে।</p>
+    </header>
+    <h3>কখন কোন পদ্ধতি?</h3>
+    <div class="card choose">
+      <div>
+        <p class="choose-h">x পদ্ধতি</p>
+        <p>সংখ্যা ও ভিত্তি একই মৌলিক সংখ্যার ঘাত হলে — যেমন ৪ ও ৮, ৯ ও ২৭, ২৫ ও ১২৫।</p>
+      </div>
+      <div>
+        <p class="choose-h">সূত্র পদ্ধতি</p>
+        <p>লগের গুণফল থাকলে (শিকল মেলে কিনা দেখো), বা সংখ্যা ও ভিত্তি ঘাতের সম্পর্কে না থাকলে।</p>
+      </div>
+    </div>
+    <div class="mgrid">
+      <article class="card method">
+        <h3>লগ থেকে ঘাতে ফেরা</h3>
+        <p class="m big">log<sub>a</sub> x = n হলে x = a<sup>n</sup></p>
+        <p class="tip"><b>মনে রাখো:</b> ভিত্তি সবসময় ভিত্তিই থাকে, লগের মান হলো ঘাত।</p>
+        <p class="work m">
+          <span>log<sub>3</sub> x = 4</span>
+          <span>x = 3<sup>4</sup> = 81<em class="warn">4<sup>2</sup> নয়!</em></span>
+        </p>
+      </article>
+      <article class="card method">
+        <h3>x পদ্ধতি: ভগ্নাংশ উত্তর</h3>
+        <ol class="steps">
+          <li>লগটিকে x ধরে ঘাতের রূপে লেখো।</li>
+          <li>দুই পাশকে একই ভিত্তির ঘাতে লেখো।</li>
+          <li>উত্তর = সংখ্যার ঘাত ÷ ভিত্তির ঘাত।</li>
+        </ol>
+        <p class="work m">
+          <span>log<sub>9</sub> 3 = x → 9<sup>x</sup> = 3</span>
+          <span>(3<sup>2</sup>)<sup>x</sup> = 3<sup>1</sup> → 2x = 1</span>
+          <span>x = 1/2</span>
+        </p>
+        <p class="note">সংখ্যা ভিত্তির চেয়ে ছোট হলে উত্তর ১-এর চেয়ে ছোট (ভগ্নাংশ) হয়। যেমন <span class="m">log<sub>8</sub> 2 = 1/3</span>, কারণ <span class="m">8<sup>1/3</sup> = 2</span>।</p>
+      </article>
+      <article class="card method">
+        <h3>সহগ থাকলে</h3>
+        <ol class="steps">
+          <li>লগের সামনে সংখ্যা থাকলে আগে সেটাকে ঘাত বানিয়ে ভেতরে ঢোকাও।</li>
+          <li>তারপর যোগ হলে গুণ, বিয়োগ হলে ভাগ করে একটি লগে আনো।</li>
+        </ol>
+        <p class="work m">
+          <span>2 log<sub>3</sub> 6 − log<sub>3</sub> 4</span>
+          <span>= log<sub>3</sub> 36 − log<sub>3</sub> 4</span>
+          <span>= log<sub>3</sub> (36 ÷ 4)</span>
+          <span>= log<sub>3</sub> 9 = 2</span>
+        </p>
+      </article>
+      <article class="card method">
+        <h3>শিকল মেলানো</h3>
+        <p>লগের গুণফল দেখলে সরাসরি হিসাব না করে আগে শিকল মেলাও — মাঝের সংখ্যাগুলো কেটে গিয়ে একটি লগ থাকে।</p>
+        <p class="work m">
+          <span>log<sub>2</sub> 3 × log<sub>3</sub> 4 × log<sub>4</sub> 8</span>
+          <span>= log<sub>2</sub> 8 = 3</span>
+        </p>
+        <p class="note">এখানে ৩ ও ৪ কেটে যায়।</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ৪. অনুশীলনী -->
+  <section class="sec" id="practice">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ৪</p>
+      <h2>অনুশীলনী ও সমাধান</h2>
+      <p class="sec-sub">প্রতিটি প্রশ্নের নিচে সমাধান আছে। উপরের “অনুশীলন মোড” চালু করলে সমাধান লুকিয়ে যাবে — আগে নিজে করে তারপর মিলিয়ে নাও।</p>
+    </header>
+
+    <h3 class="group">মৌলিক <span class="group-n">১–১৪</span></h3>
+    <div class="exgrid">
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">১</span><span class="m">log<sub>2</sub> 64 = ?</span></p>
+        <div class="sol"><p class="work m"><span>2<sup>6</sup> = 64</span></p><p class="ans">উত্তর <b>৬</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">২</span><span class="m">log<sub>10</sub> 1000 = ?</span></p>
+        <div class="sol"><p class="work m"><span>10<sup>3</sup> = 1000</span></p><p class="ans">উত্তর <b>৩</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৩</span><span class="m">log<sub>6</sub> 4 + log<sub>6</sub> 9 = ?</span></p>
+        <div class="sol"><p class="work m"><span>log<sub>6</sub> (4 × 9) = log<sub>6</sub> 36</span></p><p class="ans">উত্তর <b>২</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৪</span><span class="m">log<sub>3</sub> x = 4 হলে x = ?</span></p>
+        <div class="sol"><p class="work m"><span>x = 3<sup>4</sup></span></p><p class="ans">উত্তর <b>৮১</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৫</span><span class="m">log<sub>2</sub> 40 − log<sub>2</sub> 5 = ?</span></p>
+        <div class="sol"><p class="work m"><span>log<sub>2</sub> (40 ÷ 5) = log<sub>2</sub> 8</span></p><p class="ans">উত্তর <b>৩</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৬</span><span class="m">log<sub>9</sub> 3 = ?</span></p>
+        <div class="sol"><p class="work m"><span>ধরি log<sub>9</sub> 3 = x → 9<sup>x</sup> = 3</span><span>(3<sup>2</sup>)<sup>x</sup> = 3<sup>1</sup> → 2x = 1</span></p><p class="ans">উত্তর <b>১/২</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৭</span><span class="m">log<sub>5</sub> x = 3 হলে x = ?</span></p>
+        <div class="sol"><p class="work m"><span>x = 5<sup>3</sup></span></p><p class="ans">উত্তর <b>১২৫</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৮</span><span class="m">log<sub>4</sub> 2 = ?</span></p>
+        <div class="sol"><p class="work m"><span>4<sup>x</sup> = 2 → (2<sup>2</sup>)<sup>x</sup> = 2<sup>1</sup></span><span>2x = 1</span></p><p class="ans">উত্তর <b>১/২</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৯</span><span class="m">log<sub>10</sub> 5 + log<sub>10</sub> 20 = ?</span></p>
+        <div class="sol"><p class="work m"><span>log<sub>10</sub> 100</span></p><p class="ans">উত্তর <b>২</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">১০</span><span class="m">2 log<sub>3</sub> 6 − log<sub>3</sub> 4 = ?</span></p>
+        <div class="sol"><p class="work m">
+          <span><i class="st">ধাপ ১</i>log<sub>3</sub> 6<sup>2</sup> = log<sub>3</sub> 36</span>
+          <span><i class="st">ধাপ ২</i>log<sub>3</sub> 36 − log<sub>3</sub> 4</span>
+          <span><i class="st">ধাপ ৩</i>log<sub>3</sub> (36 ÷ 4) = log<sub>3</sub> 9</span>
+          <span><i class="st">ধাপ ৪</i>3<sup>2</sup> = 9</span>
+        </p><p class="ans">উত্তর <b>২</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">১১</span><span class="m">3 log<sub>2</sub> 2 + log<sub>2</sub> 4 = ?</span></p>
+        <div class="sol"><p class="work m"><span>3 × 1 + 2</span></p><p class="ans">উত্তর <b>৫</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">১২</span><span class="m">log<sub>5</sub> 100 − log<sub>5</sub> 4 = ?</span></p>
+        <div class="sol"><p class="work m"><span>log<sub>5</sub> 25</span></p><p class="ans">উত্তর <b>২</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">১৩</span><span class="m">2 log<sub>10</sub> 5 + log<sub>10</sub> 4 = ?</span></p>
+        <div class="sol"><p class="work m"><span>log<sub>10</sub> 25 + log<sub>10</sub> 4 = log<sub>10</sub> 100</span></p><p class="ans">উত্তর <b>২</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">১৪</span><span class="m">log<sub>8</sub> 2 = ?</span></p>
+        <div class="sol"><p class="work m"><span>8<sup>x</sup> = 2 → (2<sup>3</sup>)<sup>x</sup> = 2<sup>1</sup></span><span>3x = 1</span></p><p class="ans">উত্তর <b>১/৩</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+    </div>
+
+    <h3 class="group">ভিত্তি পরিবর্তন ও শিকল সূত্র <span class="group-n">১৫–২৫</span></h3>
+    <div class="exgrid">
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">১৫</span><span class="m">log<sub>4</sub> 8 = ?</span></p>
+        <div class="sol"><p class="work m"><span>4<sup>x</sup> = 8 → (2<sup>2</sup>)<sup>x</sup> = 2<sup>3</sup></span><span>2x = 3</span></p><p class="ans">উত্তর <b>৩/২</b></p>
+          <p class="check">যাচাই: <span class="m">4<sup>3/2</sup> = (√4)<sup>3</sup> = 8</span> <span class="ok">✓</span></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">১৬</span><span class="m">log<sub>25</sub> 5 = ?</span></p>
+        <div class="sol"><p class="work m"><span>(log<sub>5</sub> 5) ÷ (log<sub>5</sub> 25) = 1 ÷ 2</span></p><p class="ans">উত্তর <b>১/২</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">১৭</span><span class="m">log<sub>2</sub> 5 × log<sub>5</sub> 2 = ?</span></p>
+        <div class="sol"><p class="work m"><span>log<sub>a</sub> b × log<sub>b</sub> a = 1</span></p><p class="ans">উত্তর <b>১</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">১৮</span><span class="m">log<sub>2</sub> 3 × log<sub>3</sub> 4 × log<sub>4</sub> 8 = ?</span></p>
+        <div class="sol"><p class="work m"><span>৩ ও ৪ কেটে যায়, বাকি log<sub>2</sub> 8</span></p><p class="ans">উত্তর <b>৩</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">১৯</span><span class="m">log<sub>9</sub> 27 = ?</span></p>
+        <div class="sol"><p class="work m"><span>9 = 3<sup>2</sup>, 27 = 3<sup>3</sup> → 3 ÷ 2</span></p><p class="ans">উত্তর <b>৩/২</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">২০</span><span class="m">log<sub>2</sub> 7 × log<sub>7</sub> 2 = ?</span></p>
+        <div class="sol"><p class="work m"><span>log<sub>a</sub> b × log<sub>b</sub> a = 1</span></p><p class="ans">উত্তর <b>১</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">২১</span><span class="m">log<sub>3</sub> 5 × log<sub>5</sub> 81 = ?</span></p>
+        <div class="sol"><p class="work m"><span>৫ কেটে যায়, বাকি log<sub>3</sub> 81</span></p><p class="ans">উত্তর <b>৪</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">২২</span><span class="m">log<sub>25</sub> 125 = ?</span></p>
+        <div class="sol"><p class="work m"><span>25 = 5<sup>2</sup>, 125 = 5<sup>3</sup> → 3 ÷ 2</span></p><p class="ans">উত্তর <b>৩/২</b></p>
+          <p class="check">যাচাই: <span class="m">25<sup>3/2</sup> = 5<sup>3</sup> = 125</span> <span class="ok">✓</span></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">২৩</span><span class="m">log<sub>2</sub> 3 × log<sub>3</sub> 4 × log<sub>4</sub> 16 = ?</span></p>
+        <div class="sol"><p class="work m"><span>৩ ও ৪ কেটে যায়, বাকি log<sub>2</sub> 16</span></p><p class="ans">উত্তর <b>৪</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">২৪</span><span class="m">log<sub>8</sub> 16 = ?</span></p>
+        <div class="sol"><p class="work m"><span>8 = 2<sup>3</sup>, 16 = 2<sup>4</sup> → 4 ÷ 3</span></p><p class="ans">উত্তর <b>৪/৩</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">২৫</span><span class="m">log<sub>27</sub> 9 = ?</span></p>
+        <div class="sol"><p class="work m"><span>27 = 3<sup>3</sup>, 9 = 3<sup>2</sup> → 2 ÷ 3</span></p><p class="ans">উত্তর <b>২/৩</b></p>
+          <p class="check">যাচাই: <span class="m">27<sup>2/3</sup> = (∛27)<sup>2</sup> = 9</span> <span class="ok">✓</span></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+    </div>
+
+    <h3 class="group">মিশ্র প্রশ্ন <span class="group-n">২৬–৩৩</span></h3>
+    <div class="exgrid">
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">২৬</span><span class="m">log<sub>3</sub> 27 + log<sub>3</sub> 3 − log<sub>3</sub> 9 = ?</span></p>
+        <div class="sol"><p class="work m"><span>log<sub>3</sub> (27 × 3 ÷ 9) = log<sub>3</sub> 9</span></p><p class="ans">উত্তর <b>২</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">২৭</span><span class="m">3 log<sub>5</sub> 10 − log<sub>5</sub> 8 = ?</span></p>
+        <div class="sol"><p class="work m">
+          <span><i class="st">ধাপ ১</i>log<sub>5</sub> 10<sup>3</sup> = log<sub>5</sub> 1000</span>
+          <span><i class="st">ধাপ ২</i>log<sub>5</sub> (1000 ÷ 8) = log<sub>5</sub> 125</span>
+          <span><i class="st">ধাপ ৩</i>5<sup>3</sup> = 125</span>
+        </p><p class="ans">উত্তর <b>৩</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">২৮</span><span class="m">log<sub>16</sub> 8 = ?</span></p>
+        <div class="sol"><p class="work m"><span>16 = 2<sup>4</sup>, 8 = 2<sup>3</sup> → 3 ÷ 4</span></p><p class="ans">উত্তর <b>৩/৪</b></p>
+          <p class="check">যাচাই: <span class="m">16<sup>3/4</sup> = 2<sup>3</sup> = 8</span> <span class="ok">✓</span></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">২৯</span><span class="m">log<sub>3</sub> 2 × log<sub>2</sub> 27 = ?</span></p>
+        <div class="sol"><p class="work m"><span>২ কেটে যায়, বাকি log<sub>3</sub> 27</span></p><p class="ans">উত্তর <b>৩</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৩০</span><span class="m">log<sub>2</sub> 3 × log<sub>3</sub> 5 × log<sub>5</sub> 16 = ?</span></p>
+        <div class="sol"><p class="work m"><span>৩ ও ৫ কেটে যায়, বাকি log<sub>2</sub> 16</span></p><p class="ans">উত্তর <b>৪</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৩১</span><span class="m">log<sub>x</sub> 64 = 3 হলে x = ?</span></p>
+        <div class="sol"><p class="work m">
+          <span><i class="st">ধাপ ১</i>x<sup>3</sup> = 64</span>
+          <span><i class="st">ধাপ ২</i>64 = 4<sup>3</sup></span>
+          <span><i class="st">ধাপ ৩</i>x<sup>3</sup> = 4<sup>3</sup></span>
+        </p><p class="ans">উত্তর <b>৪</b></p>
+          <p class="check">যাচাই: <span class="m">4<sup>3</sup> = 64</span> <span class="ok">✓</span></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৩২</span><span class="m">log<sub>x</sub> 81 = 4 হলে x = ?</span></p>
+        <div class="sol"><p class="work m"><span>x<sup>4</sup> = 81</span></p><p class="ans">উত্তর <b>৩</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৩৩</span><span class="m">log<sub>x</sub> 32 = 5 হলে x = ?</span></p>
+        <div class="sol"><p class="work m"><span>x<sup>5</sup> = 32</span></p><p class="ans">উত্তর <b>২</b></p></div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+    </div>
+  </section>
+
+  <!-- ৫. ভুল এড়াও -->
+  <section class="sec" id="mistakes">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ৫</p>
+      <h2>ভুল এড়াও</h2>
+      <p class="sec-sub">পরীক্ষায় নম্বর কাটে এই জায়গাগুলোতেই।</p>
+    </header>
+    <div class="lists">
+      <div class="card list bad">
+        <h3>যে ভুলগুলো হয়</h3>
+        <ul>
+          <li>লগ থেকে ঘাতে যাওয়ার সময় ভিত্তি-ঘাত উল্টে ফেলা (<span class="m">log<sub>3</sub> x = 4 → x = 3<sup>4</sup></span>, <span class="m">4<sup>2</sup></span> নয়)</li>
+          <li>সূত্র লাগানোর আগে সহগ (n)-কে ঘাত না বানানো</li>
+          <li>ভিন্ন ভিত্তির লগে সরাসরি যোগ-বিয়োগ করা</li>
+          <li>মৌলিক সংখ্যা দিয়ে ভাগ করা — ভাগ হয় ঘাত দিয়ে (<span class="m">log<sub>25</sub> 125</span>-এ ৩ ÷ ২, ৫ দিয়ে নয়)</li>
+          <li>ভাগের ক্রম উল্টে ফেলা — সবসময় সংখ্যার ঘাত ÷ ভিত্তির ঘাত</li>
+          <li>লগের গুণফল দেখেই সরাসরি হিসাব শুরু করা — আগে শিকল মেলাও</li>
+        </ul>
+      </div>
+      <div class="card list good">
+        <h3>যে অভ্যাসগুলো রাখবে</h3>
+        <ul>
+          <li>ঘাত বসিয়ে গুণ করে মিলিয়ে নাও: <span class="m">5<sup>2</sup> = 25</span> ✓, <span class="m">5<sup>5</sup> = 3125</span> ✗</li>
+          <li>শেষে উত্তর যাচাই করো: <span class="m">25<sup>3/2</sup> = 5<sup>3</sup> = 125</span> ✓</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var btn = document.getElementById('mode');
+  function set(on){
+    document.body.classList.toggle('practice', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.textContent = on ? 'সমাধান দেখান' : 'অনুশীলন মোড';
+    if(!on){
+      var s = document.querySelectorAll('.ex.shown');
+      for(var i = 0; i < s.length; i++){ s[i].classList.remove('shown'); }
+    }
+    try{ localStorage.setItem('log-notes-practice', on ? '1' : '0'); }catch(e){}
+  }
+  btn.addEventListener('click', function(){
+    set(!document.body.classList.contains('practice'));
+  });
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.reveal') : null;
+    if(b){ b.closest('.ex').classList.add('shown'); }
+  });
+  try{ if(localStorage.getItem('log-notes-practice') === '1'){ set(true); } }catch(e){}
+})();
+</script>
+</body>
+</html>
