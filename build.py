@@ -7,8 +7,16 @@ Usage (run inside this folder):
     python3 build.py
 
 What it does:
-  1. Lists every .html file in math/, gk/, bengali/ and english/ on index.html.
-  2. Adds a "← হোম" link to any question page that does not have one yet.
+  1. Lists the pages on index.html in two parts, each grouped by subject:
+       MCQ অনুশীলন  every .html file in math/, gk/, bengali/ and english/
+       নোট           every .html file in notes/math/, notes/gk/, notes/bengali/
+                     and notes/english/
+  2. Adds the home button to every page, or brings an existing one up to the
+     current design.
+
+A notes page can be designed any way you like. If it has a
+<meta name="description" content="..."> tag, that text is shown under its
+name on index.html.
 
 Files are listed in file-name order. To control the order, start the file
 name with a number, e.g. "01 বীজগণিত.html", "02 জ্যামিতি.html".
@@ -28,17 +36,50 @@ SUBJECTS = [
     ("english", "ইংরেজি", "English"),
 ]
 
+# The two parts of index.html, in order:
+# (id, heading, one-line description, folder for each subject, text for an empty
+# subject, word used in each card's count).
+GROUPS = [
+    ("mcq", "MCQ অনুশীলন", "প্রশ্ন, উত্তর ও ব্যাখ্যা — প্রতিটি ফাইলে অনুশীলন মোড আছে।", "{}", "এখনো কোনো ফাইল নেই", "ফাইল"),
+    ("notes", "নোট", "বিষয়ভিত্তিক সূত্র, নিয়ম আর সমাধান করা উদাহরণ।", "notes/{}", "এখনো কোনো নোট নেই", "নোট"),
+]
+
 HOME_START = "<!-- home-link -->"
 HOME_END = "<!-- /home-link -->"
-# Pages built like the existing ones get a chip in their sticky top bar;
-# anything else gets a plain link at the top of the body.
-HOME_CHIP = HOME_START + '<a class="chip" href="../index.html">← হোম</a>' + HOME_END
-HOME_PLAIN = (
-    HOME_START
-    + '<p style="margin:16px 20px 0;font:600 14px/1.4 sans-serif">'
-    + '<a href="../index.html" style="color:var(--accent,#14624A);text-decoration:none">← হোম</a></p>'
-    + HOME_END
+# The home button carries its own styles, so it looks the same on every page.
+# It uses the page's colour tokens (light and dark) and falls back to the
+# site's green on pages that don't define them.
+HOME_STYLE = (
+    "<style>"
+    ".home-link{display:inline-flex;align-items:center;gap:6px;padding:5px 14px 5px 11px;"
+    "border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none;"
+    "color:var(--accent,#14624A);background:var(--accent-soft,#E4EFE7);"
+    "border:1px solid var(--accent,#14624A);"
+    "border-color:color-mix(in srgb,var(--accent,#14624A) 35%,transparent);"
+    "transition:background .15s,color .15s}"
+    ".home-link:hover{background:var(--accent,#14624A);color:var(--card,#fff);"
+    "border-color:var(--accent,#14624A)}"
+    ".home-link:focus-visible{outline:2px solid var(--accent,#14624A);outline-offset:2px}"
+    ".home-link svg{width:15px;height:15px;flex:none}"
+    ".home-sep{width:1px;height:22px;background:var(--line,#D9E3DB);margin-inline:2px}"
+    "</style>"
 )
+HOME_ICON = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+    '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>'
+)
+HOME_BLOCK = re.compile(re.escape(HOME_START) + ".*?" + re.escape(HOME_END), re.S)
+
+
+def home_block(text, href):
+    """The home button for a page. Pages with a sticky top bar get it first in
+    the bar, with a divider before the section chips; anything else gets it at
+    the top of the body."""
+    link = f'<a class="home-link" href="{href}">{HOME_ICON}<span>হোম</span></a>'
+    if '<div class="bar-row">' in text:
+        return HOME_START + HOME_STYLE + link + '<span class="home-sep" aria-hidden="true"></span>' + HOME_END
+    return HOME_START + HOME_STYLE + '<p style="margin:16px 20px 0">' + link + "</p>" + HOME_END
 
 BN_DIGITS = str.maketrans("0123456789", "০১২৩৪৫৬৭৮৯")
 
@@ -69,29 +110,41 @@ def read_page(path):
 
 
 def add_home_link(path, text):
-    if not text or HOME_START in text:
-        return False
-    if '<div class="bar-row">' in text:
-        text = text.replace('<div class="bar-row">', '<div class="bar-row">' + HOME_CHIP, 1)
+    """Insert the home button, or replace an older one. Returns what changed."""
+    if not text:
+        return None
+    # "../index.html" from math/x.html, "../../index.html" from notes/math/x.html.
+    depth = len(path.relative_to(ROOT).parts) - 1
+    block = home_block(text, "../" * depth + "index.html")
+    if HOME_START in text:
+        new, status = HOME_BLOCK.sub(lambda _: block, text, count=1), "updated"
+    elif '<div class="bar-row">' in text:
+        new, status = text.replace('<div class="bar-row">', '<div class="bar-row">' + block, 1), "added"
     else:
         m = re.search(r"<body[^>]*>", text, re.I)
         if not m:
-            return False
-        text = text[: m.end()] + HOME_PLAIN + text[m.end() :]
-    path.write_bytes(text.encode("utf-8"))
-    return True
+            return None
+        new, status = text[: m.end()] + block + text[m.end() :], "added"
+    if new == text:
+        return None
+    path.write_bytes(new.encode("utf-8"))
+    return status
 
 
 def page_info(path, text):
     title = first(r"<title[^>]*>(.*?)</title>", text) or path.stem
+    questions = len(re.findall(r'<article class="q"', text))
+    # A page's own description wins (notes pages use this).
+    m = re.search(r'<meta\s+name="description"\s+content="([^"]*)"', text, re.I)
+    if m:
+        return title, html.unescape(m.group(1)).strip(), questions
     # "বিষয় <b>…</b>" in the page's meta line; য় may be stored as য + nukta.
     subject = first(r"বিষ(?:য়|য়)\s*<b>(.*?)</b>", text) or first(r"<h1[^>]*>(.*?)</h1>", text)
-    questions = len(re.findall(r'<article class="q"', text))
     detail = [s for s in (subject if subject != title else "", f"{bn(questions)}টি প্রশ্ন" if questions else "") if s]
     return title, " · ".join(detail), questions
 
 
-def render_subject(folder, name_bn, name_en, files):
+def render_subject(sid, name_bn, name_en, files, empty, noun):
     items = []
     for i, (rel, title, detail) in enumerate(files, 1):
         sub = f'<span class="file-meta">{html.escape(detail)}</span>' if detail else ""
@@ -101,42 +154,59 @@ def render_subject(folder, name_bn, name_en, files):
             f'<span class="file-text"><span class="file-name">{html.escape(title)}</span>{sub}</span>'
             f'<span class="file-go" aria-hidden="true">→</span></a></li>'
         )
-    body = f'<ol class="files">{"".join(items)}</ol>' if items else '<p class="empty">এখনো কোনো ফাইল নেই</p>'
-    count = f"{bn(len(files))}টি ফাইল" if files else "খালি"
+    body = f'<ol class="files">{"".join(items)}</ol>' if items else f'<p class="empty">{empty}</p>'
+    count = f"{bn(len(files))}টি {noun}" if files else "খালি"
     return (
-        f'<section class="subject" id="{folder}" aria-labelledby="{folder}-h">'
+        f'<section class="subject" id="{sid}" aria-labelledby="{sid}-h">'
         f'<header class="subject-head"><div><p class="eyebrow">{name_en}</p>'
-        f'<h2 id="{folder}-h">{name_bn}</h2></div><span class="count">{count}</span></header>'
+        f'<h3 id="{sid}-h">{name_bn}</h3></div><span class="count">{count}</span></header>'
         f"{body}</section>"
     )
 
 
-def main():
-    sections, total_files, total_q, linked = [], 0, 0, []
-    for folder, name_bn, name_en in SUBJECTS:
-        d = ROOT / folder
-        d.mkdir(exist_ok=True)
-        files = []
-        for path in sorted(d.glob("*.html"), key=natural_key):
-            text = read_page(path)
-            if add_home_link(path, text):
-                linked.append(f"{folder}/{path.name}")
-            title, detail, q = page_info(path, text)
-            files.append((f"{folder}/{path.name}", title, detail))
-            total_q += q
-        total_files += len(files)
-        sections.append(render_subject(folder, name_bn, name_en, files))
-        print(f"  {folder:<8} {len(files)} file(s)")
+def render_group(gid, heading, blurb, cards):
+    return (
+        f'<section class="group" id="{gid}" aria-labelledby="{gid}-h">'
+        f'<header class="group-head"><h2 id="{gid}-h">{heading}</h2><p>{blurb}</p></header>'
+        f'<div class="subjects">\n{"".join(cards)}\n</div></section>'
+    )
 
-    meta = f"<span>বিষয় <b>{bn(len(SUBJECTS))}</b></span><span>ফাইল <b>{bn(total_files)}</b></span>"
+
+def main():
+    groups, counts, total_q, linked = [], {}, 0, []
+    for gid, heading, blurb, folder_pattern, empty, noun in GROUPS:
+        cards, count = [], 0
+        for folder, name_bn, name_en in SUBJECTS:
+            rel = folder_pattern.format(folder)
+            d = ROOT / rel
+            d.mkdir(parents=True, exist_ok=True)
+            files = []
+            for path in sorted(d.glob("*.html"), key=natural_key):
+                text = read_page(path)
+                status = add_home_link(path, text)
+                if status:
+                    linked.append(f"{status}: {rel}/{path.name}")
+                title, detail, q = page_info(path, text)
+                files.append((f"{rel}/{path.name}", title, detail))
+                total_q += q
+            count += len(files)
+            # MCQ cards keep their old ids (#math, #gk, …); notes cards get #notes-math, …
+            sid = folder if gid == "mcq" else f"{gid}-{folder}"
+            cards.append(render_subject(sid, name_bn, name_en, files, empty, noun))
+            print(f"  {rel:<14} {len(files)} file(s)")
+        counts[gid] = count
+        groups.append(render_group(gid, heading, blurb, cards))
+
+    meta = f"<span>বিষয় <b>{bn(len(SUBJECTS))}</b></span><span>MCQ ফাইল <b>{bn(counts['mcq'])}</b></span>"
     if total_q:
         meta += f"<span>প্রশ্ন <b>{bn(total_q)}</b></span>"
-    page = TEMPLATE.replace("{{META}}", meta).replace("{{SECTIONS}}", "\n".join(sections))
+    meta += f"<span>নোট <b>{bn(counts['notes'])}</b></span>"
+    page = TEMPLATE.replace("{{META}}", meta).replace("{{GROUPS}}", "\n".join(groups))
     (ROOT / "index.html").write_text(page, encoding="utf-8")
 
-    for name in linked:
-        print(f"  + home link added: {name}")
-    print(f"index.html updated: {total_files} file(s)")
+    for change in linked:
+        print(f"  home button {change}")
+    print(f"index.html updated: {counts['mcq']} MCQ file(s), {counts['notes']} note(s)")
 
 
 TEMPLATE = """<!doctype html>
@@ -179,6 +249,22 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,40px);lin
 .lede{color:var(--muted);margin:10px 0 0;max-width:56ch}
 .meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin:18px 0 0;font-size:14px;color:var(--muted)}
 .meta b{color:var(--ink);font-weight:600}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.jump a{display:inline-flex;gap:6px;align-items:center;font-size:13px;font-weight:600;text-decoration:none;
+  color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 14px}
+.jump a:hover{border-color:var(--accent);color:var(--accent)}
+.jump span{color:var(--muted)}
+
+/* Two parts (MCQ, notes), each a grid of subject cards. */
+.group+.group{margin-top:48px}
+.group-head{margin-bottom:16px}
+.group-head h2{font-family:var(--display);font-size:clamp(22px,4.5vw,28px);font-weight:700;margin:0;line-height:1.3}
+.group-head p{margin:4px 0 0;color:var(--muted);font-size:15px}
+/* Notes use gold instead of green, so the two parts are easy to tell apart. */
+#notes .eyebrow{color:var(--accent)}
+#notes .file-n{color:var(--gold)}
+#notes .file:hover{border-color:var(--gold);background:var(--gold-soft)}
+#notes .file:hover .file-go{color:var(--gold)}
 
 .subjects{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));
   gap:16px;align-items:start}
@@ -188,7 +274,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,40px);lin
   padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--line)}
 .eyebrow{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);
   font-weight:600;margin:0 0 2px}
-.subject h2{font-family:var(--display);font-size:22px;font-weight:700;margin:0;line-height:1.3}
+.subject h3{font-family:var(--display);font-size:22px;font-weight:700;margin:0;line-height:1.3}
 .count{font-size:13px;color:var(--muted);white-space:nowrap}
 
 .files{list-style:none;margin:0;padding:0;display:grid;gap:6px}
@@ -221,10 +307,11 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:va
     <h1>পড়াশোনা</h1>
     <p class="lede">বিষয় বেছে নিন, তারপর যে ফাইলটি পড়তে চান তার নামে ক্লিক করুন। প্রতিটি ফাইলে অনুশীলন মোড আছে।</p>
     <p class="meta">{{META}}</p>
+    <nav class="jump" aria-label="অংশ"><a href="#mcq">MCQ অনুশীলন <span>↓</span></a><a href="#notes">নোট <span>↓</span></a></nav>
   </header>
 
-  <main class="subjects">
-{{SECTIONS}}
+  <main>
+{{GROUPS}}
   </main>
 
   <footer class="foot">

@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>গড়</title>
+<meta name="description" content="৫ ধরনের প্রশ্ন, ৭টি উদাহরণ ও ৮টি অনুশীলনী সমাধানসহ">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700&family=Hind+Siliguri:wght@400;500;600&display=swap">
+<style>
+/* Notes layout: the formula up top, five question types as worked-example cards,
+   a summary table, then exercises with solutions. Same palette as the rest of the site. */
+:root{
+  --paper:#F5F8F4; --card:#FFFFFF; --ink:#18231C; --muted:#5B6D61;
+  --accent:#14624A; --accent-soft:#E4EFE7; --gold:#8A6212; --gold-soft:#F6EFDD;
+  --bad:#A3412E; --bad-soft:#F8EAE6;
+  --line:#D9E3DB; --shadow:0 1px 2px rgba(20,60,45,.06),0 8px 22px rgba(20,60,45,.05);
+  --display:"Noto Serif Bengali",Georgia,serif;
+  --body:"Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1411; --card:#151E19; --ink:#E5EDE7; --muted:#95A89C;
+  --accent:#63C49A; --accent-soft:#18271F; --gold:#D6A94A; --gold-soft:#241F13;
+  --bad:#E58B78; --bad-soft:#2A1915;
+  --line:#26332B; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.28);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E1411; --card:#151E19; --ink:#E5EDE7; --muted:#95A89C;
+  --accent:#63C49A; --accent-soft:#18271F; --gold:#D6A94A; --gold-soft:#241F13;
+  --bad:#E58B78; --bad-soft:#2A1915;
+  --line:#26332B; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.28);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.65;-webkit-text-size-adjust:100%}
+p{margin:0}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px 72px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Header */
+.top{padding-block:40px 24px}
+.kicker{font-size:12px;letter-spacing:.12em;color:var(--gold);font-weight:600;margin-bottom:10px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,7vw,46px);line-height:1.2;margin:0}
+.lede{color:var(--muted);margin-top:10px;max-width:58ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-size:14px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+
+/* Sticky bar: one row, so it never covers the page on phones. Home stays on the
+   left and the mode button on the right; the section chips between them scroll sideways. */
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-block:1px solid var(--line);padding-block:8px}
+.bar-row{display:flex;gap:8px;align-items:center}
+.bar-row>*{flex:none}
+.bar-row>.bar-scroll{flex:1 1 auto;min-width:0;display:flex;gap:8px;overflow-x:auto;
+  padding:3px 2px;scrollbar-width:none}
+.bar-scroll::-webkit-scrollbar{display:none}
+.bar-scroll>*{flex:none}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink);text-decoration:none;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip-n{color:var(--muted)}
+.mode{margin-left:auto;font-family:inherit;font-size:13px;font-weight:600;color:var(--card);
+  background:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:6px 14px;cursor:pointer}
+.mode[aria-pressed="true"]{background:var(--gold-soft);color:var(--gold);border-color:var(--gold)}
+
+/* Sections */
+.sec{padding-top:44px}
+.sec-head{margin-bottom:20px}
+.eyebrow{font-size:12px;letter-spacing:.1em;color:var(--gold);font-weight:600;margin-bottom:2px}
+h2{font-family:var(--display);font-size:clamp(24px,4.5vw,30px);font-weight:700;line-height:1.3;margin:0}
+.sec-sub{color:var(--muted);margin-top:4px;max-width:62ch}
+h3{font-family:var(--display);font-size:19px;font-weight:700;line-height:1.35;margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:20px}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:14px;align-items:start}
+.note{font-size:14.5px;color:var(--muted);margin-top:10px}
+.tip{margin-top:14px;padding:10px 14px;border-radius:8px;background:var(--gold-soft);
+  border-left:3px solid var(--gold);font-size:15px}
+.tip b{color:var(--gold)}
+.warn{margin-top:14px;padding:10px 14px;border-radius:8px;background:var(--bad-soft);
+  border-left:3px solid var(--bad);font-size:15px}
+.warn b{color:var(--bad)}
+.eq{font-family:var(--display);font-weight:700;font-size:19px;line-height:1.5}
+
+/* Concept */
+.hero{text-align:center;background:var(--accent-soft);border-color:transparent;box-shadow:none;padding:30px 20px}
+.hero-f{font-family:var(--display);font-weight:700;font-size:clamp(21px,5vw,30px);line-height:1.45}
+.hero-f .op{color:var(--accent)}
+.hero-sub{margin-top:10px;color:var(--muted);font-size:15px}
+.f-tag{font-size:12.5px;font-weight:600;color:var(--accent);letter-spacing:.02em;margin-bottom:6px}
+.star{color:var(--gold)}
+
+/* Worked examples */
+.q{background:var(--gold-soft);border-radius:8px;padding:10px 14px;font-size:15.5px}
+.q-tag{font-size:12px;font-weight:600;color:var(--gold);margin-right:6px}
+.work{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:4px;font-size:15.5px}
+.work li{position:relative;padding-left:18px}
+.work li::before{content:"";position:absolute;left:4px;top:.72em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.work .res{font-weight:600}
+.work .res b{color:var(--accent)}
+.ex-head{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.badge{font-size:12px;font-weight:600;color:var(--card);background:var(--accent);border-radius:999px;padding:2px 10px}
+.types{display:grid;gap:14px}
+.methods{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px;margin-top:12px}
+.method{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.method-h{font-weight:600;color:var(--accent);font-size:14.5px}
+.method .work{margin-top:6px}
+.formula{margin-top:12px;padding:10px 14px;border-radius:8px;border:1px dashed var(--accent);
+  background:var(--accent-soft);font-size:15px}
+.formula b{color:var(--accent)}
+
+/* Summary table */
+.sum{width:100%;border-collapse:collapse;font-size:15.5px}
+.sum th{text-align:left;font-size:12.5px;letter-spacing:.04em;color:var(--muted);font-weight:600;
+  padding:0 14px 10px;border-bottom:1px solid var(--line)}
+.sum td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.sum tr:last-child td{border-bottom:0}
+.sum td:first-child{font-weight:600;width:38%}
+.sum td:last-child{font-family:var(--display);font-weight:700;color:var(--accent)}
+.table-card{padding:16px 6px 6px}
+
+/* Exercises */
+.exgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:12px}
+.ex{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+  display:flex;flex-direction:column;gap:10px}
+.ex-q{display:flex;gap:10px;align-items:baseline;font-size:15.5px}
+.ex-n{color:var(--accent);font-weight:700;min-width:1.5em;flex:none}
+.sol{border-top:1px dashed var(--line);padding-top:4px}
+.sol .work{font-size:14.5px;color:var(--muted);margin-top:6px}
+.ans{margin-top:10px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.ans b{font-family:var(--display);font-size:18px;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:0 10px;border-radius:6px}
+.hint{font-size:13.5px;color:var(--muted);margin-top:6px}
+.hint .x{color:var(--bad);font-weight:600}
+.reveal{display:none;align-self:flex-start;font-family:inherit;font-size:13px;font-weight:600;color:var(--accent);
+  background:var(--accent-soft);border:1px dashed var(--accent);border-radius:8px;padding:5px 12px;cursor:pointer}
+.practice .ex:not(.shown) .sol{display:none}
+.practice .ex:not(.shown) .reveal{display:inline-flex}
+
+@media (max-width:420px){.card:not(.table-card){padding:16px}.sum td,.sum th{padding-inline:10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="kicker">NTRCA গণিত · পাটিগণিত · নোট</p>
+    <h1>গড়</h1>
+    <p class="lede">পাটিগণিতের প্রথম টপিক। একটিমাত্র সূত্র থেকে পাঁচ ধরনের প্রশ্ন — প্রতিটি ধাপে ধাপে সমাধান, পরীক্ষার ফাঁদ আর শেষে অনুশীলনী।</p>
+    <p class="meta"><span>সূত্র <b>৬</b></span><span>প্রশ্নের ধরন <b>৫</b></span><span>উদাহরণ <b>৭</b></span><span>অনুশীলনী <b>৮</b></span><span>বিষয় <b>গণিত</b></span></p>
+  </header>
+
+  <nav class="bar" aria-label="অংশ"><div class="bar-row"><!-- home-link --><style>.home-link{display:inline-flex;align-items:center;gap:6px;padding:5px 14px 5px 11px;border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none;color:var(--accent,#14624A);background:var(--accent-soft,#E4EFE7);border:1px solid var(--accent,#14624A);border-color:color-mix(in srgb,var(--accent,#14624A) 35%,transparent);transition:background .15s,color .15s}.home-link:hover{background:var(--accent,#14624A);color:var(--card,#fff);border-color:var(--accent,#14624A)}.home-link:focus-visible{outline:2px solid var(--accent,#14624A);outline-offset:2px}.home-link svg{width:15px;height:15px;flex:none}.home-sep{width:1px;height:22px;background:var(--line,#D9E3DB);margin-inline:2px}</style><a class="home-link" href="../../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg><span>হোম</span></a><span class="home-sep" aria-hidden="true"></span><!-- /home-link -->
+      <div class="bar-scroll">
+        <a class="chip" href="#concept">ধারণা</a>
+        <a class="chip" href="#types">পাঁচ ধরন</a>
+        <a class="chip" href="#special">বিশেষ ক্ষেত্র</a>
+        <a class="chip" href="#summary">সারসংক্ষেপ</a>
+        <a class="chip" href="#practice">অনুশীলনী <span class="chip-n">৮</span></a>
+      </div>
+      <button class="mode" id="mode" type="button" aria-pressed="false">অনুশীলন মোড</button>
+    </div></nav>
+
+  <!-- ১. ধারণা -->
+  <section class="sec" id="concept">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ১</p>
+      <h2>গড় কী?</h2>
+      <p class="sec-sub">কয়েকটি রাশিকে সমানভাবে ভাগ করলে প্রত্যেকে যা পায়, তাই গড়।</p>
+    </header>
+    <div class="card hero">
+      <p class="hero-f">গড় <span class="op">=</span> রাশিসমূহের সমষ্টি <span class="op">÷</span> রাশির সংখ্যা</p>
+      <p class="hero-sub">এই একটা সূত্র থেকেই আরও দুটো বের হয়:</p>
+    </div>
+    <div class="pair">
+      <div class="card">
+        <p class="f-tag">সমষ্টি <span class="star">★ সবচেয়ে কাজের</span></p>
+        <p class="eq">সমষ্টি = গড় × রাশির সংখ্যা</p>
+      </div>
+      <div class="card">
+        <p class="f-tag">রাশির সংখ্যা</p>
+        <p class="eq">রাশির সংখ্যা = সমষ্টি ÷ গড়</p>
+      </div>
+    </div>
+    <p class="tip"><b>মনে রাখো:</b> পরীক্ষায় তিনটার যেকোনো দুটো দিয়ে তৃতীয়টা চাওয়া হয়। তাই <b>সমষ্টি = গড় × সংখ্যা</b> — এই রূপটা সবচেয়ে বেশি কাজে লাগে।</p>
+
+    <div class="pair">
+      <article class="card">
+        <div class="ex-head"><span class="badge">উদাহরণ ১</span></div>
+        <p class="q"><span class="q-tag">প্রশ্ন</span>৫, ৭, ৯, ১১, ১৩ এর গড় কত?</p>
+        <ul class="work">
+          <li>সমষ্টি = ৫ + ৭ + ৯ + ১১ + ১৩ = ৪৫</li>
+          <li>রাশির সংখ্যা = ৫</li>
+          <li class="res">গড় = ৪৫ ÷ ৫ = <b>৯</b></li>
+        </ul>
+      </article>
+      <article class="card">
+        <div class="ex-head"><span class="badge">উদাহরণ ২</span></div>
+        <p class="q"><span class="q-tag">প্রশ্ন</span>৮টি সংখ্যার গড় ১৫ হলে সমষ্টি কত?</p>
+        <ul class="work">
+          <li class="res">সমষ্টি = গড় × সংখ্যা = ১৫ × ৮ = <b>১২০</b></li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- ২. পাঁচ ধরন -->
+  <section class="sec" id="types">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ২</p>
+      <h2>পাঁচ ধরনের প্রশ্ন</h2>
+      <p class="sec-sub">পরীক্ষার প্রায় সব গড়ের প্রশ্ন এই পাঁচটির কোনো একটি।</p>
+    </header>
+    <div class="types">
+      <article class="card">
+        <div class="ex-head"><span class="badge">ধরন ১</span><h3>নতুন সদস্য যোগ হলে</h3></div>
+        <p class="q"><span class="q-tag">উদাহরণ ৩</span>১০ জনের গড় ওজন ৫০ কেজি। নতুন একজন এলে গড় হয় ৫১ কেজি। নতুন ব্যক্তির ওজন কত?</p>
+        <div class="methods">
+          <div class="method">
+            <p class="method-h">পদ্ধতি ক — সমষ্টি দিয়ে</p>
+            <ul class="work">
+              <li>আগের সমষ্টি = ৫০ × ১০ = ৫০০</li>
+              <li>নতুন সমষ্টি = ৫১ × ১১ = ৫৬১</li>
+              <li class="res">নতুন ব্যক্তির ওজন = ৫৬১ − ৫০০ = <b>৬১ কেজি</b></li>
+            </ul>
+          </div>
+          <div class="method">
+            <p class="method-h">পদ্ধতি খ — দ্রুত কৌশল</p>
+            <ul class="work">
+              <li>নতুন গড় + (গড় বৃদ্ধি × আগের সংখ্যা)</li>
+              <li class="res">= ৫১ + (১ × ১০) = <b>৬১ কেজি</b></li>
+            </ul>
+          </div>
+        </div>
+        <p class="formula"><b>সূত্র:</b> নতুন সদস্যের মান = নতুন গড় + (গড় বৃদ্ধি × আগের সংখ্যা)</p>
+        <p class="note"><b>কেন কাজ করে:</b> নতুন ব্যক্তিকে নিজের জন্য ৫১ কেজি লাগবে, আর আগের ১০ জনের প্রত্যেকের গড় ১ কেজি বাড়াতে আরও ১০ কেজি লাগবে।</p>
+      </article>
+
+      <article class="card">
+        <div class="ex-head"><span class="badge">ধরন ২</span><h3>সদস্য বাদ গেলে</h3></div>
+        <p class="q"><span class="q-tag">উদাহরণ ৪</span>৫ জনের গড় বয়স ২০ বছর। একজন চলে গেলে গড় হয় ১৯ বছর। যে চলে গেল তার বয়স কত?</p>
+        <ul class="work">
+          <li>আগের সমষ্টি = ২০ × ৫ = ১০০</li>
+          <li>পরের সমষ্টি = ১৯ × ৪ = ৭৬</li>
+          <li class="res">চলে যাওয়া ব্যক্তির বয়স = ১০০ − ৭৬ = <b>২৪ বছর</b></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <div class="ex-head"><span class="badge">ধরন ৩</span><h3>প্রতিস্থাপন (একজনের বদলে আরেকজন)</h3></div>
+        <p class="q"><span class="q-tag">উদাহরণ ৫</span>৮ জনের গড় ওজন ৬০ কেজি। ৫০ কেজির একজনের বদলে নতুন একজন এলে গড় হয় ৬২ কেজি। নতুন ব্যক্তির ওজন কত?</p>
+        <ul class="work">
+          <li>গড় বেড়েছে ২ কেজি, ৮ জনের জন্য মোট বৃদ্ধি = ২ × ৮ = ১৬ কেজি</li>
+          <li class="res">নতুন ব্যক্তির ওজন = ৫০ + ১৬ = <b>৬৬ কেজি</b></li>
+        </ul>
+        <p class="formula"><b>সূত্র:</b> নতুন মান = পুরনো মান + (গড় পরিবর্তন × মোট সংখ্যা)</p>
+      </article>
+
+      <article class="card">
+        <div class="ex-head"><span class="badge">ধরন ৪</span><h3>দুই দলের মিলিত গড়</h3></div>
+        <p class="q"><span class="q-tag">উদাহরণ ৬</span>২০ জন ছাত্রের গড় নম্বর ৬০ এবং ৩০ জন ছাত্রীর গড় নম্বর ৭০। সবার মিলিত গড় কত?</p>
+        <ul class="work">
+          <li>ছাত্রদের সমষ্টি = ৬০ × ২০ = ১২০০</li>
+          <li>ছাত্রীদের সমষ্টি = ৭০ × ৩০ = ২১০০</li>
+          <li>মোট সমষ্টি = ৩৩০০, মোট সংখ্যা = ৫০</li>
+          <li class="res">মিলিত গড় = ৩৩০০ ÷ ৫০ = <b>৬৬</b></li>
+        </ul>
+        <p class="warn"><b>সতর্কতা:</b> (৬০ + ৭০) ÷ ২ = ৬৫ করবেন না। সংখ্যা সমান না হলে এভাবে করা যায় না। এটা পরীক্ষায় সবচেয়ে বড় ফাঁদ।</p>
+      </article>
+
+      <article class="card">
+        <div class="ex-head"><span class="badge">ধরন ৫</span><h3>ভুল সংশোধন</h3></div>
+        <p class="q"><span class="q-tag">উদাহরণ ৭</span>১০টি সংখ্যার গড় ৫০। পরে দেখা গেল একটি সংখ্যা ৩০ এর বদলে ভুলে ৮০ লেখা হয়েছিল। প্রকৃত গড় কত?</p>
+        <ul class="work">
+          <li>ভুল সমষ্টি = ৫০ × ১০ = ৫০০</li>
+          <li>অতিরিক্ত লেখা হয়েছে = ৮০ − ৩০ = ৫০</li>
+          <li>সঠিক সমষ্টি = ৫০০ − ৫০ = ৪৫০</li>
+          <li class="res">প্রকৃত গড় = ৪৫০ ÷ ১০ = <b>৪৫</b></li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- ৩. বিশেষ ক্ষেত্র -->
+  <section class="sec" id="special">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ৩</p>
+      <h2>কয়েকটি বিশেষ ক্ষেত্র</h2>
+      <p class="sec-sub">সংখ্যাগুলো সমান ব্যবধানে থাকলে যোগ না করেই গড় বের করা যায়।</p>
+    </header>
+    <div class="pair">
+      <article class="card">
+        <p class="f-tag">ক্রমিক সংখ্যার গড়</p>
+        <p class="eq">গড় = (প্রথম + শেষ) ÷ ২</p>
+        <p class="note">সমানভাবে বাড়তে থাকা সংখ্যার জন্য।</p>
+        <ul class="work">
+          <li>১ থেকে ১০০ এর গড় = (১ + ১০০) ÷ ২ = <b>৫০.৫</b></li>
+          <li>১০, ২০, ৩০, ৪০, ৫০ এর গড় = (১০ + ৫০) ÷ ২ = <b>৩০</b></li>
+        </ul>
+      </article>
+      <article class="card">
+        <p class="f-tag">বিজোড়সংখ্যক ক্রমিক রাশি</p>
+        <p class="eq">মাঝের সংখ্যাটাই গড়</p>
+        <ul class="work">
+          <li>৫, ৭, ৯, ১১, ১৩ এর গড় = মাঝের সংখ্যা <b>৯</b></li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- ৪. সারসংক্ষেপ -->
+  <section class="sec" id="summary">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ৪</p>
+      <h2>সারসংক্ষেপ</h2>
+      <p class="sec-sub">পরীক্ষার আগে শুধু এই টেবিলটা দেখে নিলেই চলবে।</p>
+    </header>
+    <div class="card table-card">
+      <table class="sum">
+        <thead><tr><th scope="col">যা চাওয়া হয়েছে</th><th scope="col">সূত্র</th></tr></thead>
+        <tbody>
+          <tr><td>গড়</td><td>সমষ্টি ÷ সংখ্যা</td></tr>
+          <tr><td>সমষ্টি</td><td>গড় × সংখ্যা</td></tr>
+          <tr><td>নতুন সদস্যের মান</td><td>নতুন গড় + (গড় বৃদ্ধি × আগের সংখ্যা)</td></tr>
+          <tr><td>প্রতিস্থাপিত মান</td><td>পুরনো মান + (গড় পরিবর্তন × মোট সংখ্যা)</td></tr>
+          <tr><td>মিলিত গড়</td><td>মোট সমষ্টি ÷ মোট সংখ্যা</td></tr>
+          <tr><td>ক্রমিক সংখ্যার গড়</td><td>(প্রথম + শেষ) ÷ ২</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tip"><b>সবচেয়ে বড় কৌশল:</b> গড়ের প্রশ্নে আটকে গেলে প্রথমেই সমষ্টি বের করুন। গড় থেকে সমষ্টিতে গেলে প্রায় সব প্রশ্ন সহজ হয়ে যায়।</p>
+  </section>
+
+  <!-- ৫. অনুশীলনী -->
+  <section class="sec" id="practice">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ৫</p>
+      <h2>অনুশীলনী ও সমাধান</h2>
+      <p class="sec-sub">প্রতিটি প্রশ্নের নিচে ধাপসহ সমাধান আছে। উপরের “অনুশীলন মোড” চালু করলে সমাধান লুকিয়ে যাবে — আগে নিজে করে তারপর মিলিয়ে নাও।</p>
+    </header>
+    <div class="exgrid">
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">১</span><span>১২, ১৫, ১৮, ২১, ২৪ সংখ্যাগুলোর গড় কত?</span></p>
+        <div class="sol">
+          <ul class="work">
+            <li>সমষ্টি = ১২ + ১৫ + ১৮ + ২১ + ২৪ = ৯০</li>
+            <li>গড় = ৯০ ÷ ৫ = ১৮</li>
+          </ul>
+          <p class="ans">উত্তর <b>১৮</b></p>
+          <p class="hint">দ্রুত: বিজোড়সংখ্যক ক্রমিক রাশি, তাই মাঝের সংখ্যা ১৮-ই গড়।</p>
+        </div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">২</span><span>৬টি সংখ্যার গড় ২৫ হলে সংখ্যাগুলোর সমষ্টি কত?</span></p>
+        <div class="sol">
+          <ul class="work">
+            <li>সমষ্টি = গড় × সংখ্যা = ২৫ × ৬ = ১৫০</li>
+          </ul>
+          <p class="ans">উত্তর <b>১৫০</b></p>
+        </div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৩</span><span>৯ জনের গড় ওজন ৫৫ কেজি। নতুন একজন যোগ হলে গড় হয় ৫৬ কেজি। নতুন ব্যক্তির ওজন কত?</span></p>
+        <div class="sol">
+          <ul class="work">
+            <li>দ্রুত কৌশল: ৫৬ + (১ × ৯) = ৬৫</li>
+            <li>যাচাই: ৫৬ × ১০ − ৫৫ × ৯ = ৫৬০ − ৪৯৫ = ৬৫</li>
+          </ul>
+          <p class="ans">উত্তর <b>৬৫ কেজি</b></p>
+        </div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৪</span><span>৬ জনের গড় বয়স ২২ বছর। একজন চলে গেলে গড় হয় ২১ বছর। যে চলে গেল তার বয়স কত?</span></p>
+        <div class="sol">
+          <ul class="work">
+            <li>আগের সমষ্টি = ২২ × ৬ = ১৩২</li>
+            <li>পরের সমষ্টি = ২১ × ৫ = ১০৫</li>
+            <li>বয়স = ১৩২ − ১০৫ = ২৭</li>
+          </ul>
+          <p class="ans">উত্তর <b>২৭ বছর</b></p>
+        </div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৫</span><span>১০ জনের গড় ওজন ৪৫ কেজি। ৪০ কেজির একজনের বদলে নতুন একজন এলে গড় হয় ৪৭ কেজি। নতুন ব্যক্তির ওজন কত?</span></p>
+        <div class="sol">
+          <ul class="work">
+            <li>গড় বেড়েছে ২ কেজি, মোট বৃদ্ধি = ২ × ১০ = ২০ কেজি</li>
+            <li>নতুন ওজন = ৪০ + ২০ = ৬০</li>
+          </ul>
+          <p class="ans">উত্তর <b>৬০ কেজি</b></p>
+        </div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৬</span><span>২৫ জন ছাত্রের গড় নম্বর ৭২ এবং ১৫ জন ছাত্রীর গড় নম্বর ৮০। সবার মিলিত গড় কত?</span></p>
+        <div class="sol">
+          <ul class="work">
+            <li>ছাত্রদের সমষ্টি = ৭২ × ২৫ = ১৮০০</li>
+            <li>ছাত্রীদের সমষ্টি = ৮০ × ১৫ = ১২০০</li>
+            <li>মোট সমষ্টি = ৩০০০, মোট সংখ্যা = ৪০</li>
+            <li>মিলিত গড় = ৩০০০ ÷ ৪০ = ৭৫</li>
+          </ul>
+          <p class="ans">উত্তর <b>৭৫</b></p>
+          <p class="hint">ফাঁদ: (৭২ + ৮০) ÷ ২ = <span class="x">৭৬ নয়</span>, কারণ দুই দলের সংখ্যা সমান নয়।</p>
+        </div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৭</span><span>১ থেকে ৫০ পর্যন্ত সংখ্যার গড় কত?</span></p>
+        <div class="sol">
+          <ul class="work">
+            <li>ক্রমিক সংখ্যা: (১ + ৫০) ÷ ২ = ২৫.৫</li>
+          </ul>
+          <p class="ans">উত্তর <b>২৫.৫</b></p>
+        </div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+      <article class="ex">
+        <p class="ex-q"><span class="ex-n">৮</span><span>৮টি সংখ্যার গড় ৪০। পরে দেখা গেল একটি সংখ্যা ২৫ এর বদলে ভুলে ৬৫ লেখা হয়েছিল। প্রকৃত গড় কত?</span></p>
+        <div class="sol">
+          <ul class="work">
+            <li>ভুল সমষ্টি = ৪০ × ৮ = ৩২০</li>
+            <li>অতিরিক্ত লেখা হয়েছে = ৬৫ − ২৫ = ৪০</li>
+            <li>সঠিক সমষ্টি = ৩২০ − ৪০ = ২৮০</li>
+            <li>প্রকৃত গড় = ২৮০ ÷ ৮ = ৩৫</li>
+          </ul>
+          <p class="ans">উত্তর <b>৩৫</b></p>
+        </div>
+        <button class="reveal" type="button">সমাধান দেখুন</button>
+      </article>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var btn = document.getElementById('mode');
+  function set(on){
+    document.body.classList.toggle('practice', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.textContent = on ? 'সমাধান দেখান' : 'অনুশীলন মোড';
+    if(!on){
+      var s = document.querySelectorAll('.ex.shown');
+      for(var i = 0; i < s.length; i++){ s[i].classList.remove('shown'); }
+    }
+    try{ localStorage.setItem('gor-notes-practice', on ? '1' : '0'); }catch(e){}
+  }
+  btn.addEventListener('click', function(){
+    set(!document.body.classList.contains('practice'));
+  });
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.reveal') : null;
+    if(b){ b.closest('.ex').classList.add('shown'); }
+  });
+  try{ if(localStorage.getItem('gor-notes-practice') === '1'){ set(true); } }catch(e){}
+})();
+</script>
+</body>
+</html>
