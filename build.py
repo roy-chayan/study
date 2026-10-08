@@ -7,12 +7,18 @@ Usage (run inside this folder):
     python3 build.py
 
 What it does:
-  1. Lists the pages on index.html in two parts, each grouped by subject:
-       MCQ অনুশীলন  every .html file in math/, gk/, bengali/ and english/
-       নোট           every .html file in notes/math/, notes/gk/, notes/bengali/
-                     and notes/english/
+  1. Lists the pages on index.html in three parts:
+       MCQ অনুশীলন       every .html file in math/, gk/, bengali/ and english/
+       নোট                every .html file in notes/math/, notes/gk/, notes/bengali/
+                          and notes/english/
+       বিগত বছরের প্রশ্ন   one card per folder in previous/ (e.g. previous/ntrca-18/),
+                          newest exam first, listing that exam's papers
   2. Adds the home button to every page, or brings an existing one up to the
      current design.
+
+A previous-year page's <title> is "<exam> — <paper>", e.g.
+"১৮তম শিক্ষক নিবন্ধন — স্কুল পর্যায়": the part before " — " names the card and
+the part after it names the row.
 
 A notes page can be designed any way you like. If it has a
 <meta name="description" content="..."> tag, that text is shown under its
@@ -43,6 +49,11 @@ GROUPS = [
     ("mcq", "MCQ অনুশীলন", "প্রশ্ন, উত্তর ও ব্যাখ্যা — প্রতিটি ফাইলে অনুশীলন মোড আছে।", "{}", "এখনো কোনো ফাইল নেই", "ফাইল"),
     ("notes", "নোট", "বিষয়ভিত্তিক সূত্র, নিয়ম আর সমাধান করা উদাহরণ।", "notes/{}", "এখনো কোনো নোট নেই", "নোট"),
 ]
+
+# Third part: previous years' question papers, one card per exam folder in previous/.
+# (folder, heading, one-line description, text for an empty card, word used in each card's count)
+PREVIOUS = ("previous", "বিগত বছরের প্রশ্ন", "শিক্ষক নিবন্ধনের পুরো প্রশ্নপত্র — সঠিক উত্তরসহ, পড়ার জন্য সাজানো।",
+            "এখনো কোনো প্রশ্নপত্র নেই", "প্রশ্নপত্র")
 
 HOME_START = "<!-- home-link -->"
 HOME_END = "<!-- /home-link -->"
@@ -197,16 +208,39 @@ def main():
         counts[gid] = count
         groups.append(render_group(gid, heading, blurb, cards))
 
+    pid, heading, blurb, empty, noun = PREVIOUS
+    (ROOT / pid).mkdir(exist_ok=True)
+    cards, papers = [], 0
+    for exam_dir in sorted((d for d in (ROOT / pid).iterdir() if d.is_dir()), key=natural_key, reverse=True):
+        files, name, year = [], exam_dir.name, ""
+        for path in sorted(exam_dir.glob("*.html"), key=natural_key):
+            text = read_page(path)
+            status = add_home_link(path, text)
+            if status:
+                linked.append(f"{status}: {pid}/{exam_dir.name}/{path.name}")
+            title, detail, _ = page_info(path, text)
+            card_name, _, paper = title.partition(" — ")
+            name = card_name if paper else name
+            years = re.findall(r"[০-৯]{4}|\d{4}", detail)
+            year = year or (years[-1].translate(str.maketrans("০১২৩৪৫৬৭৮৯", "0123456789")) if years else "")
+            files.append((f"{pid}/{exam_dir.name}/{path.name}", paper or title, detail))
+        papers += len(files)
+        cards.append(render_subject(f"{pid}-{exam_dir.name}", name, "NTRCA" + (f" · {year}" if year else ""), files, empty, noun))
+        print(f"  {pid}/{exam_dir.name:<8} {len(files)} file(s)")
+    counts[pid] = papers
+    groups.append(render_group(pid, heading, blurb, cards))
+
     meta = f"<span>বিষয় <b>{bn(len(SUBJECTS))}</b></span><span>MCQ ফাইল <b>{bn(counts['mcq'])}</b></span>"
     if total_q:
         meta += f"<span>প্রশ্ন <b>{bn(total_q)}</b></span>"
     meta += f"<span>নোট <b>{bn(counts['notes'])}</b></span>"
+    meta += f"<span>বিগত প্রশ্নপত্র <b>{bn(counts[pid])}</b></span>"
     page = TEMPLATE.replace("{{META}}", meta).replace("{{GROUPS}}", "\n".join(groups))
     (ROOT / "index.html").write_text(page, encoding="utf-8")
 
     for change in linked:
         print(f"  home button {change}")
-    print(f"index.html updated: {counts['mcq']} MCQ file(s), {counts['notes']} note(s)")
+    print(f"index.html updated: {counts['mcq']} MCQ file(s), {counts['notes']} note(s), {counts[pid]} previous-year paper(s)")
 
 
 TEMPLATE = """<!doctype html>
@@ -307,7 +341,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:va
     <h1>পড়াশোনা</h1>
     <p class="lede">বিষয় বেছে নিন, তারপর যে ফাইলটি পড়তে চান তার নামে ক্লিক করুন। প্রতিটি ফাইলে অনুশীলন মোড আছে।</p>
     <p class="meta">{{META}}</p>
-    <nav class="jump" aria-label="অংশ"><a href="#mcq">MCQ অনুশীলন <span>↓</span></a><a href="#notes">নোট <span>↓</span></a></nav>
+    <nav class="jump" aria-label="অংশ"><a href="#mcq">MCQ অনুশীলন <span>↓</span></a><a href="#notes">নোট <span>↓</span></a><a href="#previous">বিগত বছরের প্রশ্ন <span>↓</span></a></nav>
   </header>
 
   <main>
