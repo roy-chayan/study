@@ -11,8 +11,9 @@ What it does:
        MCQ অনুশীলন       every .html file in math/, gk/, bengali/ and english/
        নোট                every .html file in notes/math/, notes/gk/, notes/bengali/
                           and notes/english/
-       বিগত বছরের প্রশ্ন   one card per folder in previous/ (e.g. previous/ntrca-18/),
+       বিগত বছরের প্রশ্ন   one card per folder previous/ntrca-*/ (e.g. previous/ntrca-18/),
                           newest exam first, listing that exam's papers
+       বিসিএস প্রিলিমিনারি one card per folder previous/bcs-*/ (e.g. previous/bcs-50/)
   2. Adds the home button to every page, or brings an existing one up to the
      current design.
 
@@ -50,10 +51,15 @@ GROUPS = [
     ("notes", "নোট", "বিষয়ভিত্তিক সূত্র, নিয়ম আর সমাধান করা উদাহরণ।", "notes/{}", "এখনো কোনো নোট নেই", "নোট"),
 ]
 
-# Third part: previous years' question papers, one card per exam folder in previous/.
-# (folder, heading, one-line description, text for an empty card, word used in each card's count)
-PREVIOUS = ("previous", "বিগত বছরের প্রশ্ন", "শিক্ষক নিবন্ধনের পুরো প্রশ্নপত্র — সঠিক উত্তরসহ, পড়ার জন্য সাজানো।",
-            "এখনো কোনো প্রশ্নপত্র নেই", "প্রশ্নপত্র")
+# Last parts: previous years' question papers, one card per exam folder in previous/.
+# (id, heading, one-line description, folder prefix, card label, word used in each card's count)
+PREVIOUS = "previous"
+PREVIOUS_GROUPS = [
+    ("previous", "বিগত বছরের প্রশ্ন", "শিক্ষক নিবন্ধনের পুরো প্রশ্নপত্র — সঠিক উত্তরসহ, পড়ার জন্য সাজানো।",
+     "ntrca-", "NTRCA", "প্রশ্নপত্র"),
+    ("bcs", "বিসিএস প্রিলিমিনারি", "বিসিএস প্রিলিমিনারির যেসব বিষয় NTRCA-র কাজে লাগে — সঠিক উত্তরসহ, পড়ার জন্য সাজানো।",
+     "bcs-", "BCS", "প্রশ্নপত্র"),
+]
 
 HOME_START = "<!-- home-link -->"
 HOME_END = "<!-- /home-link -->"
@@ -208,39 +214,46 @@ def main():
         counts[gid] = count
         groups.append(render_group(gid, heading, blurb, cards))
 
-    pid, heading, blurb, empty, noun = PREVIOUS
+    pid = PREVIOUS
     (ROOT / pid).mkdir(exist_ok=True)
-    cards, papers = [], 0
-    for exam_dir in sorted((d for d in (ROOT / pid).iterdir() if d.is_dir()), key=natural_key, reverse=True):
-        files, name, year = [], exam_dir.name, ""
-        for path in sorted(exam_dir.glob("*.html"), key=natural_key):
-            text = read_page(path)
-            status = add_home_link(path, text)
-            if status:
-                linked.append(f"{status}: {pid}/{exam_dir.name}/{path.name}")
-            title, detail, _ = page_info(path, text)
-            card_name, _, paper = title.partition(" — ")
-            name = card_name if paper else name
-            years = re.findall(r"[০-৯]{4}|\d{4}", detail)
-            year = year or (years[-1].translate(str.maketrans("০১২৩৪৫৬৭৮৯", "0123456789")) if years else "")
-            files.append((f"{pid}/{exam_dir.name}/{path.name}", paper or title, detail))
-        papers += len(files)
-        cards.append(render_subject(f"{pid}-{exam_dir.name}", name, "NTRCA" + (f" · {year}" if year else ""), files, empty, noun))
-        print(f"  {pid}/{exam_dir.name:<8} {len(files)} file(s)")
-    counts[pid] = papers
-    groups.append(render_group(pid, heading, blurb, cards))
+    exam_dirs = sorted((d for d in (ROOT / pid).iterdir() if d.is_dir()), key=natural_key, reverse=True)
+    for gid, heading, blurb, prefix, label, noun in PREVIOUS_GROUPS:
+        cards, papers = [], 0
+        for exam_dir in (d for d in exam_dirs if d.name.startswith(prefix)):
+            files, name, year = [], exam_dir.name, ""
+            for path in sorted(exam_dir.glob("*.html"), key=natural_key):
+                text = read_page(path)
+                status = add_home_link(path, text)
+                if status:
+                    linked.append(f"{status}: {pid}/{exam_dir.name}/{path.name}")
+                title, detail, _ = page_info(path, text)
+                card_name, _, paper = title.partition(" — ")
+                name = card_name if paper else name
+                years = re.findall(r"[০-৯]{4}|\d{4}", detail)
+                year = year or (years[-1].translate(str.maketrans("০১২৩৪৫৬৭৮৯", "0123456789")) if years else "")
+                files.append((f"{pid}/{exam_dir.name}/{path.name}", paper or title, detail))
+            papers += len(files)
+            cards.append(render_subject(f"{pid}-{exam_dir.name}", name, label + (f" · {year}" if year else ""), files, "", noun))
+            print(f"  {pid}/{exam_dir.name:<8} {len(files)} file(s)")
+        counts[gid] = papers
+        if cards:
+            groups.append(render_group(gid, heading, blurb, cards))
 
     meta = f"<span>বিষয় <b>{bn(len(SUBJECTS))}</b></span><span>MCQ ফাইল <b>{bn(counts['mcq'])}</b></span>"
     if total_q:
         meta += f"<span>প্রশ্ন <b>{bn(total_q)}</b></span>"
     meta += f"<span>নোট <b>{bn(counts['notes'])}</b></span>"
-    meta += f"<span>বিগত প্রশ্নপত্র <b>{bn(counts[pid])}</b></span>"
-    page = TEMPLATE.replace("{{META}}", meta).replace("{{GROUPS}}", "\n".join(groups))
+    meta += f"<span>বিগত প্রশ্নপত্র <b>{bn(counts['previous'])}</b></span>"
+    jump = "".join(f'<a href="#{gid}">{heading} <span>↓</span></a>' for gid, heading, *_ in PREVIOUS_GROUPS if counts[gid])
+    if counts["bcs"]:
+        meta += f"<span>বিসিএস <b>{bn(counts['bcs'])}</b></span>"
+    page = TEMPLATE.replace("{{META}}", meta).replace("{{JUMP}}", jump).replace("{{GROUPS}}", "\n".join(groups))
     (ROOT / "index.html").write_text(page, encoding="utf-8")
 
     for change in linked:
         print(f"  home button {change}")
-    print(f"index.html updated: {counts['mcq']} MCQ file(s), {counts['notes']} note(s), {counts[pid]} previous-year paper(s)")
+    print(f"index.html updated: {counts['mcq']} MCQ file(s), {counts['notes']} note(s), "
+          f"{counts['previous']} previous-year paper(s), {counts['bcs']} BCS paper(s)")
 
 
 TEMPLATE = """<!doctype html>
@@ -341,7 +354,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:va
     <h1>পড়াশোনা</h1>
     <p class="lede">বিষয় বেছে নিন, তারপর যে ফাইলটি পড়তে চান তার নামে ক্লিক করুন। প্রতিটি ফাইলে অনুশীলন মোড আছে।</p>
     <p class="meta">{{META}}</p>
-    <nav class="jump" aria-label="অংশ"><a href="#mcq">MCQ অনুশীলন <span>↓</span></a><a href="#notes">নোট <span>↓</span></a><a href="#previous">বিগত বছরের প্রশ্ন <span>↓</span></a></nav>
+    <nav class="jump" aria-label="অংশ"><a href="#mcq">MCQ অনুশীলন <span>↓</span></a><a href="#notes">নোট <span>↓</span></a>{{JUMP}}</nav>
   </header>
 
   <main>
