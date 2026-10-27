@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>সূচক ও করণী</title>
+<meta name="description" content="সূচকের আটটি নিয়ম, শূন্য ও ঋণাত্মক ঘাত, সূচকীয় সমীকরণ, সরলীকরণ, মূল ও করণী — কৌশল আর বিগত পরীক্ষার ৬৪টি প্রশ্নের সমাধান">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700&family=Hind+Siliguri:wght@400;500;600&display=swap">
+<style>
+/* Notes layout (same design as the লগারিদম note): topic by topic — formula cards and method cards
+   with exam tags — then past exam questions with solutions, and common mistakes. */
+:root{
+  --paper:#F5F8F4; --card:#FFFFFF; --ink:#18231C; --muted:#5B6D61;
+  --accent:#14624A; --accent-soft:#E4EFE7; --gold:#8A6212; --gold-soft:#F6EFDD;
+  --bad:#A3412E; --bad-soft:#F8EAE6;
+  --line:#D9E3DB; --shadow:0 1px 2px rgba(20,60,45,.06),0 8px 22px rgba(20,60,45,.05);
+  --display:"Noto Serif Bengali",Georgia,serif;
+  --body:"Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;
+  --math:"Noto Serif Bengali",Georgia,"Times New Roman",serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1411; --card:#151E19; --ink:#E5EDE7; --muted:#95A89C;
+  --accent:#63C49A; --accent-soft:#18271F; --gold:#D6A94A; --gold-soft:#241F13;
+  --bad:#E58B78; --bad-soft:#2A1915;
+  --line:#26332B; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.28);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E1411; --card:#151E19; --ink:#E5EDE7; --muted:#95A89C;
+  --accent:#63C49A; --accent-soft:#18271F; --gold:#D6A94A; --gold-soft:#241F13;
+  --bad:#E58B78; --bad-soft:#2A1915;
+  --line:#26332B; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.28);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.65;-webkit-text-size-adjust:100%}
+p{margin:0}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px 72px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Header */
+.top{padding-block:40px 24px}
+.kicker{font-size:12px;letter-spacing:.12em;color:var(--gold);font-weight:600;margin-bottom:10px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,7vw,46px);line-height:1.2;margin:0}
+.lede{color:var(--muted);margin-top:10px;max-width:58ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-size:14px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+
+/* Sticky bar: one row, so it never covers the page on phones. Home stays on the
+   left and the mode button on the right; the section chips between them scroll sideways. */
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-block:1px solid var(--line);padding-block:8px}
+.bar-row{display:flex;gap:8px;align-items:center}
+.bar-row>*{flex:none}
+.bar-row>.bar-scroll{flex:1 1 auto;min-width:0;display:flex;gap:8px;overflow-x:auto;
+  padding:3px 2px;scrollbar-width:none}
+.bar-scroll::-webkit-scrollbar{display:none}
+.bar-scroll>*{flex:none}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink);text-decoration:none;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip-n{color:var(--muted)}
+.mode{margin-left:auto;font-family:inherit;font-size:13px;font-weight:600;color:var(--card);
+  background:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:6px 14px;cursor:pointer}
+.mode[aria-pressed="true"]{background:var(--gold-soft);color:var(--gold);border-color:var(--gold)}
+
+/* Sections */
+.sec{padding-top:44px}
+.sec-head{margin-bottom:20px}
+.eyebrow{font-size:12px;letter-spacing:.1em;color:var(--gold);font-weight:600;margin-bottom:2px}
+h2{font-family:var(--display);font-size:clamp(24px,4.5vw,30px);font-weight:700;line-height:1.3;margin:0}
+.sec-sub{color:var(--muted);margin-top:4px;max-width:62ch}
+h3{font-family:var(--display);font-size:19px;font-weight:700;line-height:1.35;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:20px}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:14px;align-items:start}
+.note{font-size:14.5px;color:var(--muted);margin-top:10px}
+.tip{margin-top:12px;padding:8px 12px;border-radius:8px;background:var(--gold-soft);
+  border-left:3px solid var(--gold);font-size:14.5px}
+.tip b{color:var(--gold)}
+
+/* Maths: serif, with real superscripts and subscripts that don't disturb line spacing. */
+.m{font-family:var(--math)}
+.m sub,.m sup{font-size:.68em;line-height:0;position:relative;vertical-align:baseline}
+.m sup{top:-.55em}
+.m sub{bottom:-.3em}
+.big{font-size:20px;line-height:1.7}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;
+  margin-inline:.2em;line-height:1.3}
+.frac>span+span{border-top:1.5px solid currentColor;padding-top:2px}
+.warn{font-style:normal;font-family:var(--body);font-size:.8em;font-weight:600;color:var(--bad);margin-left:8px}
+.st{font-style:normal;font-family:var(--body);font-size:12px;font-weight:600;color:var(--gold);margin-right:6px}
+
+/* Concept */
+.hero{text-align:center;background:var(--accent-soft);border-color:transparent;box-shadow:none;padding:30px 20px}
+.hero-f{font-size:clamp(22px,5.5vw,30px);line-height:1.5}
+.hero-f .if{font-family:var(--body);font-size:.62em;color:var(--muted);margin-inline:.4em}
+.legend{list-style:none;display:flex;justify-content:center;flex-wrap:wrap;gap:6px 20px;
+  padding:0;margin:14px 0 0;font-size:14.5px;color:var(--muted)}
+.legend b{color:var(--accent);margin-right:6px;font-size:17px}
+.hero-ex{margin-top:14px;font-size:15px}
+
+/* Formula sheet */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:12px}
+.f{padding:16px 18px}
+.f-tag{font-size:12.5px;font-weight:600;color:var(--accent);letter-spacing:.02em;margin-bottom:8px}
+.f-eq{font-size:18.5px;line-height:1.55}
+.f-note{font-size:14px;color:var(--muted);margin-top:8px}
+
+/* Methods */
+.choose{display:grid;grid-template-columns:1fr 1fr;padding:0;overflow:hidden;margin-bottom:14px}
+.choose>div{padding:16px 18px}
+.choose>div+div{border-left:1px solid var(--line)}
+.choose-h{font-weight:600;color:var(--accent);margin-bottom:4px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
+.steps{margin:0;padding-left:1.3em;display:grid;gap:4px;font-size:15px}
+.method .work{margin-top:12px;background:var(--paper);border-radius:8px;padding:10px 14px}
+.work{display:flex;flex-direction:column;gap:2px}
+.work>span{display:block}
+
+/* Exercises */
+.group{display:flex;align-items:baseline;gap:10px;margin:28px 0 12px;font-size:18px}
+.group:first-of-type{margin-top:0}
+.group-n{font-family:var(--body);font-size:13px;font-weight:500;color:var(--muted)}
+.exgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,255px),1fr));gap:12px}
+.ex{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+  display:flex;flex-direction:column;gap:10px}
+.ex-q{display:flex;gap:10px;align-items:baseline;font-size:17px}
+.ex-n{color:var(--accent);font-weight:700;min-width:1.5em;font-family:var(--body);font-size:15px;flex:none}
+.sol{border-top:1px dashed var(--line);padding-top:10px}
+.ex .work{font-size:15px;color:var(--muted)}
+.ans{margin-top:10px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.ans b{font-family:var(--display);font-size:18px;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:0 10px;border-radius:6px}
+.check{font-size:13.5px;color:var(--muted);margin-top:6px}
+.check .ok{color:var(--accent);font-weight:700}
+.reveal{display:none;align-self:flex-start;font-family:inherit;font-size:13px;font-weight:600;color:var(--accent);
+  background:var(--accent-soft);border:1px dashed var(--accent);border-radius:8px;padding:5px 12px;cursor:pointer}
+.practice .ex:not(.shown) .sol{display:none}
+.practice .ex:not(.shown) .reveal{display:inline-flex}
+
+/* Mistakes */
+.lists{display:grid;grid-template-columns:3fr 2fr;gap:14px;align-items:start}
+.list ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.list li{position:relative;padding-left:24px;font-size:15px}
+.list li::before{position:absolute;left:0;top:0;font-weight:700}
+.bad{background:var(--bad-soft);border-color:transparent;box-shadow:none}
+.bad h3{color:var(--bad)}
+.bad li::before{content:"✗";color:var(--bad)}
+.good h3{color:var(--accent)}
+.good li::before{content:"✓";color:var(--accent)}
+
+@media (max-width:640px){
+  .lists{grid-template-columns:1fr}
+  .choose{grid-template-columns:1fr}
+  .choose>div+div{border-left:0;border-top:1px solid var(--line)}
+}
+@media (max-width:420px){.card:not(.choose){padding:16px}.f{padding:14px 16px}}
+
+
+/* Exam tags: confirmed past-exam appearances */
+.xt{display:inline-block;font-family:var(--body);font-size:11.5px;font-weight:600;color:var(--accent);background:var(--accent-soft);
+  border:1px solid var(--line);border-radius:999px;padding:0 8px;margin-left:6px;white-space:nowrap;line-height:1.75;vertical-align:1px}
+.ftags{margin-top:8px}
+.ftags .xt{margin:4px 6px 0 0}
+.tip .xt{margin-left:6px}
+
+/* Prime table and lists */
+.table-card{padding:16px 6px 6px}
+.pt{width:100%;border-collapse:collapse;font-size:15px}
+.pt th{text-align:left;font-size:12.5px;color:var(--muted);font-weight:600;padding:0 12px 10px;border-bottom:1px solid var(--line)}
+.pt td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.pt tr:last-child td{border-bottom:0}
+.pt td:first-child{white-space:nowrap;color:var(--muted)}
+.pt b{color:var(--accent)}
+.sqlist{font-size:16px;line-height:1.9}
+.nw{white-space:nowrap}
+.frac{align-items:stretch;text-align:center}
+.choose .work{margin-top:10px;background:var(--paper);border-radius:8px;padding:8px 12px;font-size:15px}
+
+/* Past questions */
+.ex-q>span:last-child{font-size:16px}
+.ex-tags{margin-top:-4px}
+.ex-tags .xt{margin:0 6px 0 0}
+.ex-o{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:15px}
+.ex-o li{display:flex;gap:8px;align-items:baseline}
+.ex-o .k{flex:none;width:1.3em;color:var(--muted);font-weight:600}
+.ex-o li.ok{color:var(--accent);font-weight:600}
+.practice .ex:not(.shown) .ex-o li.ok{color:inherit;font-weight:inherit}
+.hint{font-size:13.5px;color:var(--muted);margin-top:8px}
+.hint .nb{color:var(--gold);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="kicker">NTRCA গণিত · নোট</p>
+    <h1>সূচক ও করণী</h1>
+    <p class="lede">শিক্ষক নিবন্ধনের ৩৩টি প্রশ্নপত্রের ২৯টিতেই সূচক-করণী থেকে প্রশ্ন এসেছে, বেশিরভাগে ২–৩টি; সবচেয়ে বেশি সূচকীয় সমীকরণ। প্রতিটি নিয়মের পাশে সবুজ ট্যাগ মানে সেখান থেকে বিগত শিক্ষক নিবন্ধন বা বিসিএসে প্রশ্ন এসেছে; শেষে সেই প্রশ্নগুলো সমাধানসহ।</p>
+    <p class="meta"><span>অংশ <b>৬</b></span><span>বিগত প্রশ্ন <b>৬৪</b></span><span>বিষয় <b>গণিত</b></span></p>
+  </header>
+
+  <nav class="bar" aria-label="অংশ"><div class="bar-row"><!-- home-link --><style>.home-link{display:inline-flex;align-items:center;gap:6px;padding:5px 14px 5px 11px;border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none;color:var(--accent,#14624A);background:var(--accent-soft,#E4EFE7);border:1px solid var(--accent,#14624A);border-color:color-mix(in srgb,var(--accent,#14624A) 35%,transparent);transition:background .15s,color .15s}.home-link:hover{background:var(--accent,#14624A);color:var(--card,#fff);border-color:var(--accent,#14624A)}.home-link:focus-visible{outline:2px solid var(--accent,#14624A);outline-offset:2px}.home-link svg{width:15px;height:15px;flex:none}.home-sep{width:1px;height:22px;background:var(--line,#D9E3DB);margin-inline:2px}</style><a class="home-link" href="../../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg><span>হোম</span></a><span class="home-sep" aria-hidden="true"></span><!-- /home-link -->
+      <div class="bar-scroll">
+        <a class="chip" href="#rules">নিয়ম</a>
+        <a class="chip" href="#zero">aˣ = 1</a>
+        <a class="chip" href="#eq">সমীকরণ</a>
+        <a class="chip" href="#simplify">সরলীকরণ</a>
+        <a class="chip" href="#root">মূল ও করণী</a>
+        <a class="chip" href="#log">সূচক ও লগ</a>
+        <a class="chip" href="#practice">বিগত প্রশ্ন <span class="chip-n">৬৪</span></a>
+        <a class="chip" href="#mistakes">ভুল</a>
+      </div>
+      <button class="mode" id="mode" type="button" aria-pressed="false">অনুশীলন মোড</button>
+    </div></nav>
+
+  <section class="sec" id="rules">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ১</p>
+      <h2>সূচকের নিয়ম</h2>
+      <p class="sec-sub">আটটি নিয়ম — বাকি সব প্রশ্ন এগুলোর প্রয়োগ।</p>
+    </header>
+    <div class="card hero">
+      <p class="hero-f m">a<sup>n</sup> = a × a × … × a <span class="if">(n বার)</span></p>
+      <ul class="legend"><li><b class="m">a</b>ভিত্তি</li><li><b class="m">n</b>সূচক বা ঘাত</li></ul>
+    </div><div class="fgrid" style="margin-top:14px"><div class="card f"><p class="f-tag">গুণ → সূচক যোগ</p><p class="f-eq m">a<sup>m</sup> × a<sup>n</sup> = a<sup>m + n</sup></p><p class="f-note">5ˣ + 5ˣ + 5ˣ + 5ˣ + 5ˣ = 5 × 5ˣ = 5ˣ⁺¹</p><p class="ftags"><span class="xt">১৩তম নিবন্ধন</span><span class="xt">১৫তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">ভাগ → সূচক বিয়োগ</p><p class="f-eq m">a<sup>m</sup> ÷ a<sup>n</sup> = a<sup>m − n</sup></p><p class="f-note">2ⁿ ÷ 2ⁿ⁻¹ = 2¹ = 2</p><p class="ftags"><span class="xt">১৭তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">ঘাতের ঘাত → গুণ</p><p class="f-eq m">(a<sup>m</sup>)<sup>n</sup> = a<sup>mn</sup></p><p class="ftags"><span class="xt">১৮তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">গুণফলের ঘাত</p><p class="f-eq m">(ab)<sup>n</sup> = a<sup>n</sup>b<sup>n</sup></p><p class="f-note">(√3 × √5)⁴ = 3² × 5² = 225 · 2ˣ × 5ˣ = 10ˣ</p><p class="ftags"><span class="xt">৮ম নিবন্ধন</span><span class="xt">১১তম নিবন্ধন</span><span class="xt">১৭তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">শূন্য ঘাত</p><p class="f-eq m">a<sup>0</sup> = 1 &nbsp;(a ≠ 0)</p><p class="ftags"><span class="xt">১০ম নিবন্ধন</span><span class="xt">১২তম নিবন্ধন</span><span class="xt">১৫তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">ঋণাত্মক ঘাত</p><p class="f-eq m">a<sup>−n</sup> = 1/a<sup>n</sup> &nbsp;(a ≠ 0)</p><p class="f-note">(a⁻¹)⁻¹ = a</p><p class="ftags"><span class="xt">৯ম নিবন্ধন</span><span class="xt">১৪তম নিবন্ধন</span><span class="xt">১৭তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">ভগ্নাংশ ঘাত</p><p class="f-eq m">a<sup>m/n</sup> = <sup>n</sup>√a<sup>m</sup></p><p class="f-note">হর মূল, লব ঘাত: ᵐ√(aⁿ) = aⁿᐟᵐ</p><p class="ftags"><span class="xt">৯ম নিবন্ধন</span><span class="xt">১২তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">উল্টো ভগ্নাংশ</p><p class="f-eq m">(a/b)<sup>−n</sup> = (b/a)<sup>n</sup></p><p class="ftags"><span class="xt">১৭তম নিবন্ধন</span></p></div></div><p class="tip"><b>ফাঁদ:</b> বন্ধনী কোথায় দেখো — <span class="m">(8x)<sup>0</sup> = 1</span>, কিন্তু <span class="m">8x<sup>0</sup> = 8 × 1 = 8</span>। তাই <span class="m">(8x)<sup>0</sup> + 8x<sup>0</sup> = 9</span>, আর <span class="m">(17)<sup>0</sup>x = x</span>।<span class="xt">১৪তম নিবন্ধন</span><span class="xt">১৫তম নিবন্ধন</span></p>
+  </section>
+
+  <section class="sec" id="zero">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ২</p>
+      <h2>aˣ = 1 হলে</h2>
+      <p class="sec-sub">সবচেয়ে সহজ, কিন্তু প্রায় প্রতি বছর আসে।</p>
+    </header>
+    <div class="mgrid" style="margin-top:14px"><article class="card method"><h3>aˣ = 1 হলে x = 0</h3><ol class="steps"><li>ভিত্তি 0, 1 বা −1 না হলে, মান 1 হওয়ার একটিই উপায় — ঘাত শূন্য।</li></ol><p class="work m"><span>(3/2)<sup>x</sup> = 1 → x = 0</span><span>(x/5)<sup>P</sup> = 1 → P = 0</span><span>(x/2)<sup>a + 1</sup> = 1 → a + 1 = 0 → a = −1</span></p><p class="ftags"><span class="xt">১০ম নিবন্ধন</span><span class="xt">১১তম নিবন্ধন</span><span class="xt">১৩তম নিবন্ধন</span><span class="xt">১৮তম নিবন্ধন</span></p></article></div>
+  </section>
+
+  <section class="sec" id="eq">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ৩</p>
+      <h2>সূচকীয় সমীকরণ</h2>
+      <p class="sec-sub">একই ভিত্তি বানাও, ঘাত সমান ধরো।</p>
+    </header>
+    <div class="card hero">
+      <p class="hero-f m">a<sup>m</sup> = a<sup>n</sup> <span class="if">হলে</span> m = n</p>
+      <p class="hero-ex">দুই পাশকে একই ভিত্তির ঘাতে লেখো, তারপর ঘাত দুটি সমান ধরো।</p>
+    </div>
+    <div class="card" style="margin-top:14px"><h3>যে ঘাতগুলো চেনা থাকা দরকার</h3><p class="m sqlist">4 = 2<sup>2</sup> · 8 = 2<sup>3</sup> · 16 = 2<sup>4</sup> = 4<sup>2</sup> · 32 = 2<sup>5</sup> · 64 = 2<sup>6</sup> = 4<sup>3</sup> = 8<sup>2</sup> · 256 = 2<sup>8</sup> = 4<sup>4</sup> · 512 = 2<sup>9</sup> · 9 = 3<sup>2</sup> · 27 = 3<sup>3</sup> · 81 = 3<sup>4</sup> = 9<sup>2</sup> · 125 = 5<sup>3</sup> · 625 = 5<sup>4</sup></p></div><div class="mgrid" style="margin-top:14px"><article class="card method"><h3>একই ভিত্তি বানাও</h3><ol class="steps"><li>দুই পাশ একই মৌলিক সংখ্যার ঘাতে লেখো।</li><li>ঘাত সমান ধরে সরল সমীকরণ সমাধান করো।</li></ol><p class="work m"><span>9<sup>x + 3</sup> = 27<sup>x + 1</sup> → 3<sup>2x + 6</sup> = 3<sup>3x + 3</sup></span><span>2x + 6 = 3x + 3 → x = 3</span><span>4<sup>x + 1</sup> = 2<sup>x − 2</sup> → 2x + 2 = x − 2 → x = −4</span></p><p class="note">এই ধরনের প্রশ্ন প্রায় প্রতিটি প্রশ্নপত্রে আসে।</p><p class="ftags"><span class="xt">৮ম নিবন্ধন</span><span class="xt">৯ম নিবন্ধন</span><span class="xt">১০ম নিবন্ধন</span><span class="xt">১১তম নিবন্ধন</span><span class="xt">১২তম নিবন্ধন</span><span class="xt">১৩তম নিবন্ধন</span><span class="xt">১৪তম নিবন্ধন</span><span class="xt">১৫তম নিবন্ধন</span><span class="xt">১৬তম নিবন্ধন</span><span class="xt">১৭তম নিবন্ধন</span><span class="xt">১৮তম নিবন্ধন</span><span class="xt">৪৫তম বিসিএস</span></p></article><article class="card method"><h3>করণী ভিত্তি</h3><ol class="steps"><li>√3 = 3<sup>1/2</sup>, ∛3 = 3<sup>1/3</sup>, ∛√3 = 3<sup>1/6</sup> লিখে ঘাত মেলাও।</li></ol><p class="work m"><span>(√3)<sup>x + 1</sup> = (∛3)<sup>2x − 1</sup></span><span>(x + 1)/2 = (2x − 1)/3 → 3x + 3 = 4x − 2 → x = 5</span><span>(√3)<sup>2x + 1</sup> = (∛√3)<sup>x − 1</sup> → (2x + 1)/2 = (x − 1)/6 → x = −4/5</span></p><p class="ftags"><span class="xt">১২তম নিবন্ধন</span><span class="xt">১৪তম নিবন্ধন</span><span class="xt">১৮তম নিবন্ধন</span></p></article><article class="card method"><h3>উল্টো ভগ্নাংশ ভিত্তি</h3><ol class="steps"><li>b/a = (a/b)<sup>−1</sup> লিখে একই ভিত্তি বানাও।</li></ol><p class="work m"><span>(a/b)<sup>x − 3</sup> = (b/a)<sup>x − 5</sup> = (a/b)<sup>5 − x</sup></span><span>x − 3 = 5 − x → x = 4</span></p><p class="ftags"><span class="xt">১৭তম নিবন্ধন</span></p></article><article class="card method"><h3>সাধারণ উৎপাদক বা নতুন চলক</h3><ol class="steps"><li>একই পদ বারবার থাকলে আলাদা করো; aˣ আর a<sup>−x</sup> থাকলে y = aˣ ধরো।</li></ol><p class="work m"><span>5<sup>x</sup>(1 + 8 + 16) = 1 → 5<sup>x + 2</sup> = 5<sup>0</sup> → x = −2</span><span>½ × 2<sup>x − 3</sup> + 1 = 5 → 2<sup>x − 4</sup> = 2<sup>2</sup> → x = 6</span><span>4<sup>x</sup> + 4<sup>1 − x</sup> = 4 → y + 4/y = 4 → y = 2 → x = 1/2</span></p><p class="ftags"><span class="xt">১৭তম নিবন্ধন</span><span class="xt">৪১তম বিসিএস</span><span class="xt">৪৩তম বিসিএস</span><span class="xt">৪৬তম বিসিএস</span></p></article></div>
+  </section>
+
+  <section class="sec" id="simplify">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ৪</p>
+      <h2>সরলীকরণ</h2>
+      <p class="sec-sub">সাধারণ উৎপাদক বের করা আর চক্রাকার রাশি।</p>
+    </header>
+    <div class="mgrid" style="margin-top:14px"><article class="card method"><h3>ক্ষুদ্রতম ঘাত বের করে আনো</h3><ol class="steps"><li>সব পদ থেকে সবচেয়ে ছোট ঘাতটি সাধারণ উৎপাদক হিসেবে বের করো।</li></ol><p class="work m"><span>3 × 2<sup>n</sup> − 4 × 2<sup>n − 2</sup> = 2<sup>n − 2</sup>(12 − 4) = 2<sup>n − 2</sup> × 2<sup>3</sup> = 2<sup>n + 1</sup></span><span>(5<sup>n + 2</sup> + 35 × 5<sup>n − 1</sup>) ÷ (4 × 5<sup>n</sup>) = 5<sup>n − 1</sup>(125 + 35) ÷ (20 × 5<sup>n − 1</sup>) = 8</span></p><p class="ftags"><span class="xt">৮ম নিবন্ধন</span><span class="xt">১১তম নিবন্ধন</span><span class="xt">১২তম নিবন্ধন</span></p></article><article class="card method"><h3>বর্গের অন্তর</h3><ol class="steps"><li>9<sup>x</sup> = (3<sup>x</sup>)<sup>2</sup></li></ol><p class="work m"><span>(9<sup>x</sup> − 4)/(3<sup>x</sup> − 2) = (3<sup>x</sup> + 2)(3<sup>x</sup> − 2)/(3<sup>x</sup> − 2) = 3<sup>x</sup> + 2</span></p><p class="ftags"><span class="xt">১৩তম নিবন্ধন</span></p></article><article class="card method"><h3>চক্রাকার রাশি — উত্তর প্রায় সবসময় 1</h3><ol class="steps"><li>সব ঘাত যোগ করলে শূন্য হয়, তাই মান x<sup>0</sup> = 1।</li></ol><p class="work m"><span>(p − q)(p + q) + (q − r)(q + r) + (r − p)(r + p) = p<sup>2</sup> − q<sup>2</sup> + q<sup>2</sup> − r<sup>2</sup> + r<sup>2</sup> − p<sup>2</sup> = 0</span><span>√(x<sup>−1</sup>y) × √(y<sup>−1</sup>z) × √(z<sup>−1</sup>x) = √1 = 1</span></p><p class="ftags"><span class="xt">১৪তম নিবন্ধন</span><span class="xt">১৮তম নিবন্ধন</span></p></article><article class="card method"><h3>aˣ = b, bʸ = c, cᶻ = a</h3><ol class="steps"><li>একটিকে আরেকটিতে বসাও: a = c<sup>z</sup> = (b<sup>y</sup>)<sup>z</sup> = a<sup>xyz</sup></li></ol><p class="work m"><span>তাই xyz = 1</span><span>x = y<sup>a</sup>, y = z<sup>b</sup>, z = x<sup>c</sup> হলেও abc = 1</span></p><p class="ftags"><span class="xt">১০ম নিবন্ধন</span><span class="xt">১৬তম নিবন্ধন</span><span class="xt">১৭তম নিবন্ধন</span></p></article></div>
+  </section>
+
+  <section class="sec" id="root">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ৫</p>
+      <h2>মূল ও করণী</h2>
+      <p class="sec-sub">মূলকে ভগ্নাংশ ঘাতে লেখো — তখন সূচকের নিয়মই খাটে।</p>
+    </header>
+    <div class="fgrid"><div class="card f"><p class="f-tag">মূলের মূল</p><p class="f-eq m">∛(∛a<sup>3</sup>) = (a<sup>3</sup>)<sup>1/9</sup> = a<sup>1/3</sup></p><p class="f-note">ঘাতগুলো গুণ হয়।</p><p class="ftags"><span class="xt">১০ম নিবন্ধন</span><span class="xt">১২তম নিবন্ধন</span><span class="xt">১৬তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">ঘাত যোগ</p><p class="f-eq m">a<sup>1/2</sup> · a<sup>1/6</sup> · a<sup>−1/3</sup> = a<sup>1/3</sup></p><p class="f-note">1/2 + 1/6 − 1/3 = 1/3</p><p class="ftags"><span class="xt">১৫তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">মান বের করো</p><p class="f-eq m">(√3)<sup>6</sup> = 3<sup>3</sup> = 27</p><p class="f-note">(∛3 × ∛4)⁶ = 12² = 144 · ⁶√64 × ∛27 = 2 × 3 = 6</p><p class="ftags"><span class="xt">৮ম নিবন্ধন</span><span class="xt">১১তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">ঋণাত্মক ভিত্তি</p><p class="f-eq m">∛(−27) = −3 &nbsp;·&nbsp; (−27)<sup>4/3</sup> = (−3)<sup>4</sup> = 81</p><p class="f-note">বিজোড় মূল ঋণাত্মক হতে পারে; জোড় ঘাতে চিহ্ন চলে যায়।</p><p class="ftags"><span class="xt">৯ম নিবন্ধন</span><span class="xt">১৮তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">উল্টো দিক থেকে</p><p class="f-eq m">a<sup>1/3</sup> = √5 → a = (√5)<sup>3</sup> = 5√5</p><p class="f-note">∛x = 1/10 → x = 1/1000 = 0.001 · ⁴√(x³) = 2 → x³ = 16 → x³ᐟ² = 4</p><p class="ftags"><span class="xt">১৭তম নিবন্ধন</span><span class="xt">১৮তম নিবন্ধন</span><span class="xt">৪৪তম বিসিএস</span></p></div><div class="card f"><p class="f-tag">করণীর গুণ</p><p class="f-eq m">√a × √b = √(ab) &nbsp;(a, b ≥ 0)</p><p class="f-note">দুটোই ঋণাত্মক হলে নয়: √−8 × √−2 = 2√2 i × √2 i = 4i² = −4</p><p class="ftags"><span class="xt">৪১তম বিসিএস</span></p></div><div class="card f"><p class="f-tag">হরের করণী দূর করো</p><p class="f-eq m">1/(√a + √b) = (√a − √b)/(a − b)</p><p class="f-note">√2/(√6 + 2) = √2(√6 − 2)/2 = √3 − √2</p><p class="ftags"><span class="xt">১৫তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">সদৃশ করণী</p><p class="f-eq m">2√3 + 5√3 = 7√3</p><p class="f-note">√12 = 2√3, √50 = 5√2 — আগে সরল করে তারপর যোগ-বিয়োগ।</p></div></div>
+  </section>
+
+  <section class="sec" id="log">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ৬</p>
+      <h2>সূচক ও লগ</h2>
+      <p class="sec-sub">একই সম্পর্কের দুই রূপ।</p>
+    </header>
+    <div class="fgrid"><div class="card f"><p class="f-tag">সূচক ↔ লগ</p><p class="f-eq m">a<sup>x</sup> = n &nbsp;⇔&nbsp; x = log<sub>a</sub> n</p><p class="f-note">ভিত্তি ভিত্তিই থাকে, ঘাতটিই লগের মান।</p><p class="ftags"><span class="xt">১০ম নিবন্ধন</span><span class="xt">১৪তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">e আর ln</p><p class="f-eq m">e<sup>ln x</sup> = x &nbsp;·&nbsp; e<sup>2 ln x</sup> = x<sup>2</sup></p><p class="ftags"><span class="xt">১৭তম নিবন্ধন</span></p></div></div><p class="tip"><b>আরও:</b> লগের সব সূত্র আর অনুশীলনী আলাদা নোটে — <a href="লগারিদম.html">লগারিদম</a>।</p>
+  </section>
+
+  <section class="sec" id="practice">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ৭</p>
+      <h2>বিগত পরীক্ষার প্রশ্ন</h2>
+      <p class="sec-sub">সবগুলোই আসল প্রশ্ন, সাইটের বিগত প্রশ্নপত্র থেকে — সমাধান সেখানকার মতোই। একই প্রশ্ন একাধিক পরীক্ষায় এলে একটি কার্ডে সব ট্যাগ। উপরের “অনুশীলন মোড” চালু করলে সমাধান লুকিয়ে যাবে।</p>
+    </header>
+    <h3 class="group">সূচকের মৌলিক নিয়ম <span class="group-n">১–১১</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">১</span><span>a ≠ 0 হলে, a⁰ = কত?</span></p><p class="ex-tags"><span class="xt">১০ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>0</li><li><span class="k">খ</span>a</li><li class="ok"><span class="k">গ</span>1</li><li><span class="k">ঘ</span>অনির্ণেয়</li></ol><div class="sol"><p class="work"><span>সূচকের নিয়ম: aᵐ ÷ aᵐ = aᵐ⁻ᵐ = a⁰, আবার aᵐ ÷ aᵐ = 1</span><span>তাই a ≠ 0 হলে a⁰ = 1</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২</span><span>(3x)⁰ এর মান কত?</span></p><p class="ex-tags"><span class="xt">১২তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>1</li><li><span class="k">খ</span>–1</li><li><span class="k">গ</span>3x</li><li><span class="k">ঘ</span>0</li></ol><div class="sol"><p class="work"><span>শূন্য ছাড়া যেকোনো রাশির শূন্য ঘাত = 1</span><span>(3x)⁰ = 1</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩</span><span>(5x)⁰ এর মান নিচের কোনটি?</span></p><p class="ex-tags"><span class="xt">১৫তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>5x</li><li><span class="k">খ</span>0</li><li><span class="k">গ</span>5</li><li class="ok"><span class="k">ঘ</span>1</li></ol><div class="sol"><p class="work"><span>যেকোনো অশূন্য রাশির শূন্য ঘাত = 1</span><span>(5x)⁰ = 1</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪</span><span>(8x)⁰ + 8x⁰ এর মান নিচের কোনটি?</span></p><p class="ex-tags"><span class="xt">১৪তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>8</li><li><span class="k">খ</span>2</li><li><span class="k">গ</span>16</li><li class="ok"><span class="k">ঘ</span>9</li></ol><div class="sol"><p class="work"><span>শূন্য ছাড়া যেকোনো রাশির শূন্য ঘাত = 1, তাই (8x)⁰ = 1</span><span>8x⁰-তে ঘাত শুধু x-এর উপর: 8 × x⁰ = 8 × 1 = 8</span><span>যোগফল = 1 + 8 = 9</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫</span><span>(3x)⁰ + 3x⁰ কত?</span></p><p class="ex-tags"><span class="xt">১৫তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>1</li><li><span class="k">খ</span>2</li><li><span class="k">গ</span>3</li><li class="ok"><span class="k">ঘ</span>4</li></ol><div class="sol"><p class="work"><span>(3x)⁰ = 1; কিন্তু 3x⁰ = 3 × x⁰ = 3 × 1 = 3 (শূন্য ঘাত শুধু x-এর)</span><span>যোগফল = 1 + 3 = 4</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৬</span><span>(17)⁰x = কত?</span></p><p class="ex-tags"><span class="xt">১৪তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>17x</li><li><span class="k">খ</span>17</li><li class="ok"><span class="k">গ</span>x</li><li><span class="k">ঘ</span>1</li></ol><div class="sol"><p class="work"><span>(17)⁰ = 1</span><span>(17)⁰x = 1 × x = x</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৭</span><span>a⁻ⁿ = 1/aⁿ কোন শর্তে সত্য?</span></p><p class="ex-tags"><span class="xt">১৭তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>a = 0</li><li class="ok"><span class="k">খ</span>a ≠ 0</li><li><span class="k">গ</span>a &gt; 0</li><li><span class="k">ঘ</span>a &lt; 0</li></ol><div class="sol"><p class="work"><span>1/aⁿ-এর হর শূন্য হতে পারে না</span><span>তাই সূত্রটি সত্য যখন a ≠ 0</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৮</span><span>(a⁻¹)⁻¹ এর মান নিচের কোনটি সঠিক?</span></p><p class="ex-tags"><span class="xt">৯ম নিবন্ধন · স্কুল</span><span class="xt">১৪তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>1/a</li><li><span class="k">খ</span>a²</li><li class="ok"><span class="k">গ</span>a</li><li><span class="k">ঘ</span>a/a²</li></ol><div class="sol"><p class="work"><span>(aᵐ)ⁿ = aᵐⁿ</span><span>(a⁻¹)⁻¹ = a^((−1) × (−1)) = a¹ = a</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৯</span><span>a^(m/n) = কত?</span></p><p class="ex-tags"><span class="xt">৯ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>maⁿ</li><li><span class="k">খ</span>naᵐ</li><li><span class="k">গ</span>ᵐ√aⁿ</li><li class="ok"><span class="k">ঘ</span>ⁿ√aᵐ</li></ol><div class="sol"><p class="work"><span>সূচকের হর মূলের ঘাত, লব শক্তির ঘাত</span><span>a^(m/n) = ⁿ√(aᵐ)</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১০</span><span>ᵐ√(aⁿ) এর মান নিচের কোনটি?</span></p><p class="ex-tags"><span class="xt">১২তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>aᵐⁿ</li><li class="ok"><span class="k">খ</span>a^(n/m)</li><li><span class="k">গ</span>a^(m/n)</li><li><span class="k">ঘ</span>a^(–n/m)</li></ol><div class="sol"><p class="work"><span>m-তম মূল মানে ঘাত 1/m</span><span>ᵐ√(aⁿ) = (aⁿ)^(1/m) = a^(n/m)</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১১</span><span>2ⁿ ÷ 2ⁿ⁻¹ = কত?</span></p><p class="ex-tags"><span class="xt">১৭তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>2</li><li><span class="k">খ</span>2ⁿ⁺¹</li><li><span class="k">গ</span>2ⁿ</li><li><span class="k">ঘ</span>2ⁿ⁻¹</li></ol><div class="sol"><p class="work"><span>2ⁿ ÷ 2ⁿ⁻¹ = 2^(n − (n − 1)) = 2¹ = 2</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article></div>
+    <h3 class="group">aˣ = 1 <span class="group-n">১২–১৫</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">১২</span><span>aˣ = 1 হলে, x এর মান কত?</span></p><p class="ex-tags"><span class="xt">১০ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>1</li><li class="ok"><span class="k">খ</span>0</li><li><span class="k">গ</span>অনির্ণেয়</li><li><span class="k">ঘ</span>2</li></ol><div class="sol"><p class="work"><span>a ≠ 0, 1 হলে aˣ = 1 = a⁰</span><span>x = 0</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৩</span><span>(3/2)ˣ = 1 হলে x এর মান নিচের কোনটি?</span></p><p class="ex-tags"><span class="xt">১৩তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>0</li><li><span class="k">খ</span>2/3</li><li><span class="k">গ</span>1</li><li><span class="k">ঘ</span>3/2</li></ol><div class="sol"><p class="work"><span>শূন্য ছাড়া যেকোনো সংখ্যার শূন্য ঘাত 1</span><span>(3/2)⁰ = 1 ⇒ x = 0</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৪</span><span>(x/2)ᵃ⁺¹ = 1 হলে, a এর মান কত?</span></p><p class="ex-tags"><span class="xt">১১তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>0</li><li><span class="k">খ</span>2</li><li><span class="k">গ</span>1</li><li class="ok"><span class="k">ঘ</span>–1</li></ol><div class="sol"><p class="work"><span>শূন্য ছাড়া কোনো সংখ্যার ঘাত 1 দেয় কেবল ঘাত 0 হলে</span><span>a + 1 = 0 ⇒ a = −1</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৫</span><span>(x/5)^P = 1 হলে P এর মান কত?</span></p><p class="ex-tags"><span class="xt">১৮তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>0</li><li><span class="k">খ</span>1</li><li><span class="k">গ</span>-5</li><li><span class="k">ঘ</span>5</li></ol><div class="sol"><p class="work"><span>যেকোনো অশূন্য রাশির শূন্য ঘাত = 1</span><span>(x/5)^P = 1 = (x/5)⁰ ⇒ P = 0</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article></div>
+    <h3 class="group">সূচকীয় সমীকরণ <span class="group-n">১৬–৩৮</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">১৬</span><span>9ˣ⁺³ = 27ˣ⁺¹ হলে, x এর মান কত?</span></p><p class="ex-tags"><span class="xt">১০ম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>2</li><li><span class="k">খ</span>–3</li><li><span class="k">গ</span>9</li><li class="ok"><span class="k">ঘ</span>3</li></ol><div class="sol"><p class="work"><span>9ˣ⁺³ = 3^(2x+6), 27ˣ⁺¹ = 3^(3x+3)</span><span>2x + 6 = 3x + 3 ⇒ x = 3</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৭</span><span>2ˣ⁺⁷ = 4ˣ⁺² হলে x এর মান কত?</span></p><p class="ex-tags"><span class="xt">৯ম নিবন্ধন · স্কুল</span><span class="xt">৪৫তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>0</li><li><span class="k">খ</span>2</li><li class="ok"><span class="k">গ</span>3</li><li><span class="k">ঘ</span>–1</li></ol><div class="sol"><p class="work"><span>4ˣ⁺² = (2²)^(x+2) = 2^(2x+4)</span><span>x + 7 = 2x + 4 ⇒ x = 3</span></p><p class="ans">উত্তর <b>গ</b></p><p class="hint"><span class="nb">নোট:</span> MyExaminer-এর পাঠে ‘2x+7 = 4x+2’ দেখা যায়, কিন্তু আসলে সূচক: 2ˣ⁺⁷ = 4ˣ⁺²; সেভাবে উত্তর 3 মেলে।</p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৮</span><span>4ˣ⁺¹ = 2ˣ⁻² হলে x এর মান কত?</span></p><p class="ex-tags"><span class="xt">১২তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>3</li><li><span class="k">খ</span>6</li><li class="ok"><span class="k">গ</span>– 4</li><li><span class="k">ঘ</span>– 2</li></ol><div class="sol"><p class="work"><span>4ˣ⁺¹ = (2²)^(x+1) = 2^(2x+2)</span><span>2x + 2 = x − 2 ⇒ x = −4</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৯</span><span>8²ˣ⁺³ = 2³ˣ⁺⁶ হলে, x এর মান-</span></p><p class="ex-tags"><span class="xt">১৩তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>– 3</li><li class="ok"><span class="k">খ</span>– 1</li><li><span class="k">গ</span>0</li><li><span class="k">ঘ</span>4</li></ol><div class="sol"><p class="work"><span>8 = 2³, তাই 8^(2x+3) = 2^(6x+9)</span><span>6x + 9 = 3x + 6 ⇒ 3x = −3</span><span>x = −1</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২০</span><span>3·27ˣ = 9ˣ⁺⁴ হলে, x এর মান কত?</span></p><p class="ex-tags"><span class="xt">১০ম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>9</li><li><span class="k">খ</span>3</li><li class="ok"><span class="k">গ</span>7</li><li><span class="k">ঘ</span>1</li></ol><div class="sol"><p class="work"><span>3 × 27ˣ = 3^(3x+1), 9ˣ⁺⁴ = 3^(2x+8)</span><span>3x + 1 = 2x + 8 ⇒ x = 7</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২১</span><span>3³ˣ⁻⁸ = 3⁴ হলে x এর মান কত?</span></p><p class="ex-tags"><span class="xt">১১তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>3</li><li class="ok"><span class="k">খ</span>4</li><li><span class="k">গ</span>2</li><li><span class="k">ঘ</span>6</li></ol><div class="sol"><p class="work"><span>ভিত্তি সমান, তাই ঘাত সমান: 3x − 8 = 4</span><span>3x = 12 ⇒ x = 4</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২২</span><span>x এর মান কত হলে 2⁴ˣ⁻¹² = 16 হবে?</span></p><p class="ex-tags"><span class="xt">১২তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>4</li><li><span class="k">খ</span>2</li><li><span class="k">গ</span>6</li><li><span class="k">ঘ</span>8</li></ol><div class="sol"><p class="work"><span>16 = 2⁴</span><span>4x − 12 = 4 ⇒ 4x = 16 ⇒ x = 4</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৩</span><span>4ˣ⁺¹ = 32 হলে x এর মান কত?</span></p><p class="ex-tags"><span class="xt">১৪তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>1/2</li><li><span class="k">খ</span>1</li><li class="ok"><span class="k">গ</span>3/2</li><li><span class="k">ঘ</span>2/3</li></ol><div class="sol"><p class="work"><span>4ˣ⁺¹ = 32 ⇒ (2²)^(x+1) = 2⁵</span><span>2^(2x+2) = 2⁵ ⇒ 2x + 2 = 5</span><span>x = 3/2</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৪</span><span>4ˣ = 2 হলে, x এর মান কত?</span></p><p class="ex-tags"><span class="xt">১৪তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>1</li><li class="ok"><span class="k">খ</span>1/2</li><li><span class="k">গ</span>1/8</li><li><span class="k">ঘ</span>1/16</li></ol><div class="sol"><p class="work"><span>4ˣ = 2 ⇒ (2²)ˣ = 2¹ ⇒ 2²ˣ = 2¹</span><span>2x = 1 ⇒ x = 1/2</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৫</span><span>4ˣ = 8 হলে, x-এর মান কত?</span></p><p class="ex-tags"><span class="xt">১১তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>2/3</li><li class="ok"><span class="k">খ</span>3/2</li><li><span class="k">গ</span>4/3</li><li><span class="k">ঘ</span>3/4</li></ol><div class="sol"><p class="work"><span>4ˣ = 8 ⇒ 2²ˣ = 2³</span><span>2x = 3 ⇒ x = 3/2</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৬</span><span>27ˣ⁺¹ = 81 হলে x এর মান নিচের কোনটি?</span></p><p class="ex-tags"><span class="xt">১৫তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>1/3</li><li><span class="k">খ</span>7/3</li><li><span class="k">গ</span>2</li><li><span class="k">ঘ</span>3</li></ol><div class="sol"><p class="work"><span>27 = 3³, 81 = 3⁴ ⇒ 3^(3x + 3) = 3⁴</span><span>3x + 3 = 4 ⇒ x = 1/3</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৭</span><span>2ˣ⁺¹ = 32 হলে x এর মান কত?</span></p><p class="ex-tags"><span class="xt">১৬তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>4</li><li><span class="k">খ</span>3</li><li><span class="k">গ</span>2</li><li><span class="k">ঘ</span>1</li></ol><div class="sol"><p class="work"><span>32 = 2⁵ ⇒ x + 1 = 5</span><span>x = 4</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৮</span><span>2 × 4³ˣ⁻⁵ = 512 হলে, x এর মান-</span></p><p class="ex-tags"><span class="xt">১৮তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>2</li><li class="ok"><span class="k">খ</span>3</li><li><span class="k">গ</span>4</li><li><span class="k">ঘ</span>5</li></ol><div class="sol"><p class="work"><span>4^(3x − 5) = 512 ÷ 2 = 256 = 4⁴</span><span>3x − 5 = 4 ⇒ x = 3</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৯</span><span>32/(64)ˣ = 8 হলে x এর মান কত?</span></p><p class="ex-tags"><span class="xt">১৭তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>1/3</li><li><span class="k">খ</span>3</li><li><span class="k">গ</span>4</li><li><span class="k">ঘ</span>8</li></ol><div class="sol"><p class="work"><span>64ˣ = 32 ÷ 8 = 4</span><span>2^(6x) = 2² ⇒ 6x = 2 ⇒ x = 1/3</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩০</span><span>যদি 3ˣ⁺² = 81 হয়, তবে 3ˣ⁻² = কত?</span></p><p class="ex-tags"><span class="xt">৮ম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>1</li><li><span class="k">খ</span>0</li><li><span class="k">গ</span>4</li><li><span class="k">ঘ</span>3</li></ol><div class="sol"><p class="work"><span>81 = 3⁴ ⇒ x + 2 = 4 ⇒ x = 2</span><span>3ˣ⁻² = 3⁰ = 1</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩১</span><span>যদি 3ᵐ = 81 হয়, তবে m³ = ?</span></p><p class="ex-tags"><span class="xt">১৭তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>9</li><li><span class="k">খ</span>16</li><li><span class="k">গ</span>27</li><li class="ok"><span class="k">ঘ</span>64</li></ol><div class="sol"><p class="work"><span>81 = 3⁴ ⇒ m = 4</span><span>m³ = 4³ = 64</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩২</span><span>(√3)ˣ⁺¹ = (∛3)²ˣ⁻¹ এর সমাধান কত?</span></p><p class="ex-tags"><span class="xt">১২তম নিবন্ধন · স্কুল</span><span class="xt">১৪তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>4</li><li class="ok"><span class="k">খ</span>5</li><li><span class="k">গ</span>6</li><li><span class="k">ঘ</span>7</li></ol><div class="sol"><p class="work"><span>√3 = 3^(1/2), ∛3 = 3^(1/3)</span><span>(x + 1)/2 = (2x − 1)/3 ⇒ 3x + 3 = 4x − 2</span><span>x = 5</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৩</span><span>(√3)²ˣ⁺¹ = (∛√3)ˣ⁻¹ হলে, x = কত?</span></p><p class="ex-tags"><span class="xt">১৮তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>−5/4</li><li class="ok"><span class="k">খ</span>−4/5</li><li><span class="k">গ</span>4/5</li><li><span class="k">ঘ</span>5/4</li></ol><div class="sol"><p class="work"><span>দুই দিক 3-এর ঘাতে লিখি: (√3)^(2x+1) = 3^((2x+1)/2), (∛√3)^(x−1) = 3^((x−1)/6)</span><span>(2x + 1)/2 = (x − 1)/6 ⇒ 6x + 3 = x − 1 ⇒ 5x = −4</span><span>x = −4/5</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৪</span><span>যদি (a/b)ˣ⁻³ = (b/a)ˣ⁻⁵ হয়, তবে x এর মান কত?</span></p><p class="ex-tags"><span class="xt">১৭তম নিবন্ধন · স্কুল</span><span class="xt">১৭তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>8</li><li><span class="k">খ</span>5</li><li class="ok"><span class="k">গ</span>4</li><li><span class="k">ঘ</span>3</li></ol><div class="sol"><p class="work"><span>(b/a)^(x−5) = (a/b)^(5−x)</span><span>তাই (a/b)^(x−3) = (a/b)^(5−x) ⇒ x − 3 = 5 − x</span><span>2x = 8 ⇒ x = 4</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৫</span><span>5ˣ + 8 × 5ˣ + 16 × 5ˣ = 1 হলে, x এর মান কত?</span></p><p class="ex-tags"><span class="xt">৪১তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>–3</li><li class="ok"><span class="k">খ</span>–2</li><li><span class="k">গ</span>–1</li><li><span class="k">ঘ</span>–1/2</li></ol><div class="sol"><p class="work"><span>5ˣ(1 + 8 + 16) = 1 ⇒ 25 × 5ˣ = 1</span><span>5ˣ = 1/25 = 5⁻² ⇒ x = –2</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৬</span><span>½ × 2ˣ⁻³ + 1 = 5 হলে x এর মান কত?</span></p><p class="ex-tags"><span class="xt">৪৬তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>3</li><li><span class="k">খ</span>4</li><li><span class="k">গ</span>5</li><li class="ok"><span class="k">ঘ</span>6</li></ol><div class="sol"><p class="work"><span>½ × 2ˣ⁻³ + 1 = 5 ⇒ ½ × 2ˣ⁻³ = 4</span><span>2ˣ⁻³ = 8 = 2³ ⇒ x – 3 = 3</span><span>x = 6</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৭</span><span>4ˣ + 4¹⁻ˣ = 4 হলে, x = কত?</span></p><p class="ex-tags"><span class="xt">৪৩তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>1/4</li><li><span class="k">খ</span>1/3</li><li class="ok"><span class="k">গ</span>1/2</li><li><span class="k">ঘ</span>1</li></ol><div class="sol"><p class="work"><span>4ˣ = y ধরলে 4¹⁻ˣ = 4/y</span><span>y + 4/y = 4 ⇒ y² – 4y + 4 = 0 ⇒ y = 2</span><span>4ˣ = 2 ⇒ x = 1/2</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৮</span><span>2ˣ · 5ˣ = 100000 হলে, x = কত?</span></p><p class="ex-tags"><span class="xt">১৭তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>2/5</li><li><span class="k">খ</span>1/3</li><li><span class="k">গ</span>3</li><li class="ok"><span class="k">ঘ</span>5</li></ol><div class="sol"><p class="work"><span>2ˣ · 5ˣ = (2 × 5)ˣ = 10ˣ</span><span>10ˣ = 100000 = 10⁵ ⇒ x = 5</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article></div>
+    <h3 class="group">সরলীকরণ <span class="group-n">৩৯–৪৭</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">৩৯</span><span>3·2ⁿ – 4·2ⁿ⁻² = কত?</span></p><p class="ex-tags"><span class="xt">৮ম নিবন্ধন · কলেজ</span><span class="xt">১১তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>1</li><li class="ok"><span class="k">খ</span>2ⁿ⁺¹</li><li><span class="k">গ</span>3</li><li><span class="k">ঘ</span>2ⁿ</li></ol><div class="sol"><p class="work"><span>4·2ⁿ⁻² = 2²·2ⁿ⁻² = 2ⁿ</span><span>3·2ⁿ − 2ⁿ = 2·2ⁿ = 2ⁿ⁺¹</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪০</span><span>(5ⁿ⁺² + 35 × 5ⁿ⁻¹)/(4 × 5ⁿ) এর মান কত?</span></p><p class="ex-tags"><span class="xt">১২তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>5</li><li><span class="k">খ</span>4</li><li class="ok"><span class="k">গ</span>8</li><li><span class="k">ঘ</span>7</li></ol><div class="sol"><p class="work"><span>লবে 5ⁿ⁻¹ সাধারণ: 5ⁿ⁺² + 35 × 5ⁿ⁻¹ = 5ⁿ⁻¹(5³ + 35) = 5ⁿ⁻¹ × 160</span><span>হর 4 × 5ⁿ = 4 × 5 × 5ⁿ⁻¹ = 20 × 5ⁿ⁻¹</span><span>মান = 160 ÷ 20 = 8</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪১</span><span>5ˣ + 5ˣ + 5ˣ + 5ˣ + 5ˣ = কত?</span></p><p class="ex-tags"><span class="xt">১৩তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>25x</li><li class="ok"><span class="k">খ</span>5ˣ⁺¹</li><li><span class="k">গ</span>5⁵ˣ</li><li><span class="k">ঘ</span>25ˣ</li></ol><div class="sol"><p class="work"><span>5ˣ পাঁচবার যোগ = 5 × 5ˣ</span><span>= 5¹ × 5ˣ = 5ˣ⁺¹</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪২</span><span>(9ˣ – 4)/(3ˣ – 2) এর মান কত?</span></p><p class="ex-tags"><span class="xt">১৩তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>3ˣ</li><li class="ok"><span class="k">খ</span>3ˣ + 2</li><li><span class="k">গ</span>2ˣ – 2</li><li><span class="k">ঘ</span>2ˣ</li></ol><div class="sol"><p class="work"><span>9ˣ = (3ˣ)², তাই 9ˣ − 4 = (3ˣ)² − 2² = (3ˣ + 2)(3ˣ − 2)</span><span>(3ˣ + 2)(3ˣ − 2) ÷ (3ˣ − 2) = 3ˣ + 2</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪৩</span><span>(x^(p−q))^(p+q) · (x^(q−r))^(q+r) · (x^(r−p))^(r+p) = কত?</span></p><p class="ex-tags"><span class="xt">১৮তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>0</li><li><span class="k">খ</span>p + q</li><li><span class="k">গ</span>q + r</li><li class="ok"><span class="k">ঘ</span>1</li></ol><div class="sol"><p class="work"><span>সূচকগুলো যোগ করি: (p − q)(p + q) + (q − r)(q + r) + (r − p)(r + p)</span><span>= (p² − q²) + (q² − r²) + (r² − p²) = 0</span><span>ফলে রাশিটি = x⁰ = 1</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪৪</span><span>√(x⁻¹y) × √(y⁻¹z) × √(z⁻¹x) এর মান কত?</span></p><p class="ex-tags"><span class="xt">১৪তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>0</li><li class="ok"><span class="k">খ</span>1</li><li><span class="k">গ</span>xyz</li><li><span class="k">ঘ</span>√(xyz)</li></ol><div class="sol"><p class="work"><span>তিনটি বর্গমূল একসঙ্গে: √(x⁻¹y × y⁻¹z × z⁻¹x)</span><span>= √(x⁻¹x × y⁻¹y × z⁻¹z) = √(1 × 1 × 1)</span><span>= 1</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪৫</span><span>aˣ = b, bʸ = c, cᶻ = a হলে, নিচের কোন সম্পর্কটি সঠিক?</span></p><p class="ex-tags"><span class="xt">১০ম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>a = x/ayz</li><li><span class="k">খ</span>a = y/azx</li><li><span class="k">গ</span>b = x/cyz</li><li class="ok"><span class="k">ঘ</span>a = aˣʸᶻ</li></ol><div class="sol"><p class="work"><span>a = cᶻ = (bʸ)ᶻ = bʸᶻ = (aˣ)ʸᶻ</span><span>অর্থাৎ a = aˣʸᶻ (তাই xyz = 1)</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪৬</span><span>যদি aˣ = b, bʸ = c এবং cᶻ = a হয়, তবে xyz এর মান কত হবে?</span></p><p class="ex-tags"><span class="xt">১৬তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>2</li><li class="ok"><span class="k">খ</span>1</li><li><span class="k">গ</span>−2</li><li><span class="k">ঘ</span>−1</li></ol><div class="sol"><p class="work"><span>b = aˣ ⇒ c = bʸ = a^(xy) ⇒ a = cᶻ = a^(xyz)</span><span>a¹ = a^(xyz) ⇒ xyz = 1</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪৭</span><span>যদি x = yᵃ, y = zᵇ এবং z = xᶜ হয়, তখন abc এর মান হয় —</span></p><p class="ex-tags"><span class="xt">১৭তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>4</li><li><span class="k">খ</span>3</li><li><span class="k">গ</span>2</li><li class="ok"><span class="k">ঘ</span>1</li></ol><div class="sol"><p class="work"><span>x = yᵃ = (zᵇ)ᵃ = z^(ab) = (xᶜ)^(ab) = x^(abc)</span><span>x¹ = x^(abc) ⇒ abc = 1</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article></div>
+    <h3 class="group">মূল ও করণী <span class="group-n">৪৮–৬১</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">৪৮</span><span>∛(∛a³) = কত?</span></p><p class="ex-tags"><span class="xt">১০ম নিবন্ধন · কলেজ</span><span class="xt">১২তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>a</li><li class="ok"><span class="k">খ</span>a^(1/3)</li><li><span class="k">গ</span>1</li><li><span class="k">ঘ</span>a³</li></ol><div class="sol"><p class="work"><span>∛(a³) = a</span><span>∛(∛a³) = ∛a = a^(1/3)</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪৯</span><span>∛(∛x³) = কত?</span></p><p class="ex-tags"><span class="xt">১৬তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>x^(1/2)</li><li class="ok"><span class="k">খ</span>x^(1/3)</li><li><span class="k">গ</span>x^(2/3)</li><li><span class="k">ঘ</span>x^(3/2)</li></ol><div class="sol"><p class="work"><span>ভেতরের ∛x³ = x</span><span>∛x = x^(1/3)</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫০</span><span>a^(1/2) · a^(1/6) · a^(−1/3) = ?</span></p><p class="ex-tags"><span class="xt">১৫তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>a³</li><li class="ok"><span class="k">খ</span>a^(1/3)</li><li><span class="k">গ</span>a</li><li><span class="k">ঘ</span>1</li></ol><div class="sol"><p class="work"><span>একই ভিত্তির গুণে সূচক যোগ হয়: 1/2 + 1/6 − 1/3 = 3/6 + 1/6 − 2/6 = 1/3</span><span>= a^(1/3)</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫১</span><span>(√3)⁶ = কত?</span></p><p class="ex-tags"><span class="xt">৮ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>9</li><li class="ok"><span class="k">খ</span>27</li><li><span class="k">গ</span>18</li><li><span class="k">ঘ</span>81</li></ol><div class="sol"><p class="work"><span>(√3)⁶ = (3^(1/2))⁶ = 3³</span><span>= 27</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫২</span><span>(√3 × √5)⁴ এর মান কত?</span></p><p class="ex-tags"><span class="xt">৮ম নিবন্ধন · কলেজ</span><span class="xt">১৭তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>30</li><li><span class="k">খ</span>60</li><li class="ok"><span class="k">গ</span>225</li><li><span class="k">ঘ</span>150</li></ol><div class="sol"><p class="work"><span>(√3 × √5)⁴ = (√15)⁴ = 15² = 225</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫৩</span><span>(∛3 × ∛4)⁶ = কত?</span></p><p class="ex-tags"><span class="xt">১১তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>12</li><li><span class="k">খ</span>36</li><li><span class="k">গ</span>48</li><li class="ok"><span class="k">ঘ</span>144</li></ol><div class="sol"><p class="work"><span>∛3 × ∛4 = ∛12</span><span>(∛12)⁶ = 12² = 144</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫৪</span><span>⁶√64 × ∛27 = কত?</span></p><p class="ex-tags"><span class="xt">১১তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>2</li><li><span class="k">খ</span>4</li><li class="ok"><span class="k">গ</span>6</li><li><span class="k">ঘ</span>8</li></ol><div class="sol"><p class="work"><span>⁶√64 = ⁶√(2⁶) = 2; ∛27 = 3</span><span>2 × 3 = 6</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫৫</span><span>∛(–27) = ?</span></p><p class="ex-tags"><span class="xt">৯ম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>3</li><li><span class="k">খ</span>9</li><li class="ok"><span class="k">গ</span>– 3</li><li><span class="k">ঘ</span>– 9</li></ol><div class="sol"><p class="work"><span>(−3)³ = −27</span><span>∛(−27) = −3</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫৬</span><span>(−27)^(4/3) এর মান কত?</span></p><p class="ex-tags"><span class="xt">১৮তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>−81</li><li class="ok"><span class="k">খ</span>81</li><li><span class="k">গ</span>± 81</li><li><span class="k">ঘ</span>± 27</li></ol><div class="sol"><p class="work"><span>(−27)^(4/3) = [(−27)^(1/3)]⁴</span><span>(−27)-এর ঘনমূল = −3 ⇒ (−3)⁴ = 81</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫৭</span><span>a^(1/3) = √5 হলে a এর মান কত?</span></p><p class="ex-tags"><span class="xt">১৭তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>3√5</li><li class="ok"><span class="k">খ</span>5√5</li><li><span class="k">গ</span>5</li><li><span class="k">ঘ</span>∛5</li></ol><div class="sol"><p class="work"><span>a^(1/3) = √5 ⇒ a = (√5)³ = 5√5</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫৮</span><span>∛x = 1/10 হলে, x এর মান-</span></p><p class="ex-tags"><span class="xt">১৮তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>0.00001</li><li><span class="k">খ</span>0.0001</li><li class="ok"><span class="k">গ</span>0.001</li><li><span class="k">ঘ</span>0.01</li></ol><div class="sol"><p class="work"><span>∛x = 1/10 ⇒ x = (1/10)³ = 1/1000 = 0.001</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫৯</span><span>যদি ⁴√(x³) = 2 হয়, তাহলে x<sup>3/2</sup> = ?</span></p><p class="ex-tags"><span class="xt">৪৪তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>8</li><li><span class="k">খ</span>16</li><li class="ok"><span class="k">গ</span>4</li><li><span class="k">ঘ</span>64</li></ol><div class="sol"><p class="work"><span>⁴√(x³) = 2 ⇒ x³ = 2⁴ = 16</span><span>x<sup>3/2</sup> = √(x³) = √16 = 4</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৬০</span><span>√–8 × √–2 = কত?</span></p><p class="ex-tags"><span class="xt">৪১তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>4</li><li><span class="k">খ</span>4i</li><li class="ok"><span class="k">গ</span>–4</li><li><span class="k">ঘ</span>–4i</li></ol><div class="sol"><p class="work"><span>√–8 = 2√2 i, √–2 = √2 i</span><span>গুণফল = 2√2 × √2 × i² = 4 × (–1) = –4</span><span>(সাবধান: √–8 × √–2 ≠ √16 — ঋণাত্মক সংখ্যার বর্গমূল গুণ করার নিয়ম আলাদা)</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৬১</span><span>√2/(√6 + 2) = কত?</span></p><p class="ex-tags"><span class="xt">১৫তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>√3+ √2</li><li><span class="k">খ</span>3 – √2</li><li class="ok"><span class="k">গ</span>√3– √2</li><li><span class="k">ঘ</span>√3+ 2</li></ol><div class="sol"><p class="work"><span>লব ও হরকে (√6 − 2) দিয়ে গুণ: √2(√6 − 2) ÷ (6 − 4)</span><span>= (√12 − 2√2) ÷ 2 = (2√3 − 2√2) ÷ 2</span><span>= √3 − √2</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article></div>
+    <h3 class="group">সূচক ও লগ <span class="group-n">৬২–৬৪</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">৬২</span><span>aˣ = n হলে নিচের কোন সম্পর্কটি সঠিক?</span></p><p class="ex-tags"><span class="xt">১০ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>x = aⁿ</li><li><span class="k">খ</span>x = ln x</li><li><span class="k">গ</span>a = xⁿ</li><li class="ok"><span class="k">ঘ</span>x = logₐn</li></ol><div class="sol"><p class="work"><span>লগারিদমের সংজ্ঞা: aˣ = n হলে x হলো a ভিত্তিতে n-এর লগ</span><span>x = logₐn</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৬৩</span><span>aˣ = y হলে নিচের কোন সম্পর্কটি সঠিক?</span></p><p class="ex-tags"><span class="xt">১৪তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>y = logₓa</li><li class="ok"><span class="k">খ</span>x = logₐy</li><li><span class="k">গ</span>a = logₓy</li><li><span class="k">ঘ</span>x = log<sub>y</sub>a</li></ol><div class="sol"><p class="work"><span>সংজ্ঞা: aˣ = y হলে x হলো a ভিত্তিতে y-এর লগ</span><span>অর্থাৎ x = logₐy</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৬৪</span><span>e^(2 ln x) = y হলে, y এর মান = কত?</span></p><p class="ex-tags"><span class="xt">১৭তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>ln x</li><li><span class="k">খ</span>ln 2x</li><li class="ok"><span class="k">গ</span>x²</li><li><span class="k">ঘ</span>2x</li></ol><div class="sol"><p class="work"><span>2 ln x = ln x²</span><span>y = e^(ln x²) = x²</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article></div>
+  </section>
+
+  <section class="sec" id="mistakes">
+    <header class="sec-head">
+      <p class="eyebrow">অংশ ৮</p>
+      <h2>ভুল এড়াও</h2>
+      <p class="sec-sub">পরীক্ষায় নম্বর কাটে এই জায়গাগুলোতেই।</p>
+    </header>
+    <div class="lists">
+      <div class="card list bad">
+        <h3>যে ভুলগুলো হয়</h3>
+        <ul>
+          <li><span class="m">a<sup>m</sup> × a<sup>n</sup></span>-এ ঘাত গুণ করা — যোগ হয়; গুণ হয় <span class="m">(a<sup>m</sup>)<sup>n</sup></span>-এ</li>
+          <li><span class="m">8x<sup>0</sup></span>-কে 1 ধরা — শুধু x-এর ঘাত শূন্য, তাই 8</li>
+          <li>ভিত্তি না মিলিয়েই ঘাত সমান ধরা — আগে 4 = 2², 27 = 3³ লেখো</li>
+          <li><span class="m">√−8 × √−2</span>-কে √16 = 4 ধরা — উত্তর −4</li>
+          <li>ভগ্নাংশ ঘাতে লব-হর উল্টে ফেলা — <span class="m">a<sup>m/n</sup></span>-এ হর n মূল</li>
+        </ul>
+      </div>
+      <div class="card list good">
+        <h3>যে অভ্যাসগুলো রাখবে</h3>
+        <ul>
+          <li>উত্তর বসিয়ে মিলিয়ে নাও: x = 3 হলে 9⁶ = 3¹² আর 27⁴ = 3¹² ✓</li>
+          <li>২ ও ৩-এর ঘাতগুলো ২⁹ আর ৩⁵ পর্যন্ত মুখস্থ রাখো</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var btn = document.getElementById('mode');
+  function set(on){
+    document.body.classList.toggle('practice', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.textContent = on ? 'সমাধান দেখান' : 'অনুশীলন মোড';
+    if(!on){
+      var s = document.querySelectorAll('.ex.shown');
+      for(var i = 0; i < s.length; i++){ s[i].classList.remove('shown'); }
+    }
+    try{ localStorage.setItem('exp-notes-practice', on ? '1' : '0'); }catch(e){}
+  }
+  btn.addEventListener('click', function(){
+    set(!document.body.classList.contains('practice'));
+  });
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.reveal') : null;
+    if(b){ b.closest('.ex').classList.add('shown'); }
+  });
+  try{ if(localStorage.getItem('exp-notes-practice') === '1'){ set(true); } }catch(e){}
+})();
+</script>
+<!-- top-button --><style>.to-top{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:50;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;padding:0;cursor:pointer;border:1px solid var(--line,#D9E3DB);background:var(--card,#fff);color:var(--accent,#14624A);box-shadow:0 2px 10px rgba(0,0,0,.14);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .2s,transform .2s,visibility .2s,background .15s,color .15s}.to-top.show{opacity:1;visibility:visible;transform:none}.to-top:hover{background:var(--accent,#14624A);color:var(--card,#fff);border-color:var(--accent,#14624A)}.to-top:focus-visible{outline:2px solid var(--accent,#14624A);outline-offset:2px}.to-top svg{width:20px;height:20px}@media print{.to-top{display:none}}</style><button class="to-top" type="button" aria-label="উপরে যান" title="উপরে যান"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button><script>(function(){var b=document.currentScript.previousElementSibling;function f(){b.classList.toggle('show',window.scrollY>window.innerHeight*1.5)}window.addEventListener('scroll',f,{passive:true});f();b.addEventListener('click',function(){var r=window.matchMedia('(prefers-reduced-motion: reduce)').matches;window.scrollTo({top:0,behavior:r?'auto':'smooth'})})})();</script><!-- /top-button -->
+</body>
+</html>

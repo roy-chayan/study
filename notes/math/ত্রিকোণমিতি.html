@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ত্রিকোণমিতি</title>
+<meta name="description" content="ত্রিকোণমিতিক অনুপাত ও অভেদ, বিশেষ কোণের মান, পূরক কোণ, উচ্চতা ও দূরত্ব আর কোণের পরিমাপ — সূত্র আর বিগত পরীক্ষার ৪৩টি প্রশ্নের সমাধান">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700&family=Hind+Siliguri:wght@400;500;600&display=swap">
+<style>
+/* Notes layout (same design as the লগারিদম note): topic by topic — formula cards and method cards
+   with exam tags — then past exam questions with solutions, and common mistakes. */
+:root{
+  --paper:#F5F8F4; --card:#FFFFFF; --ink:#18231C; --muted:#5B6D61;
+  --accent:#14624A; --accent-soft:#E4EFE7; --gold:#8A6212; --gold-soft:#F6EFDD;
+  --bad:#A3412E; --bad-soft:#F8EAE6;
+  --line:#D9E3DB; --shadow:0 1px 2px rgba(20,60,45,.06),0 8px 22px rgba(20,60,45,.05);
+  --display:"Noto Serif Bengali",Georgia,serif;
+  --body:"Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;
+  --math:"Noto Serif Bengali",Georgia,"Times New Roman",serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1411; --card:#151E19; --ink:#E5EDE7; --muted:#95A89C;
+  --accent:#63C49A; --accent-soft:#18271F; --gold:#D6A94A; --gold-soft:#241F13;
+  --bad:#E58B78; --bad-soft:#2A1915;
+  --line:#26332B; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.28);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E1411; --card:#151E19; --ink:#E5EDE7; --muted:#95A89C;
+  --accent:#63C49A; --accent-soft:#18271F; --gold:#D6A94A; --gold-soft:#241F13;
+  --bad:#E58B78; --bad-soft:#2A1915;
+  --line:#26332B; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.28);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.65;-webkit-text-size-adjust:100%}
+p{margin:0}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px 72px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Header */
+.top{padding-block:40px 24px}
+.kicker{font-size:12px;letter-spacing:.12em;color:var(--gold);font-weight:600;margin-bottom:10px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,7vw,46px);line-height:1.2;margin:0}
+.lede{color:var(--muted);margin-top:10px;max-width:58ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-size:14px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+
+/* Sticky bar: one row, so it never covers the page on phones. Home stays on the
+   left and the mode button on the right; the section chips between them scroll sideways. */
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-block:1px solid var(--line);padding-block:8px}
+.bar-row{display:flex;gap:8px;align-items:center}
+.bar-row>*{flex:none}
+.bar-row>.bar-scroll{flex:1 1 auto;min-width:0;display:flex;gap:8px;overflow-x:auto;
+  padding:3px 2px;scrollbar-width:none}
+.bar-scroll::-webkit-scrollbar{display:none}
+.bar-scroll>*{flex:none}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink);text-decoration:none;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip-n{color:var(--muted)}
+.mode{margin-left:auto;font-family:inherit;font-size:13px;font-weight:600;color:var(--card);
+  background:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:6px 14px;cursor:pointer}
+.mode[aria-pressed="true"]{background:var(--gold-soft);color:var(--gold);border-color:var(--gold)}
+
+/* Sections */
+.sec{padding-top:44px}
+.sec-head{margin-bottom:20px}
+.eyebrow{font-size:12px;letter-spacing:.1em;color:var(--gold);font-weight:600;margin-bottom:2px}
+h2{font-family:var(--display);font-size:clamp(24px,4.5vw,30px);font-weight:700;line-height:1.3;margin:0}
+.sec-sub{color:var(--muted);margin-top:4px;max-width:62ch}
+h3{font-family:var(--display);font-size:19px;font-weight:700;line-height:1.35;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:20px}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:14px;align-items:start}
+.note{font-size:14.5px;color:var(--muted);margin-top:10px}
+.tip{margin-top:12px;padding:8px 12px;border-radius:8px;background:var(--gold-soft);
+  border-left:3px solid var(--gold);font-size:14.5px}
+.tip b{color:var(--gold)}
+
+/* Maths: serif, with real superscripts and subscripts that don't disturb line spacing. */
+.m{font-family:var(--math)}
+.m sub,.m sup{font-size:.68em;line-height:0;position:relative;vertical-align:baseline}
+.m sup{top:-.55em}
+.m sub{bottom:-.3em}
+.big{font-size:20px;line-height:1.7}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;
+  margin-inline:.2em;line-height:1.3}
+.frac>span+span{border-top:1.5px solid currentColor;padding-top:2px}
+.warn{font-style:normal;font-family:var(--body);font-size:.8em;font-weight:600;color:var(--bad);margin-left:8px}
+.st{font-style:normal;font-family:var(--body);font-size:12px;font-weight:600;color:var(--gold);margin-right:6px}
+
+/* Concept */
+.hero{text-align:center;background:var(--accent-soft);border-color:transparent;box-shadow:none;padding:30px 20px}
+.hero-f{font-size:clamp(22px,5.5vw,30px);line-height:1.5}
+.hero-f .if{font-family:var(--body);font-size:.62em;color:var(--muted);margin-inline:.4em}
+.legend{list-style:none;display:flex;justify-content:center;flex-wrap:wrap;gap:6px 20px;
+  padding:0;margin:14px 0 0;font-size:14.5px;color:var(--muted)}
+.legend b{color:var(--accent);margin-right:6px;font-size:17px}
+.hero-ex{margin-top:14px;font-size:15px}
+
+/* Formula sheet */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:12px}
+.f{padding:16px 18px}
+.f-tag{font-size:12.5px;font-weight:600;color:var(--accent);letter-spacing:.02em;margin-bottom:8px}
+.f-eq{font-size:18.5px;line-height:1.55}
+.f-note{font-size:14px;color:var(--muted);margin-top:8px}
+
+/* Methods */
+.choose{display:grid;grid-template-columns:1fr 1fr;padding:0;overflow:hidden;margin-bottom:14px}
+.choose>div{padding:16px 18px}
+.choose>div+div{border-left:1px solid var(--line)}
+.choose-h{font-weight:600;color:var(--accent);margin-bottom:4px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
+.steps{margin:0;padding-left:1.3em;display:grid;gap:4px;font-size:15px}
+.method .work{margin-top:12px;background:var(--paper);border-radius:8px;padding:10px 14px}
+.work{display:flex;flex-direction:column;gap:2px}
+.work>span{display:block}
+
+/* Exercises */
+.group{display:flex;align-items:baseline;gap:10px;margin:28px 0 12px;font-size:18px}
+.group:first-of-type{margin-top:0}
+.group-n{font-family:var(--body);font-size:13px;font-weight:500;color:var(--muted)}
+.exgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,255px),1fr));gap:12px}
+.ex{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+  display:flex;flex-direction:column;gap:10px}
+.ex-q{display:flex;gap:10px;align-items:baseline;font-size:17px}
+.ex-n{color:var(--accent);font-weight:700;min-width:1.5em;font-family:var(--body);font-size:15px;flex:none}
+.sol{border-top:1px dashed var(--line);padding-top:10px}
+.ex .work{font-size:15px;color:var(--muted)}
+.ans{margin-top:10px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.ans b{font-family:var(--display);font-size:18px;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:0 10px;border-radius:6px}
+.check{font-size:13.5px;color:var(--muted);margin-top:6px}
+.check .ok{color:var(--accent);font-weight:700}
+.reveal{display:none;align-self:flex-start;font-family:inherit;font-size:13px;font-weight:600;color:var(--accent);
+  background:var(--accent-soft);border:1px dashed var(--accent);border-radius:8px;padding:5px 12px;cursor:pointer}
+.practice .ex:not(.shown) .sol{display:none}
+.practice .ex:not(.shown) .reveal{display:inline-flex}
+
+/* Mistakes */
+.lists{display:grid;grid-template-columns:3fr 2fr;gap:14px;align-items:start}
+.list ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.list li{position:relative;padding-left:24px;font-size:15px}
+.list li::before{position:absolute;left:0;top:0;font-weight:700}
+.bad{background:var(--bad-soft);border-color:transparent;box-shadow:none}
+.bad h3{color:var(--bad)}
+.bad li::before{content:"✗";color:var(--bad)}
+.good h3{color:var(--accent)}
+.good li::before{content:"✓";color:var(--accent)}
+
+@media (max-width:640px){
+  .lists{grid-template-columns:1fr}
+  .choose{grid-template-columns:1fr}
+  .choose>div+div{border-left:0;border-top:1px solid var(--line)}
+}
+@media (max-width:420px){.card:not(.choose){padding:16px}.f{padding:14px 16px}}
+
+
+/* Exam tags: confirmed past-exam appearances */
+.xt{display:inline-block;font-family:var(--body);font-size:11.5px;font-weight:600;color:var(--accent);background:var(--accent-soft);
+  border:1px solid var(--line);border-radius:999px;padding:0 8px;margin-left:6px;white-space:nowrap;line-height:1.75;vertical-align:1px}
+.ftags{margin-top:8px}
+.ftags .xt{margin:4px 6px 0 0}
+.tip .xt{margin-left:6px}
+
+/* Prime table and lists */
+.table-card{padding:16px 6px 6px}
+.pt{width:100%;border-collapse:collapse;font-size:15px}
+.pt th{text-align:left;font-size:12.5px;color:var(--muted);font-weight:600;padding:0 12px 10px;border-bottom:1px solid var(--line)}
+.pt td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.pt tr:last-child td{border-bottom:0}
+.pt td:first-child{white-space:nowrap;color:var(--muted)}
+.pt b{color:var(--accent)}
+.sqlist{font-size:16px;line-height:1.9}
+.nw{white-space:nowrap}
+.frac{align-items:stretch;text-align:center}
+.choose .work{margin-top:10px;background:var(--paper);border-radius:8px;padding:8px 12px;font-size:15px}
+
+/* Past questions */
+.ex-q>span:last-child{font-size:16px}
+.ex-tags{margin-top:-4px}
+.ex-tags .xt{margin:0 6px 0 0}
+.ex-o{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:15px}
+.ex-o li{display:flex;gap:8px;align-items:baseline}
+.ex-o .k{flex:none;width:1.3em;color:var(--muted);font-weight:600}
+.ex-o li.ok{color:var(--accent);font-weight:600}
+.practice .ex:not(.shown) .ex-o li.ok{color:inherit;font-weight:inherit}
+.hint{font-size:13.5px;color:var(--muted);margin-top:8px}
+.hint .nb{color:var(--gold);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="kicker">NTRCA গণিত · নোট</p>
+    <h1>ত্রিকোণমিতি</h1>
+    <p class="lede">শিক্ষক নিবন্ধনের ৩৩টি প্রশ্নপত্রের ২২টিতে ত্রিকোণমিতি থেকে প্রশ্ন এসেছে, সাধারণত ১–২টি; সবচেয়ে বেশি একটি অনুপাত থেকে অন্যটি বের করা। প্রতিটি নিয়মের পাশে সবুজ ট্যাগ মানে সেখান থেকে বিগত শিক্ষক নিবন্ধন বা বিসিএসে প্রশ্ন এসেছে; শেষে সেই প্রশ্নগুলো সমাধানসহ।</p>
+    <p class="meta"><span>অংশ <b>৪</b></span><span>বিগত প্রশ্ন <b>৪৩</b></span><span>বিষয় <b>গণিত</b></span></p>
+  </header>
+
+  <nav class="bar" aria-label="অংশ"><div class="bar-row"><!-- home-link --><style>.home-link{display:inline-flex;align-items:center;gap:6px;padding:5px 14px 5px 11px;border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none;color:var(--accent,#14624A);background:var(--accent-soft,#E4EFE7);border:1px solid var(--accent,#14624A);border-color:color-mix(in srgb,var(--accent,#14624A) 35%,transparent);transition:background .15s,color .15s}.home-link:hover{background:var(--accent,#14624A);color:var(--card,#fff);border-color:var(--accent,#14624A)}.home-link:focus-visible{outline:2px solid var(--accent,#14624A);outline-offset:2px}.home-link svg{width:15px;height:15px;flex:none}.home-sep{width:1px;height:22px;background:var(--line,#D9E3DB);margin-inline:2px}</style><a class="home-link" href="../../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg><span>হোম</span></a><span class="home-sep" aria-hidden="true"></span><!-- /home-link -->
+      <div class="bar-scroll">
+        <a class="chip" href="#ratio">অনুপাত</a>
+        <a class="chip" href="#special">বিশেষ কোণ</a>
+        <a class="chip" href="#height">উচ্চতা ও দূরত্ব</a>
+        <a class="chip" href="#measure">কোণের পরিমাপ</a>
+        <a class="chip" href="#practice">বিগত প্রশ্ন <span class="chip-n">৪৩</span></a>
+        <a class="chip" href="#mistakes">ভুল</a>
+      </div>
+      <button class="mode" id="mode" type="button" aria-pressed="false">অনুশীলন মোড</button>
+    </div></nav>
+
+  <section class="sec" id="ratio">
+    <header class="sec-head"><p class="eyebrow">অংশ ১</p><h2>অনুপাত ও অভেদ</h2>
+      <p class="sec-sub">ছয়টি অনুপাত, তিনটি অভেদ — আর একটি অনুপাত থেকে বাকিগুলো।</p></header>
+    <div class="card hero">
+      <p class="hero-f m">sinθ = <span class="frac"><span>লম্ব</span><span>অতিভুজ</span></span> &nbsp;·&nbsp; cosθ = <span class="frac"><span>ভূমি</span><span>অতিভুজ</span></span> &nbsp;·&nbsp; tanθ = <span class="frac"><span>লম্ব</span><span>ভূমি</span></span></p>
+      <p class="hero-ex">বাকি তিনটি এদের উল্টো: cosec = 1/sin, sec = 1/cos, cot = 1/tan।</p>
+    </div><div class="fgrid" style="margin-top:14px"><div class="card f"><p class="f-tag">উল্টো অনুপাত</p><p class="f-eq m">tanθ = 1/cotθ</p><p class="f-note">tanθ = sinθ/cosθ — cosθ/sinθ নয়</p><p class="ftags"><span class="xt">৮ম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">তিনটি অভেদ</p><p class="f-eq m">sin<sup>2</sup>θ + cos<sup>2</sup>θ = 1</p><p class="f-note">sec²θ − tan²θ = 1 · cosec²θ − cot²θ = 1 · 1 + tan²θ = 4 → secθ = 2 → 60° · cotθ√(1 − cos²θ) = cotθ sinθ = cosθ</p><p class="ftags"><span class="xt">৯ম নিবন্ধন</span><span class="xt">১০ম নিবন্ধন</span><span class="xt">১২তম নিবন্ধন</span><span class="xt">৪৫তম বিসিএস</span></p></div><div class="card f"><p class="f-tag">মানের সীমা</p><p class="f-eq m">−1 ≤ sinθ ≤ 1</p><p class="f-note">sinθ-এর সর্বনিম্ন মান −1 · সূক্ষ্মকোণে sinθ + cosθ > 1</p><p class="ftags"><span class="xt">৭ম নিবন্ধন</span><span class="xt">১১তম নিবন্ধন</span></p></div></div><div class="mgrid" style="margin-top:14px"><article class="card method"><h3>একটি অনুপাত থেকে অন্যগুলো</h3><ol class="steps"><li>অনুপাতটিকে সমকোণী ত্রিভুজের দুই বাহু ধরো।</li><li>পিথাগোরাস দিয়ে তৃতীয় বাহু বের করো, তারপর যেটি চাওয়া হয়েছে লেখো।</li></ol><p class="work m"><span>sinθ = 5/13 → লম্ব 5, অতিভুজ 13 → ভূমি 12 → tanθ = 5/12, cosecθ = 13/5</span><span>tanθ = 3/4 → অতিভুজ 5 → sinθ = 3/5, cosecθ = 5/3</span><span>sinθ = 4/5 → ভূমি 3 → tanθ = 4/3, secθ = 5/3</span><span>tanθ = 5/12 → secθ = 13/12 · 3 cot A = 4 → sin A = 3/5</span><span>secθ = 2 → লম্ব √3 → cotθ = 1/√3 · tanθ = √3 → cosθ = 1/2</span><span>tanθ = a/b → অতিভুজ √(a² + b²) → cosecθ = √(a² + b²)/a</span></p><p class="note">চিহ্ন: 90°–180°-এর মধ্যে শুধু sin আর cosec ধনাত্মক — তাই tanθ = −5/12 হলেও cosecθ = 13/5।</p><p class="ftags"><span class="xt">৭ম নিবন্ধন</span><span class="xt">৮ম নিবন্ধন</span><span class="xt">৯ম নিবন্ধন</span><span class="xt">১১তম নিবন্ধন</span><span class="xt">১৪তম নিবন্ধন</span><span class="xt">১৫তম নিবন্ধন</span><span class="xt">১৬তম নিবন্ধন</span><span class="xt">১৮তম নিবন্ধন</span></p></article><article class="card method"><h3>secθ + tanθ দিলে</h3><ol class="steps"><li>sec²θ − tan²θ = 1 → (secθ + tanθ)(secθ − tanθ) = 1</li><li>তাই secθ − tanθ = 1 ÷ (secθ + tanθ)</li></ol><p class="work m"><span>5/2 → 2/5</span><span>7/5 → 5/7</span></p><p class="note">এই প্রশ্ন শিক্ষক নিবন্ধন আর বিসিএস দুটোতেই এসেছে।</p><p class="ftags"><span class="xt">৮ম নিবন্ধন</span><span class="xt">১৫তম নিবন্ধন</span><span class="xt">৪২তম বিসিএস</span></p></article><article class="card method"><h3>(sinθ + cosθ)/(sinθ − cosθ) = k</h3><ol class="steps"><li>লব-হরকে cosθ দিয়ে ভাগ করো: (tanθ + 1)/(tanθ − 1) = k</li></ol><p class="work m"><span>(t + 1)/(t − 1) = 7 → t = 4/3</span><span>sec²θ = 1 + 16/9 = 25/9 → secθ = ±5/3</span></p><p class="ftags"><span class="xt">১৬তম নিবন্ধন</span></p></article></div>
+  </section>
+
+  <section class="sec" id="special">
+    <header class="sec-head"><p class="eyebrow">অংশ ২</p><h2>বিশেষ কোণ ও পূরক কোণ</h2>
+      <p class="sec-sub">0°, 30°, 45°, 60°, 90°-এর মান মুখস্থ রাখলে অর্ধেক প্রশ্ন সেকেন্ডে হয়।</p></header>
+    <div class="card hero">
+      <p class="hero-f m">sin 0°, 30°, 45°, 60°, 90° = √0/2, √1/2, √2/2, √3/2, √4/2</p>
+      <p class="hero-ex">অর্থাৎ 0, ½, 1/√2, √3/2, 1। cos একই মানগুলো উল্টো ক্রমে; tan = sin ÷ cos।</p>
+    </div><div class="fgrid" style="margin-top:14px"><div class="card f"><p class="f-tag">cos ও tan-এর মান</p><p class="f-eq m">tan: 0, 1/√3, 1, √3, ∞</p><p class="f-note">A = 45° → cos 2A = cos 90° = 0 · tan A = 1 → 45° · tan 90° সংজ্ঞায়িত নয়, প্রচলিত উত্তর ∞</p><p class="ftags"><span class="xt">৮ম নিবন্ধন</span><span class="xt">১২তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">sec থেকে কোণ</p><p class="f-eq m">secθ = 2 → cosθ = ½</p><p class="f-note">→ θ = 60°</p><p class="ftags"><span class="xt">৭ম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">পূরক কোণ</p><p class="f-eq m">sin(90° − θ) = cosθ</p><p class="f-note">sin 69° = cos 21° → sin²21° + sin²69° = 1 · cosec(90° − θ) = secθ = 2 → cosθ = ½</p><p class="ftags"><span class="xt">৭ম নিবন্ধন</span><span class="xt">৮ম নিবন্ধন</span><span class="xt">১০ম নিবন্ধন</span><span class="xt">১৬তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">ঋণাত্মক কোণ</p><p class="f-eq m">sin(−θ) = −sinθ</p><p class="f-note">কিন্তু cos(−θ) = cosθ</p><p class="ftags"><span class="xt">৯ম নিবন্ধন</span></p></div></div><div class="mgrid" style="margin-top:14px"><article class="card method"><h3>সমীকরণে sin² আর cos একসঙ্গে</h3><ol class="steps"><li>sin²θ = 1 − cos²θ বসিয়ে cosθ-এর দ্বিঘাত সমীকরণ বানাও।</li></ol><p class="work m"><span>2(1 − cos²θ) + 3cosθ − 3 = 0 → 2cos²θ − 3cosθ + 1 = 0</span><span>cosθ = 1 বা ½ → সূক্ষ্মকোণ θ = 60°</span></p><p class="ftags"><span class="xt">১৭তম নিবন্ধন</span></p></article></div>
+  </section>
+
+  <section class="sec" id="height">
+    <header class="sec-head"><p class="eyebrow">অংশ ৩</p><h2>উচ্চতা ও দূরত্ব</h2>
+      <p class="sec-sub">মই, গাছ, মিনার, ছায়া — সবই একটি সমকোণী ত্রিভুজ।</p></header>
+    <div class="card hero">
+      <p class="hero-f m">উচ্চতা = ভূমির দূরত্ব × tan(উন্নতি কোণ)</p>
+      <p class="hero-ex">উচ্চতা আর ভূমির দূরত্ব হলে tan; মই, দড়ি বা ভাঙা অংশ (অতিভুজ) থাকলে sin। √3 ≈ 1.732।</p>
+    </div><div class="fgrid" style="margin-top:14px"><div class="card f"><p class="f-tag">উন্নতি কোণ</p><p class="f-eq m">tanθ = উচ্চতা ÷ দূরত্ব</p><p class="f-note">10 মি. দূরে 60° → 10√3 = 17.32 · ছায়া 240, 60° → 240√3 = 415.69 · 45° হলে ছায়া = উচ্চতা = 20 · ছায়া উচ্চতার √3 গুণ → tanθ = 1/√3 → 30°</p><p class="ftags"><span class="xt">১০ম নিবন্ধন</span><span class="xt">১১তম নিবন্ধন</span><span class="xt">১৭তম নিবন্ধন</span><span class="xt">১৮তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">অবনতি কোণ</p><p class="f-eq m">= নিচ থেকে উন্নতি কোণ</p><p class="f-note">নদী 10 মি. চওড়া, টাওয়ার 10√3 → tan = √3 → 60°</p><p class="ftags"><span class="xt">১০ম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">মই</p><p class="f-eq m">উচ্চতা = মই × sinθ</p><p class="f-note">18 মি. মই, 30° → 18 × ½ = 9 মি.</p><p class="ftags"><span class="xt">৭ম নিবন্ধন</span><span class="xt">১২তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">ভাঙা খুঁটি বা গাছ</p><p class="f-eq m">দাঁড়ানো অংশ = ভাঙা অংশ × sinθ</p><p class="f-note">ভাঙা অংশ 16, 30° → 8 মি. · মোট 18 ফুট, 30°: ভাঙা অংশ = 2x → x + 2x = 18 → 6 ফুট উঁচুতে ভেঙেছে</p><p class="ftags"><span class="xt">৮ম নিবন্ধন</span><span class="xt">১৩তম নিবন্ধন</span></p></div></div>
+  </section>
+
+  <section class="sec" id="measure">
+    <header class="sec-head"><p class="eyebrow">অংশ ৪</p><h2>কোণের পরিমাপ</h2>
+      <p class="sec-sub">কোণের ধরন, চাকার ঘূর্ণন আর ঘড়ির কাঁটা।</p></header>
+    <div class="fgrid"><div class="card f"><p class="f-tag">কোণের ধরন</p><p class="f-eq m">প্রবৃদ্ধ কোণ: 180° থেকে 360°</p><p class="f-note">253° → প্রবৃদ্ধ কোণ</p><p class="ftags"><span class="xt">১৫তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">চাকার ঘূর্ণন</p><p class="f-eq m">এক পাক = 360°</p><p class="f-note">মিনিটে 12 পাক → 5 সেকেন্ডে 1 পাক = 360° · মিনিটে 10 পাক → 5 সেকেন্ডে 5/6 পাক = 300°</p><p class="ftags"><span class="xt">৯ম নিবন্ধন</span><span class="xt">১৮তম নিবন্ধন</span></p></div><div class="card f"><p class="f-tag">ঘড়ির কাঁটা</p><p class="f-eq m">|30 × ঘণ্টা − 5.5 × মিনিট|</p><p class="f-note">2:30 → |60 − 165| = 105°</p><p class="ftags"><span class="xt">১১তম নিবন্ধন</span></p></div></div>
+  </section>
+
+  <section class="sec" id="practice">
+    <header class="sec-head"><p class="eyebrow">অংশ ৫</p><h2>বিগত পরীক্ষার প্রশ্ন</h2>
+      <p class="sec-sub">সবগুলোই আসল প্রশ্ন, সাইটের বিগত প্রশ্নপত্র থেকে — সমাধান সেখানকার মতোই। একই প্রশ্ন একাধিক পরীক্ষায় এলে একটি কার্ডে সব ট্যাগ। উপরের “অনুশীলন মোড” চালু করলে সমাধান লুকিয়ে যাবে।</p></header>
+    <h3 class="group">অনুপাত ও অভেদ <span class="group-n">১–৭</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">১</span><span>নিচের কোনটি সঠিক?</span></p><p class="ex-tags"><span class="xt">৮ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>tanθ = 1/cosθ</li><li><span class="k">খ</span>tanθ = cotθ</li><li class="ok"><span class="k">গ</span>tanθ = 1/cotθ</li><li><span class="k">ঘ</span>tanθ = cosθ/sinθ</li></ol><div class="sol"><p class="work"><span>tanθ = sinθ/cosθ, cotθ = cosθ/sinθ</span><span>তাই tanθ = 1/cotθ</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২</span><span>নিচের কোনটি সঠিক?</span></p><p class="ex-tags"><span class="xt">৯ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>sec²θ = 1 + tan²θ</li><li><span class="k">খ</span>sec²θ = 1 – tan²θ</li><li><span class="k">গ</span>tanθ = cosθ/sinθ</li><li><span class="k">ঘ</span>sin²θ – cos²θ = 1</li></ol><div class="sol"><p class="work"><span>sin²θ + cos²θ = 1-কে cos²θ দিয়ে ভাগ করলে tan²θ + 1 = sec²θ</span><span>তাই sec²θ = 1 + tan²θ</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩</span><span>ত্রিকোণমিতিক অনুপাতে কোন সম্পর্কটি ব্যবহার করা হয়?</span></p><p class="ex-tags"><span class="xt">১০ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>sinθ = 1 + cos²θ</li><li class="ok"><span class="k">খ</span>sin²θ = 1 – cos²θ</li><li><span class="k">গ</span>sin²θ – cos²θ = 1</li><li><span class="k">ঘ</span>sinθ = 1/cosθ</li></ol><div class="sol"><p class="work"><span>মৌলিক অভেদ: sin²θ + cos²θ = 1</span><span>তাই sin²θ = 1 − cos²θ</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪</span><span>নিচের কোন সম্পর্কটি সঠিক?</span></p><p class="ex-tags"><span class="xt">৭ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>sin²A + cos²B = 1</li><li class="ok"><span class="k">খ</span>sinθ + cosθ > 1</li><li><span class="k">গ</span>tan²θ – sec²θ = 1</li><li><span class="k">ঘ</span>sinθ + cosθ < 1</li></ol><div class="sol"><p class="work"><span>সূক্ষ্মকোণ θ-র জন্য sinθ + cosθ = √2 sin(θ + 45°)</span><span>45° < θ + 45° < 135° ⇒ sin(θ + 45°) > 1/√2</span><span>তাই sinθ + cosθ > 1</span><span>(sin²A + cos²A = 1 সত্য, ভিন্ন কোণ A, B হলে নয়; sec²θ – tan²θ = 1, উল্টোটা নয়)</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫</span><span>cotθ √(1 – cos²θ) = ?</span></p><p class="ex-tags"><span class="xt">১২তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>sinθ</li><li class="ok"><span class="k">খ</span>cosθ</li><li><span class="k">গ</span>tanθ</li><li><span class="k">ঘ</span>cotθ</li></ol><div class="sol"><p class="work"><span>1 − cos²θ = sin²θ ⇒ √(1 − cos²θ) = sinθ</span><span>cotθ × sinθ = (cosθ/sinθ) × sinθ = cosθ</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৬</span><span>যদি 1 + tan²θ = 4 এবং θ &lt; 90° হয়, θ = ?</span></p><p class="ex-tags"><span class="xt">৪৫তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>30°</li><li><span class="k">খ</span>45°</li><li class="ok"><span class="k">গ</span>60°</li><li><span class="k">ঘ</span>0°</li></ol><div class="sol"><p class="work"><span>tan²θ = 3 ⇒ tanθ = √3</span><span>θ = 60°</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৭</span><span>sinθ এর সর্বনিম্ন মান কত?</span></p><p class="ex-tags"><span class="xt">১১তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>0</li><li><span class="k">খ</span>– 2</li><li><span class="k">গ</span>1</li><li class="ok"><span class="k">ঘ</span>– 1</li></ol><div class="sol"><p class="work"><span>sinθ-এর মান সবসময় −1 থেকে 1-এর মধ্যে থাকে</span><span>সর্বনিম্ন মান −1 (θ = 270°-এ)</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article></div>
+    <h3 class="group">একটি অনুপাত থেকে অন্যটি <span class="group-n">৮–২২</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">৮</span><span>sinθ = 5/13 হলে, tanθ-এর মান কত?</span></p><p class="ex-tags"><span class="xt">৭ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>3/4</li><li class="ok"><span class="k">খ</span>5/12</li><li><span class="k">গ</span>12/13</li><li><span class="k">ঘ</span>5/13</li></ol><div class="sol"><p class="work"><span>cosθ = √(1 – 25/169) = 12/13</span><span>tanθ = sinθ/cosθ = 5/12</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৯</span><span>sinθ = 5/13 হলে, cosecθ = কত?</span></p><p class="ex-tags"><span class="xt">৯ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>5/12</li><li><span class="k">খ</span>12/5</li><li class="ok"><span class="k">গ</span>13/5</li><li><span class="k">ঘ</span>5/13</li></ol><div class="sol"><p class="work"><span>cosecθ = 1/sinθ</span><span>= 13/5</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১০</span><span>sinθ = 4/5 হলে, tanθ = কত?</span></p><p class="ex-tags"><span class="xt">১১তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>4/3</li><li><span class="k">খ</span>3/4</li><li><span class="k">গ</span>3/5</li><li><span class="k">ঘ</span>5/4</li></ol><div class="sol"><p class="work"><span>sinθ = 4/5 = লম্ব/অতিভুজ; ভূমি = √(25 − 16) = 3</span><span>tanθ = লম্ব/ভূমি = 4/3</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১১</span><span>sinθ = 4/5 হলে, secθ এর মান কোনটি?</span></p><p class="ex-tags"><span class="xt">১৪তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>5/4</li><li><span class="k">খ</span>4/9</li><li><span class="k">গ</span>3/5</li><li class="ok"><span class="k">ঘ</span>5/3</li></ol><div class="sol"><p class="work"><span>sinθ = 4/5 = লম্ব/অতিভুজ; ভূমি = √(5² − 4²) = 3</span><span>cosθ = ভূমি/অতিভুজ = 3/5</span><span>secθ = 1/cosθ = 5/3</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১২</span><span>tanθ = 5/12 হলে, secθ = কত?</span></p><p class="ex-tags"><span class="xt">৭ম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>5/13</li><li><span class="k">খ</span>13/5</li><li><span class="k">গ</span>12/13</li><li class="ok"><span class="k">ঘ</span>13/12</li></ol><div class="sol"><p class="work"><span>tanθ = 5/12 = লম্ব/ভূমি; অতিভুজ = √(25 + 144) = 13</span><span>cosθ = 12/13 ⇒ secθ = 13/12</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৩</span><span>tanθ = ¾ হলে, cosecθ এর মান কত?</span></p><p class="ex-tags"><span class="xt">৮ম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>3/4</li><li class="ok"><span class="k">খ</span>5/3</li><li><span class="k">গ</span>4/3</li><li><span class="k">ঘ</span>5/4</li></ol><div class="sol"><p class="work"><span>tanθ = 3/4 = লম্ব/ভূমি; অতিভুজ = 5</span><span>sinθ = 3/5 ⇒ cosecθ = 5/3</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৪</span><span>tanθ = ¾ হলে, sinθ এর মান কত?</span></p><p class="ex-tags"><span class="xt">৯ম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>5/3</li><li class="ok"><span class="k">খ</span>3/5</li><li><span class="k">গ</span>4/3</li><li><span class="k">ঘ</span>5/4</li></ol><div class="sol"><p class="work"><span>tanθ = 3/4 = লম্ব/ভূমি; অতিভুজ = √(9 + 16) = 5</span><span>sinθ = লম্ব/অতিভুজ = 3/5</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৫</span><span>tanθ = √3 হলে, cosθ = কত?</span></p><p class="ex-tags"><span class="xt">১৪তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>√3/2</li><li><span class="k">খ</span>1/√2</li><li class="ok"><span class="k">গ</span>1/2</li><li><span class="k">ঘ</span>1</li></ol><div class="sol"><p class="work"><span>tanθ = √3 = tan60° ⇒ θ = 60°</span><span>cosθ = cos60° = 1/2</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৬</span><span>3 cot A = 4 হলে sin A এর মান কত?</span></p><p class="ex-tags"><span class="xt">১৬তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>4/5</li><li class="ok"><span class="k">খ</span>3/5</li><li><span class="k">গ</span>3/4</li><li><span class="k">ঘ</span>4/3</li></ol><div class="sol"><p class="work"><span>cot A = 4/3 ⇒ ভূমি 4, লম্ব 3, অতিভুজ = √(4² + 3²) = 5</span><span>sin A = লম্ব ÷ অতিভুজ = 3/5</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৭</span><span>tan θ = a/b হলে নিচের কোনটি সঠিক?</span></p><p class="ex-tags"><span class="xt">১৬তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>sin θ = b/(a² + b²)</li><li><span class="k">খ</span>cos θ = a/√(a² + b²)</li><li><span class="k">গ</span>sec θ = √(a² + b²)/a</li><li class="ok"><span class="k">ঘ</span>cosec θ = √(a² + b²)/a</li></ol><div class="sol"><p class="work"><span>tanθ = a/b ⇒ লম্ব a, ভূমি b, অতিভুজ √(a² + b²)</span><span>sinθ = a/√(a² + b²) ⇒ cosecθ = √(a² + b²)/a</span><span>(cosθ = b/√(a² + b²), secθ = √(a² + b²)/b — তাই অন্য অপশনগুলো ভুল)</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৮</span><span>secθ = 2 হলে, cotθ এর মান-</span></p><p class="ex-tags"><span class="xt">১৮তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>1/√5</li><li class="ok"><span class="k">খ</span>1/√3</li><li><span class="k">গ</span>√3</li><li><span class="k">ঘ</span>√5</li></ol><div class="sol"><p class="work"><span>secθ = 2 ⇒ cosθ = 1/2 ⇒ θ = 60°</span><span>cotθ = cot 60° = 1/√3</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৯</span><span>tanθ = −5/12, π/2 &lt; θ &lt; π হলে cosecθ এর মান-</span></p><p class="ex-tags"><span class="xt">১৫তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>−5/13</li><li><span class="k">খ</span>−13/5</li><li><span class="k">গ</span>5/13</li><li class="ok"><span class="k">ঘ</span>13/5</li></ol><div class="sol"><p class="work"><span>tanθ = −5/12 ⇒ লম্ব 5, ভূমি 12, অতিভুজ 13</span><span>θ দ্বিতীয় চতুর্ভাগে (π/2 থেকে π), সেখানে sin ধনাত্মক ⇒ sinθ = 5/13</span><span>cosecθ = 13/5</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২০</span><span>secθ + tanθ = 5/2 হলে, secθ – tanθ এর মান কত?</span></p><p class="ex-tags"><span class="xt">৮ম নিবন্ধন · স্কুল</span><span class="xt">৪২তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>9/4</li><li class="ok"><span class="k">খ</span>2/5</li><li><span class="k">গ</span>3</li><li><span class="k">ঘ</span>25/4</li></ol><div class="sol"><p class="work"><span>sec²θ – tan²θ = 1 ⇒ (secθ + tanθ)(secθ – tanθ) = 1</span><span>secθ – tanθ = 1 ÷ (5/2) = 2/5</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২১</span><span>(secθ + tanθ) = 7/5 হলে (secθ − tanθ) এর মান কত?</span></p><p class="ex-tags"><span class="xt">১৫তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>5/7</li><li><span class="k">খ</span>3/7</li><li><span class="k">গ</span>3/5</li><li><span class="k">ঘ</span>1/5</li></ol><div class="sol"><p class="work"><span>sec²θ − tan²θ = 1 ⇒ (secθ + tanθ)(secθ − tanθ) = 1</span><span>secθ − tanθ = 1 ÷ (7/5) = 5/7</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২২</span><span>(sin θ + cos θ)/(sin θ − cos θ) = 7 হলে sec θ এর মান কত?</span></p><p class="ex-tags"><span class="xt">১৬তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>5/3</li><li class="ok"><span class="k">খ</span>±5/3</li><li><span class="k">গ</span>−5/3</li><li><span class="k">ঘ</span>3/5</li></ol><div class="sol"><p class="work"><span>sinθ + cosθ = 7sinθ − 7cosθ ⇒ 8cosθ = 6sinθ ⇒ tanθ = 4/3</span><span>sec²θ = 1 + tan²θ = 1 + 16/9 = 25/9</span><span>secθ = ±5/3</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article></div>
+    <h3 class="group">বিশেষ ও পূরক কোণ <span class="group-n">২৩–৩১</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">২৩</span><span>secθ = 2 হলে, θ- এর মান কত?</span></p><p class="ex-tags"><span class="xt">৭ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>0°</li><li><span class="k">খ</span>30°</li><li><span class="k">গ</span>45°</li><li class="ok"><span class="k">ঘ</span>60°</li></ol><div class="sol"><p class="work"><span>secθ = 2 ⇒ cosθ = 1/2</span><span>θ = 60°</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৪</span><span>tan A = 1 হলে, A - এর মান কত ডিগ্রি?</span></p><p class="ex-tags"><span class="xt">৮ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>45°</li><li><span class="k">খ</span>30°</li><li><span class="k">গ</span>60°</li><li><span class="k">ঘ</span>70°</li></ol><div class="sol"><p class="work"><span>tan45° = 1</span><span>A = 45°</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৫</span><span>যদি A = 45° হয়, তবে cos 2A - এর মান কত?</span></p><p class="ex-tags"><span class="xt">৮ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>1</li><li><span class="k">খ</span>1/√2</li><li class="ok"><span class="k">গ</span>0</li><li><span class="k">ঘ</span>1/2</li></ol><div class="sol"><p class="work"><span>2A = 2 × 45° = 90°</span><span>cos 90° = 0</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৬</span><span>tan 90° এর মান কত?</span></p><p class="ex-tags"><span class="xt">১২তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>∞</li><li><span class="k">খ</span>– ∞</li><li><span class="k">গ</span>1</li><li><span class="k">ঘ</span>– 1</li></ol><div class="sol"><p class="work"><span>tanθ = sinθ/cosθ; θ = 90°-এ cos90° = 0</span><span>শূন্য দিয়ে ভাগ সংজ্ঞায়িত নয় — প্রচলিতভাবে লেখা হয় tan 90° = ∞</span></p><p class="ans">উত্তর <b>ক</b></p><p class="hint"><span class="nb">নোট:</span> কঠোরভাবে tan 90° সংজ্ঞায়িত নয়; প্রচলিত উত্তর ∞।</p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৭</span><span>cosec (90° – θ) = 2 হলে, cosθ = কত?</span></p><p class="ex-tags"><span class="xt">১০ম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>2</li><li><span class="k">খ</span>√3/2</li><li class="ok"><span class="k">গ</span>1/2</li><li><span class="k">ঘ</span>1/√2</li></ol><div class="sol"><p class="work"><span>cosec(90° − θ) = secθ = 2</span><span>cosθ = 1/secθ = 1/2</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৮</span><span>2sin²θ + 3cosθ − 3 = 0 হলে θ এর মান কত? (θ সূক্ষ্মকোণ)</span></p><p class="ex-tags"><span class="xt">১৭তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>60°</li><li><span class="k">খ</span>0°</li><li><span class="k">গ</span>30°</li><li><span class="k">ঘ</span>45°</li></ol><div class="sol"><p class="work"><span>sin²θ = 1 − cos²θ বসিয়ে: 2 − 2cos²θ + 3cosθ − 3 = 0</span><span>2cos²θ − 3cosθ + 1 = 0 ⇒ (2cosθ − 1)(cosθ − 1) = 0</span><span>cosθ = 1/2 ⇒ θ = 60° (cosθ = 1 দিলে θ = 0°, যা সূক্ষ্মকোণ নয়)</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৯</span><span>sin²21° + sin²69° এর মান কত?</span></p><p class="ex-tags"><span class="xt">৭ম নিবন্ধন · স্কুল</span><span class="xt">৮ম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>1</li><li><span class="k">খ</span>–1</li><li><span class="k">গ</span>1/2</li><li><span class="k">ঘ</span>1/√2</li></ol><div class="sol"><p class="work"><span>sin69° = sin(90° – 21°) = cos21°</span><span>sin²21° + cos²21° = 1</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩০</span><span>sin(90° − θ) = ?</span></p><p class="ex-tags"><span class="xt">১৬তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>sin θ</li><li><span class="k">খ</span>− sin θ</li><li class="ok"><span class="k">গ</span>cos θ</li><li><span class="k">ঘ</span>− cos θ</li></ol><div class="sol"><p class="work"><span>90° − θ কোণটি θ-এর পূরক কোণ</span><span>পূরক কোণের sin = মূল কোণের cos ⇒ sin(90° − θ) = cos θ</span></p><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩১</span><span>sin(–θ) কত?</span></p><p class="ex-tags"><span class="xt">৯ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>–sinθ</li><li><span class="k">খ</span>sinθ</li><li><span class="k">গ</span>±sinθ</li><li><span class="k">ঘ</span>কোনোটিই নয়</li></ol><div class="sol"><p class="work"><span>sin বিজোড় ফাংশন: sin(−θ) = −sinθ</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article></div>
+    <h3 class="group">উচ্চতা ও দূরত্ব <span class="group-n">৩২–৩৯</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">৩২</span><span>18 মিটার দীর্ঘ একটি মই ভূমির সাথে 30° কোণ উৎপন্ন করে দেওয়ালের ছাদ স্পর্শ করে। দেওয়ালটির উচ্চতা কত?</span></p><p class="ex-tags"><span class="xt">৭ম নিবন্ধন · স্কুল</span><span class="xt">১২তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>6 মিটার</li><li class="ok"><span class="k">খ</span>9 মিটার</li><li><span class="k">গ</span>12 মিটার</li><li><span class="k">ঘ</span>6√3 মিটার</li></ol><div class="sol"><p class="work"><span>মই অতিভুজ, দেওয়াল লম্ব</span><span>উচ্চতা = 18 × sin30° = 18 × ½ = 9 মিটার</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৩</span><span>একটি খুঁটি ভেঙে গিয়ে ভূমির সাথে 30° কোণ উৎপন্ন করে। ভাঙা অংশের দৈর্ঘ্য 16 মিটার হলে দণ্ডায়মান অংশের দৈর্ঘ্য কত মিটার?</span></p><p class="ex-tags"><span class="xt">৮ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>8 মিটার</li><li><span class="k">খ</span>8√3 মিটার</li><li><span class="k">গ</span>16√3 মিটার</li><li><span class="k">ঘ</span>16 মিটার</li></ol><div class="sol"><p class="work"><span>ভাঙা অংশ (16 মি.) ভূমির সঙ্গে 30° কোণে হেলে আছে — এটি অতিভুজ</span><span>দাঁড়ানো অংশ = 16 × sin30°</span><span>= 16 × ½ = 8 মিটার</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৪</span><span>১৮ ফুট উঁচু একটি গাছ এমনভাবে ভেঙ্গে গেল যে, ভাঙ্গা অংশটি বিচ্ছিন্ন না হয়ে ভূমির সাথে ৩০°কোণ উৎপন্ন করল। গাছটি মাটি থেকে কত উঁচুতে ভেঙ্গেছিল?</span></p><p class="ex-tags"><span class="xt">১৩তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>১৫ ফুট</li><li><span class="k">খ</span>১২ ফুট</li><li><span class="k">গ</span>৯ ফুট</li><li class="ok"><span class="k">ঘ</span>৬ ফুট</li></ol><div class="sol"><p class="work"><span>গাছটি x ফুট উচ্চতায় ভাঙলে ভাঙা অংশ (১৮ − x) ফুট — এটি অতিভুজ</span><span>sin৩০° = x/(১৮ − x) = ১/২ ⇒ ২x = ১৮ − x</span><span>৩x = ১৮ ⇒ x = ৬ ফুট</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৫</span><span>10 মিটার প্রস্থবিশিষ্ট নদীর তীরে অবস্থিত একটি টাওয়ারের উচ্চতা 10√3 মিটার হলে, অপর তীরে টাওয়ারের অবনতি কোণ কত ডিগ্রি?</span></p><p class="ex-tags"><span class="xt">১০ম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>90°</li><li class="ok"><span class="k">খ</span>60°</li><li><span class="k">গ</span>45°</li><li><span class="k">ঘ</span>30°</li></ol><div class="sol"><p class="work"><span>অবনতি কোণ θ হলে tanθ = উচ্চতা ÷ নদীর প্রস্থ</span><span>= 10√3 ÷ 10 = √3</span><span>θ = 60°</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৬</span><span>একটি তালগাছ এর পাদবিন্দু হতে ১০ মিটার দূরবর্তী স্থানে গাছের শীর্ষের উন্নতি কোণ ৬০° হলে, গাছটির উচ্চতা কত?</span></p><p class="ex-tags"><span class="xt">১০ম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>১৭.৩২ মি.</li><li><span class="k">খ</span>১৭.৭২ মি.</li><li><span class="k">গ</span>১৬.৬৫ মি.</li><li><span class="k">ঘ</span>১৭.৭৫ মি.</li></ol><div class="sol"><p class="work"><span>উচ্চতা = দূরত্ব × tan৬০°</span><span>= ১০ × √৩ ≈ ১০ × ১.৭৩২ = ১৭.৩২ মিটার</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৭</span><span>সূর্যের উন্নতি কোণ 60° হলে একটি মিনারের ছায়ার দৈর্ঘ্য 240 মিটার হয়। মিনারটির উচ্চতা কত?</span></p><p class="ex-tags"><span class="xt">১১তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>415.69 মি.</li><li><span class="k">খ</span>417 মি.</li><li><span class="k">গ</span>315.69 মি.</li><li><span class="k">ঘ</span>315 মি.</li></ol><div class="sol"><p class="work"><span>উচ্চতা = ছায়া × tan60°</span><span>= 240 × √3 ≈ 240 × 1.732 = 415.69 মি.</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৮</span><span>একটি খুঁটির দৈর্ঘ্য 20 মিটার। এর ছায়ার দৈর্ঘ্য কত মিটার হলে উন্নতি কোণ 45° হবে?</span></p><p class="ex-tags"><span class="xt">১৭তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>20 মি.</li><li><span class="k">খ</span>25 মি.</li><li><span class="k">গ</span>30 মি.</li><li><span class="k">ঘ</span>40 মি.</li></ol><div class="sol"><p class="work"><span>tan 45° = উচ্চতা ÷ ছায়া = 1</span><span>ছায়া = উচ্চতা = 20 মিটার</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৯</span><span>একটি খুঁটির ছায়ার দৈর্ঘ্য তার উচ্চতার √3 গুণ হলে, সূর্যের উন্নতি কোণ-</span></p><p class="ex-tags"><span class="xt">১৮তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>30°</li><li><span class="k">খ</span>45°</li><li><span class="k">গ</span>60°</li><li><span class="k">ঘ</span>90°</li></ol><div class="sol"><p class="work"><span>উচ্চতা h হলে ছায়া √3h ⇒ tanθ = h ÷ √3h = 1/√3</span><span>θ = 30°</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article></div>
+    <h3 class="group">কোণের পরিমাপ <span class="group-n">৪০–৪৩</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">৪০</span><span>২৫৩° কোণকে কি কোণ বলে?</span></p><p class="ex-tags"><span class="xt">১৫তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>সূক্ষ্মকোণ</li><li><span class="k">খ</span>স্থূলকোণ</li><li><span class="k">গ</span>পূরককোণ</li><li class="ok"><span class="k">ঘ</span>প্রবৃদ্ধ কোণ</li></ol><div class="sol"><p class="work"><span>১৮০°-এর বেশি কিন্তু ৩৬০°-এর কম কোণকে প্রবৃদ্ধ কোণ বলে</span><span>২৫৩° প্রবৃদ্ধ কোণ</span></p><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪১</span><span>একটি গাড়ির চাকা প্রতি মিনিটে ১২ বার ঘোরে। চাকাটি পাঁচ সেকেন্ডে কত ডিগ্রি ঘোরে?</span></p><p class="ex-tags"><span class="xt">৯ম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>৩৬০°</li><li><span class="k">খ</span>৩০০°</li><li><span class="k">গ</span>১৮০°</li><li><span class="k">ঘ</span>৩০°</li></ol><div class="sol"><p class="work"><span>প্রতি মিনিটে ১২ বার ⇒ প্রতি ৫ সেকেন্ডে ১ বার</span><span>এক পূর্ণ ঘূর্ণন = ৩৬০°</span></p><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪২</span><span>একটি গাড়ির চাকা প্রতি মিনিটে 10 বার ঘুরে। চাকাটি 5 সেকেন্ডে কত ডিগ্রী ঘুরে?</span></p><p class="ex-tags"><span class="xt">১৮তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>50</li><li class="ok"><span class="k">খ</span>300</li><li><span class="k">গ</span>360</li><li><span class="k">ঘ</span>3000</li></ol><div class="sol"><p class="work"><span>1 মিনিটে 10 পাক ⇒ 5 সেকেন্ডে 10 × 5/60 = 5/6 পাক</span><span>1 পাক = 360° ⇒ 5/6 × 360° = 300°</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪৩</span><span>বেলা ২.৩০ ঘটিকার সময় ঘড়িতে ঘন্টা ও মিনিটের কাঁটা পরস্পর কত ডিগ্রি কোণ উৎপন্ন করবে?</span></p><p class="ex-tags"><span class="xt">১১তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>৯০°</li><li class="ok"><span class="k">খ</span>১০৫°</li><li><span class="k">গ</span>৬০°</li><li><span class="k">ঘ</span>১২০°</li></ol><div class="sol"><p class="work"><span>কোণ = |৩০ × ঘণ্টা − ৫.৫ × মিনিট|</span><span>= |৩০ × ২ − ৫.৫ × ৩০| = |৬০ − ১৬৫| = ১০৫°</span></p><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">সমাধান দেখুন</button></article></div>
+  </section>
+
+  <section class="sec" id="mistakes">
+    <header class="sec-head"><p class="eyebrow">অংশ ৬</p><h2>ভুল এড়াও</h2>
+      <p class="sec-sub">পরীক্ষায় নম্বর কাটে এই জায়গাগুলোতেই।</p></header>
+    <div class="lists">
+      <div class="card list bad">
+        <h3>যে ভুলগুলো হয়</h3>
+        <ul>
+          <li>tanθ-কে ভূমি ÷ লম্ব লেখা — লম্ব ÷ ভূমি</li>
+          <li>উচ্চতা-দূরত্বের অঙ্কে sin আর tan গুলিয়ে ফেলা</li>
+          <li>পূরক কোণে sin ↔ cos বদলাতে ভুলে যাওয়া</li>
+          <li>90°-এর বেশি কোণে চিহ্ন না দেখা</li>
+        </ul>
+      </div>
+      <div class="card list good">
+        <h3>যে অভ্যাসগুলো রাখবে</h3>
+        <ul>
+          <li>অনুপাত দিলে একটি সমকোণী ত্রিভুজ এঁকে বাহু বসাও</li>
+          <li>30°-60°-90° ত্রিভুজের বাহু 1 : √3 : 2 মনে রাখো</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var btn = document.getElementById('mode');
+  function set(on){
+    document.body.classList.toggle('practice', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.textContent = on ? 'সমাধান দেখান' : 'অনুশীলন মোড';
+    if(!on){
+      var s = document.querySelectorAll('.ex.shown');
+      for(var i = 0; i < s.length; i++){ s[i].classList.remove('shown'); }
+    }
+    try{ localStorage.setItem('trig-notes-practice', on ? '1' : '0'); }catch(e){}
+  }
+  btn.addEventListener('click', function(){
+    set(!document.body.classList.contains('practice'));
+  });
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.reveal') : null;
+    if(b){ b.closest('.ex').classList.add('shown'); }
+  });
+  try{ if(localStorage.getItem('trig-notes-practice') === '1'){ set(true); } }catch(e){}
+})();
+</script>
+<!-- top-button --><style>.to-top{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:50;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;padding:0;cursor:pointer;border:1px solid var(--line,#D9E3DB);background:var(--card,#fff);color:var(--accent,#14624A);box-shadow:0 2px 10px rgba(0,0,0,.14);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .2s,transform .2s,visibility .2s,background .15s,color .15s}.to-top.show{opacity:1;visibility:visible;transform:none}.to-top:hover{background:var(--accent,#14624A);color:var(--card,#fff);border-color:var(--accent,#14624A)}.to-top:focus-visible{outline:2px solid var(--accent,#14624A);outline-offset:2px}.to-top svg{width:20px;height:20px}@media print{.to-top{display:none}}</style><button class="to-top" type="button" aria-label="উপরে যান" title="উপরে যান"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button><script>(function(){var b=document.currentScript.previousElementSibling;function f(){b.classList.toggle('show',window.scrollY>window.innerHeight*1.5)}window.addEventListener('scroll',f,{passive:true});f();b.addEventListener('click',function(){var r=window.matchMedia('(prefers-reduced-motion: reduce)').matches;window.scrollTo({top:0,behavior:r?'auto':'smooth'})})})();</script><!-- /top-button -->
+</body>
+</html>
