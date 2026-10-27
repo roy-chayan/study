@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ধ্বনি ও বর্ণ</title>
+<meta name="description" content="ধ্বনি, বর্ণমালা, মাত্রা, কার-ফলা, স্বর ও ব্যঞ্জনধ্বনির উচ্চারণ আর ধ্বনি পরিবর্তন — তথ্য আর বিগত পরীক্ষার ৩৯টি প্রশ্ন">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700&family=Hind+Siliguri:wght@400;500;600&display=swap">
+<style>
+/* Notes layout (same design as the other notes): rules as tables and cards,
+   then past exam questions with hidden answers. */
+:root{
+  --paper:#F5F8F4; --card:#FFFFFF; --ink:#18231C; --muted:#5B6D61;
+  --accent:#14624A; --accent-soft:#E4EFE7; --gold:#8A6212; --gold-soft:#F6EFDD;
+  --bad:#A3412E; --bad-soft:#F8EAE6;
+  --line:#D9E3DB; --shadow:0 1px 2px rgba(20,60,45,.06),0 8px 22px rgba(20,60,45,.05);
+  --display:"Noto Serif Bengali",Georgia,serif;
+  --body:"Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0E1411; --card:#151E19; --ink:#E5EDE7; --muted:#95A89C;
+  --accent:#63C49A; --accent-soft:#18271F; --gold:#D6A94A; --gold-soft:#241F13;
+  --bad:#E58B78; --bad-soft:#2A1915;
+  --line:#26332B; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.28);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0E1411; --card:#151E19; --ink:#E5EDE7; --muted:#95A89C;
+  --accent:#63C49A; --accent-soft:#18271F; --gold:#D6A94A; --gold-soft:#241F13;
+  --bad:#E58B78; --bad-soft:#2A1915;
+  --line:#26332B; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.28);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.65;-webkit-text-size-adjust:100%}
+p{margin:0}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px 72px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Header */
+.top{padding-block:40px 24px}
+.kicker{font-size:12px;letter-spacing:.12em;color:var(--gold);font-weight:600;margin-bottom:10px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(32px,7vw,46px);line-height:1.2;margin:0}
+.lede{color:var(--muted);margin-top:10px;max-width:58ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:18px;font-size:14px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+
+/* Sticky bar: one row, so it never covers the page on phones. Home stays on the
+   left and the mode button on the right; the section chips between them scroll sideways. */
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-block:1px solid var(--line);padding-block:8px}
+.bar-row{display:flex;gap:8px;align-items:center}
+.bar-row>*{flex:none}
+.bar-row>.bar-scroll{flex:1 1 auto;min-width:0;display:flex;gap:8px;overflow-x:auto;
+  padding:3px 2px;scrollbar-width:none}
+.bar-scroll::-webkit-scrollbar{display:none}
+.bar-scroll>*{flex:none}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink);text-decoration:none;
+  background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip-n{color:var(--muted)}
+.mode{margin-left:auto;font-family:inherit;font-size:13px;font-weight:600;color:var(--card);
+  background:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:6px 14px;cursor:pointer}
+.mode[aria-pressed="true"]{background:var(--gold-soft);color:var(--gold);border-color:var(--gold)}
+
+/* Sections */
+.sec{padding-top:44px}
+.sec-head{margin-bottom:20px}
+.eyebrow{font-size:12px;letter-spacing:.1em;color:var(--gold);font-weight:600;margin-bottom:2px}
+h2{font-family:var(--display);font-size:clamp(24px,4.5vw,30px);font-weight:700;line-height:1.3;margin:0}
+.sec-sub{color:var(--muted);margin-top:4px;max-width:62ch}
+h3{font-family:var(--display);font-size:19px;font-weight:700;line-height:1.35;margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:20px}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:14px;align-items:start}
+.note{font-size:14.5px;color:var(--muted);margin-top:10px}
+.tip{margin-top:14px;padding:10px 14px;border-radius:8px;background:var(--gold-soft);
+  border-left:3px solid var(--gold);font-size:15px}
+.tip b{color:var(--gold)}
+.warn{margin-top:14px;padding:10px 14px;border-radius:8px;background:var(--bad-soft);
+  border-left:3px solid var(--bad);font-size:15px}
+.warn b{color:var(--bad)}
+.eq{font-family:var(--display);font-weight:700;font-size:19px;line-height:1.5}
+
+/* Concept */
+.hero{text-align:center;background:var(--accent-soft);border-color:transparent;box-shadow:none;padding:30px 20px}
+.hero-f{font-family:var(--display);font-weight:700;font-size:clamp(21px,5vw,30px);line-height:1.45}
+.hero-f .op{color:var(--accent)}
+.hero-sub{margin-top:10px;color:var(--muted);font-size:15px}
+.f-tag{font-size:12.5px;font-weight:600;color:var(--accent);letter-spacing:.02em;margin-bottom:6px}
+.star{color:var(--gold)}
+
+/* Worked examples */
+.q{background:var(--gold-soft);border-radius:8px;padding:10px 14px;font-size:15.5px}
+.q-tag{font-size:12px;font-weight:600;color:var(--gold);margin-right:6px}
+.work{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:4px;font-size:15.5px}
+.work li{position:relative;padding-left:18px}
+.work li::before{content:"";position:absolute;left:4px;top:.72em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.work .res{font-weight:600}
+.work .res b{color:var(--accent)}
+.ex-head{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.badge{font-size:12px;font-weight:600;color:var(--card);background:var(--accent);border-radius:999px;padding:2px 10px}
+.types{display:grid;gap:14px}
+.methods{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px;margin-top:12px}
+.method{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.method-h{font-weight:600;color:var(--accent);font-size:14.5px}
+.method .work{margin-top:6px}
+.formula{margin-top:12px;padding:10px 14px;border-radius:8px;border:1px dashed var(--accent);
+  background:var(--accent-soft);font-size:15px}
+.formula b{color:var(--accent)}
+
+/* Summary table */
+.sum{width:100%;border-collapse:collapse;font-size:15.5px}
+.sum th{text-align:left;font-size:12.5px;letter-spacing:.04em;color:var(--muted);font-weight:600;
+  padding:0 14px 10px;border-bottom:1px solid var(--line)}
+.sum td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.sum tr:last-child td{border-bottom:0}
+.sum td:first-child{font-weight:600;width:38%}
+.sum td:last-child{font-family:var(--display);font-weight:700;color:var(--accent)}
+.table-card{padding:16px 6px 6px}
+
+/* Exercises */
+.exgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:12px}
+.ex{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;
+  display:flex;flex-direction:column;gap:10px}
+.ex-q{display:flex;gap:10px;align-items:baseline;font-size:15.5px}
+.ex-n{color:var(--accent);font-weight:700;min-width:1.5em;flex:none}
+.sol{border-top:1px dashed var(--line);padding-top:4px}
+.sol .work{font-size:14.5px;color:var(--muted);margin-top:6px}
+.ans{margin-top:10px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.ans b{font-family:var(--display);font-size:18px;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:0 10px;border-radius:6px}
+.hint{font-size:13.5px;color:var(--muted);margin-top:6px}
+.hint .x{color:var(--bad);font-weight:600}
+.reveal{display:none;align-self:flex-start;font-family:inherit;font-size:13px;font-weight:600;color:var(--accent);
+  background:var(--accent-soft);border:1px dashed var(--accent);border-radius:8px;padding:5px 12px;cursor:pointer}
+.practice .ex:not(.shown) .sol{display:none}
+.practice .ex:not(.shown) .reveal{display:inline-flex}
+
+@media (max-width:420px){.card:not(.table-card){padding:16px}.sum td,.sum th{padding-inline:10px}}
+
+/* Exam tags: confirmed past-exam appearances */
+.xt{display:inline-block;font-family:var(--body);font-size:11.5px;font-weight:600;color:var(--accent);background:var(--accent-soft);
+  border:1px solid var(--line);border-radius:999px;padding:0 8px;margin-left:6px;white-space:nowrap;line-height:1.75;vertical-align:1px}
+.en s{color:var(--bad);text-decoration-thickness:1.5px}
+
+/* a / an word chips */
+.wgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:14px}
+.wlist{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.w{display:flex;flex-direction:column;align-items:flex-start;gap:1px;border:1px solid var(--line);border-radius:10px;padding:6px 11px;background:var(--paper)}
+.w b{color:var(--accent)}
+.w small{color:var(--muted);font-size:12.5px}
+.w .xt{margin:3px 0 0}
+
+/* Rule tables: two or three columns that wrap instead of scrolling */
+.rt{width:100%;border-collapse:collapse;font-size:15px}
+.rt th{text-align:left;font-size:12.5px;letter-spacing:.04em;color:var(--muted);font-weight:600;padding:0 14px 10px;border-bottom:1px solid var(--line)}
+.rt td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.rt tr:last-child td{border-bottom:0}
+.rt td:first-child{width:42%;font-weight:500}
+.rt b{color:var(--accent)}
+.rt3 td:first-child{width:auto}
+.pp{font-family:var(--display);font-weight:700;color:var(--accent);white-space:nowrap}
+@media (max-width:560px){
+  .rt thead{display:none}
+  .rt tr{display:block;padding:10px 12px;border-bottom:1px solid var(--line)}
+  .rt tr:last-child{border-bottom:0}
+  .rt td{display:block;padding:0;border:0;width:auto!important}
+  .rt td+td{margin-top:4px;color:var(--muted)}
+  .rt td.en{color:var(--ink)}
+}
+
+/* Preposition list */
+.find{width:100%;font:inherit;font-size:15px;color:var(--ink);background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:10px 14px;margin-bottom:12px}
+.find:focus{outline:2px solid var(--accent);outline-offset:1px}
+.find-n{font-size:13px;color:var(--muted);margin:-4px 0 12px}
+.plist{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:10px}
+.pi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 14px}
+.pw{font-size:16px;font-weight:600}
+.pw b{color:var(--accent);font-family:var(--display)}
+.pm{font-size:14px;color:var(--muted)}
+.pe{font-size:14px;margin-top:4px;font-style:italic}
+.pi .xt{margin:6px 6px 0 0}
+
+/* Pairs and mistakes */
+.pc h3{font-size:17px;color:var(--accent)}
+.pc p{font-size:15px;margin-top:6px}
+.pc b{color:var(--accent)}
+.mlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:12px}
+.m{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.m .bad{color:var(--bad);text-decoration:line-through;text-decoration-thickness:1px}
+.m .good{color:var(--accent);font-weight:600;margin-top:2px}
+.m .bad::before{content:"✗ ";text-decoration:none;display:inline-block}
+.m .good::before{content:"✓ "}
+.m .why{font-size:13.5px;color:var(--muted);margin-top:4px}
+.dlist{display:grid;gap:8px;margin-top:8px}
+.dlist p{font-size:15px}
+
+/* Link to the MCQ page */
+.cta{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:44px;text-decoration:none;color:inherit}
+.cta:hover{border-color:var(--accent)}
+.cta h3{color:var(--accent)}
+.cta .arrow{font-size:22px;color:var(--accent)}
+
+
+/* Rule tables with a narrow first column */
+.conv .lab td{padding:14px 14px 4px;border-bottom:0;font-size:13px;font-weight:600;color:var(--accent)}
+.conv .lab .xt{vertical-align:0}
+.conv td{width:33.3%}
+.conv td:first-child{width:33.3%;font-weight:400}
+.cl{display:none}
+@media (max-width:560px){
+  .conv .lab{padding-bottom:0;border-bottom:0}
+  .conv .lab td{padding:0}
+  .conv tr:not(.lab) td+td{margin-top:6px}
+  .conv tr:not(.lab) td{color:var(--ink)}
+  .cl{display:block;font-family:var(--body);font-size:11.5px;font-weight:600;color:var(--muted);letter-spacing:.03em}
+}
+
+/* Degree pattern cards */
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.deg p:not(.f-tag):not(.note):not(.dtags){display:flex;flex-direction:column;gap:0;font-size:15px;margin-top:8px}
+.dl{font-size:11.5px;font-weight:600;color:var(--muted);letter-spacing:.03em}
+.deg b{color:var(--accent)}
+.dtags{margin-top:8px}
+.dtags .xt{margin:4px 6px 0 0}
+
+/* Past questions */
+.group{display:flex;align-items:baseline;gap:10px;margin:30px 0 12px;font-size:18px}
+.group:first-of-type{margin-top:0}
+.group-n{font-family:var(--body);font-size:13px;font-weight:500;color:var(--muted)}
+.ex-tags{margin-top:-4px}
+.ex-tags .xt{margin:0 6px 0 0}
+.ex-o{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:14.5px}
+.ex-o li{display:flex;gap:8px;align-items:baseline}
+.ex-o .k{flex:none;width:1.3em;color:var(--muted);font-weight:600}
+.ex-o li.ok{color:var(--accent);font-weight:600}
+.practice .ex:not(.shown) .ex-o li.ok{color:inherit;font-weight:inherit}
+.hint .nb{color:var(--gold);font-weight:600}
+
+.wt{display:flex;flex-wrap:wrap;gap:0 4px}
+.wt .xt{margin:3px 0 0}
+.wgrid .card .f-tag{font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="kicker">বাংলা · ব্যাকরণ · নোট</p>
+    <h1>ধ্বনি ও বর্ণ</h1>
+    <p class="lede">ধ্বনি, বর্ণ, উচ্চারণস্থান আর ধ্বনি পরিবর্তন — শিক্ষক নিবন্ধনের ৩৩টি প্রশ্নপত্রের ১৫টিতে এসেছে, সাধারণত একটি করে; সাইটের ৮টি বিসিএস প্রশ্নপত্রের প্রতিটিতে ১–৩টি। প্রতিটি নিয়মের পাশে সবুজ ট্যাগ মানে সেখান থেকে বিগত শিক্ষক নিবন্ধন বা বিসিএসে প্রশ্ন এসেছে।</p>
+    <p class="meta"><span>তথ্যের ছক <b>৪</b></span><span>বিগত প্রশ্ন <b>৩৯</b></span><span>বিষয় <b>বাংলা</b></span></p>
+  </header>
+
+  <nav class="bar" aria-label="অংশ"><div class="bar-row"><!-- home-link --><style>.home-link{display:inline-flex;align-items:center;gap:6px;padding:5px 14px 5px 11px;border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;text-decoration:none;color:var(--accent,#14624A);background:var(--accent-soft,#E4EFE7);border:1px solid var(--accent,#14624A);border-color:color-mix(in srgb,var(--accent,#14624A) 35%,transparent);transition:background .15s,color .15s}.home-link:hover{background:var(--accent,#14624A);color:var(--card,#fff);border-color:var(--accent,#14624A)}.home-link:focus-visible{outline:2px solid var(--accent,#14624A);outline-offset:2px}.home-link svg{width:15px;height:15px;flex:none}.home-sep{width:1px;height:22px;background:var(--line,#D9E3DB);margin-inline:2px}</style><a class="home-link" href="../../index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg><span>হোম</span></a><span class="home-sep" aria-hidden="true"></span><!-- /home-link -->
+      <div class="bar-scroll">
+        <a class="chip" href="#idea">ধ্বনি ও বর্ণ</a>
+        <a class="chip" href="#svar">স্বরধ্বনি</a>
+        <a class="chip" href="#byanjan">ব্যঞ্জনধ্বনি</a>
+        <a class="chip" href="#change">ধ্বনি পরিবর্তন</a>
+        <a class="chip" href="#practice">বিগত প্রশ্ন <span class="chip-n">৩৯</span></a>
+      </div>
+      <button class="mode" id="mode" type="button" aria-pressed="false">অনুশীলন মোড</button>
+    </div></nav>
+
+  <section class="sec" id="idea">
+    <header class="sec-head"><p class="eyebrow">অংশ ১</p><h2>ধ্বনি, বর্ণ ও অক্ষর</h2>
+      <p class="sec-sub">বর্ণমালার সংখ্যা, মাত্রা আর কার-ফলা — মুখস্থ রাখার মতো তথ্য।</p></header>
+    <div class="card table-card"><table class="rt"><thead><tr><th>বিষয়</th><th>মনে রাখো</th></tr></thead><tbody><tr><td>ধ্বনি</td><td>উচ্চারণীয় ও শ্রবণীয় — দৃশ্যমান নয় · ধ্বনি তৈরিতে সাহায্য করে বাক্‌প্রত্যঙ্গ · পাশাপাশি দুটি ধ্বনির মিলন সন্ধি, যা ধ্বনিতত্ত্বের বিষয়<span class="xt">১১তম নিবন্ধন</span><span class="xt">১২তম নিবন্ধন</span><span class="xt">১৪তম নিবন্ধন</span><span class="xt">৪২তম বিসিএস</span><span class="xt">৪৫তম বিসিএস</span></td></tr><tr><td>অক্ষর</td><td>নিঃশ্বাসের স্বল্পতম প্রয়াসে উচ্চারিত ধ্বনিগুচ্ছ · স্বরান্ত অক্ষর মুক্তাক্ষর<span class="xt">৪১তম বিসিএস</span><span class="xt">৪৫তম বিসিএস</span></td></tr><tr><td>বর্ণমালা</td><td>উৎস ব্রাহ্মী লিপি · মোট ৫০টি বর্ণ (১১টি স্বর, ৩৯টি ব্যঞ্জন) · পূর্ণমাত্রা ৩২, অর্ধমাত্রা ৮, মাত্রাহীন ১০ · পরাশ্রয়ী বর্ণ ৩টি (ং ঃ ঁ) — অভিধানে স্বরবর্ণের শেষে<span class="xt">১৫তম নিবন্ধন</span><span class="xt">১৬তম নিবন্ধন</span><span class="xt">১৭তম নিবন্ধন</span><span class="xt">৪৭তম বিসিএস</span></td></tr><tr><td>কার, ফলা, যুক্তবর্ণ</td><td>স্বরবর্ণের সংক্ষিপ্ত রূপ কার, ব্যঞ্জনবর্ণের সংক্ষিপ্ত রূপ ফলা · ই-এর মাত্রার উপরের অংশ চৈতন · ষ্ণ = ষ্ + ণ (উষ্ণ, কৃষ্ণ) · হ্ম = হ্ + ম (ব্রাহ্মণ) · ঙ-এর উচ্চারণ উয়ো<span class="xt">১৪তম নিবন্ধন</span><span class="xt">১৫তম নিবন্ধন</span><span class="xt">১৬তম নিবন্ধন</span><span class="xt">৪১তম বিসিএস</span><span class="xt">৫০তম বিসিএস</span></td></tr></tbody></table></div>
+  </section>
+
+  <section class="sec" id="svar">
+    <header class="sec-head"><p class="eyebrow">অংশ ২</p><h2>স্বরধ্বনি</h2>
+      <p class="sec-sub">মৌলিক-যৌগিক আর জিহ্বার অবস্থান।</p></header>
+    <div class="card table-card"><table class="rt"><thead><tr><th>বিষয়</th><th>মনে রাখো</th></tr></thead><tbody><tr><td>মৌলিক ও যৌগিক স্বর</td><td>মৌলিক স্বরধ্বনি ৭টি: অ, আ, ই, উ, এ, ও, অ্যা · যৌগিক স্বরবর্ণ ২টি: ঐ, ঔ<span class="xt">১৩তম নিবন্ধন</span><span class="xt">৪৬তম বিসিএস</span></td></tr><tr><td>জিহ্বার উচ্চতা</td><td>উচ্চ: ই, উ · উচ্চমধ্য: এ (সম্মুখ), ও (পশ্চাৎ) · নিম্ন: আ — নিম্ন-বিবৃত<span class="xt">৪৩তম বিসিএস</span><span class="xt">৪৫তম বিসিএস</span><span class="xt">৪৬তম বিসিএস</span></td></tr><tr><td>বিবৃত স্বর</td><td>উচ্চারণে মুখ (ঠোঁট) বেশি খোলে<span class="xt">৪৭তম বিসিএস</span></td></tr></tbody></table></div>
+  </section>
+
+  <section class="sec" id="byanjan">
+    <header class="sec-head"><p class="eyebrow">অংশ ৩</p><h2>ব্যঞ্জনধ্বনি</h2>
+      <p class="sec-sub">উচ্চারণস্থান, ঘোষ-অঘোষ, অল্পপ্রাণ-মহাপ্রাণ।</p></header>
+    <div class="card table-card"><table class="rt"><thead><tr><th>বিষয়</th><th>মনে রাখো</th></tr></thead><tbody><tr><td>উচ্চারণস্থান</td><td>কণ্ঠ্য: ক খ গ ঘ ঙ · তালব্য: চ ছ জ ঝ ঞ · মূর্ধন্য: ট ঠ ড ঢ ণ · দন্ত্য: ত থ দ ধ ন · ওষ্ঠ্য: প ফ ব ভ ম<span class="xt">১০ম নিবন্ধন</span><span class="xt">১১তম নিবন্ধন</span><span class="xt">১৩তম নিবন্ধন</span></td></tr><tr><td>ঘোষ ও প্রাণ</td><td>প্রতি বর্গের ১ম-২য় বর্ণ অঘোষ, ৩য়-৪র্থ-৫ম ঘোষ · ১ম-৩য় অল্পপ্রাণ, ২য়-৪র্থ মহাপ্রাণ — তাই ড ঘোষ অল্পপ্রাণ, চ অঘোষ অল্পপ্রাণ<span class="xt">১৫তম নিবন্ধন</span><span class="xt">১৭তম নিবন্ধন</span></td></tr><tr><td>আঞ্চলিক উচ্চারণ</td><td>পূর্ববঙ্গে ‘স্মরণ’-এ স-এর উচ্চারণ শ হয়ে যায়<span class="xt">৪৭তম বিসিএস</span></td></tr></tbody></table></div>
+  </section>
+
+  <section class="sec" id="change">
+    <header class="sec-head"><p class="eyebrow">অংশ ৪</p><h2>ধ্বনি পরিবর্তন</h2>
+      <p class="sec-sub">বিপর্যয়, বিষমীভবন, স্বরসঙ্গতি।</p></header>
+    <div class="card table-card"><table class="rt"><thead><tr><th>বিষয়</th><th>মনে রাখো</th></tr></thead><tbody><tr><td>ধ্বনি বিপর্যয় (বর্ণ বিপর্যয়)</td><td>পাশাপাশি দুটি ব্যঞ্জনের জায়গা বদল: লাফ > ফাল, পিশাচ > পিচাশ<span class="xt">১৩তম নিবন্ধন</span><span class="xt">১৬তম নিবন্ধন</span><span class="xt">৪৪তম বিসিএস</span></td></tr><tr><td>বিষমীভবন</td><td>দুটি একই ধ্বনির একটি বদলে যায়: শরীর > শরীল<span class="xt">১৪তম নিবন্ধন</span><span class="xt">১৮তম নিবন্ধন</span></td></tr><tr><td>স্বরসঙ্গতি</td><td>এক স্বরের প্রভাবে অন্য স্বর বদলায়: দেশি > দিশি<span class="xt">৫০তম বিসিএস</span></td></tr><tr><td>অপিনিহিতি</td><td>পরের ই বা উ আগে উচ্চারিত হয়: আজি > আইজ<span class="xt">৪১তম বিসিএস</span></td></tr><tr><td>ব্যঞ্জনদ্বিত্ব</td><td>জোর দিতে ব্যঞ্জন দ্বিত্ব হয়: বড় > বড্ড<span class="xt">৪৩তম বিসিএস</span></td></tr></tbody></table></div><p class="tip"><b>আরও:</b> সমীভবন (কাঁদ + না = কান্না) আর স্বরভক্তি (রত্ন > রতন) আছে <a href="সন্ধি ও সমাস.html">সন্ধি ও সমাস</a> নোটে।</p>
+  </section>
+
+  <section class="sec" id="practice">
+    <header class="sec-head"><p class="eyebrow">অংশ ৫</p><h2>বিগত পরীক্ষার প্রশ্ন</h2>
+      <p class="sec-sub">সবগুলোই আসল প্রশ্ন, সাইটের বিগত প্রশ্নপত্র থেকে — উত্তর ও ব্যাখ্যা সেখানকার মতোই। একই প্রশ্ন একাধিক পরীক্ষায় এলে একটি কার্ডে সব ট্যাগ। “অনুশীলন মোড” চালু করলে উত্তর লুকিয়ে যাবে।</p></header>
+    <h3 class="group">ধ্বনি, বর্ণ ও অক্ষর <span class="group-n">১–১৬</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">১</span><span>'ধ্বনি' সম্পর্কে নিচের কোন বাক্যটি সঠিক নয়?</span></p><p class="ex-tags"><span class="xt">৪৫তম বিসিএস</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>ধ্বনি দৃশ্যমান</li><li><span class="k">খ</span>মানুষের ভাষার মূলে আছে কতগুলো ধ্বনি</li><li><span class="k">গ</span>ধ্বনি উচ্চারণীয় ও শ্রবণীয়</li><li><span class="k">ঘ</span>অর্থবোধক ধ্বনিগুলোই মানুষের বিভিন্ন ভাষার বাগ্‌ধ্বনি</li></ol><div class="sol"><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২</span><span>মানুষের দেহের যে সব অঙ্গ-প্রত্যঙ্গ ধ্বনি তৈরিতে সহায়তা করে তাকে বলে?</span></p><p class="ex-tags"><span class="xt">৪২তম বিসিএস</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>বাক প্রত্যঙ্গ</li><li><span class="k">খ</span>অঙ্গধ্বনি</li><li><span class="k">গ</span>স্বরতন্ত্রী</li><li><span class="k">ঘ</span>নাসিকাতন্ত্র</li></ol><div class="sol"><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩</span><span>নিঃশ্বাসের স্বল্পতম প্রয়াসে উচ্চারিত ধ্বনি বা ধ্বনিগুচ্ছকে কী বলে?</span></p><p class="ex-tags"><span class="xt">৪১তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>যৌগিক ধ্বনি</li><li class="ok"><span class="k">খ</span>অক্ষর</li><li><span class="k">গ</span>বর্ণ</li><li><span class="k">ঘ</span>মৌলিক স্বরধ্বনি</li></ol><div class="sol"><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৪</span><span>স্বরান্ত অক্ষরকে কী বলে?</span></p><p class="ex-tags"><span class="xt">৪৫তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>একাক্ষর</li><li class="ok"><span class="k">খ</span>মুক্তাক্ষর</li><li><span class="k">গ</span>বদ্ধাক্ষর</li><li><span class="k">ঘ</span>যুক্তাক্ষর</li></ol><div class="sol"><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৫</span><span>বাংলা বর্ণমালার উৎস কী?</span></p><p class="ex-tags"><span class="xt">১৬তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>তিব্বতি লিপি</li><li class="ok"><span class="k">খ</span>ব্রাহ্মী লিপি</li><li><span class="k">গ</span>খরোষ্ঠী লিপি</li><li><span class="k">ঘ</span>দেবনাগরি লিপি</li></ol><div class="sol"><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৬</span><span>বাংলা ভাষায় মোট কয়টি বর্ণ রয়েছে?</span></p><p class="ex-tags"><span class="xt">১৭তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>৪৭</li><li><span class="k">খ</span>৪৮</li><li><span class="k">গ</span>৪৯</li><li class="ok"><span class="k">ঘ</span>৫০</li></ol><div class="sol"><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৭</span><span>বাংলা বর্ণমালায় পূর্ণমাত্রা, অর্ধমাত্রা ও মাত্রাহীন বর্ণের সংখ্যা যথাক্রমে-</span></p><p class="ex-tags"><span class="xt">১৫তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>৩২,৮,১০</li><li><span class="k">খ</span>৩২,৭,১১</li><li><span class="k">গ</span>৩০,৮,১২</li><li><span class="k">ঘ</span>৩২,৭,৯</li></ol><div class="sol"><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৮</span><span>বাংলা বর্ণমালায় পরাশ্রয়ী বর্ণ কয়টি?</span></p><p class="ex-tags"><span class="xt">১৬তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>৫টি</li><li class="ok"><span class="k">খ</span>৩টি</li><li><span class="k">গ</span>৪টি</li><li><span class="k">ঘ</span>১টি</li></ol><div class="sol"><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৯</span><span>অভিধানে ং, ঃ, ঁ, - এই বর্ণগুলোর অবস্থান কোথায়?</span></p><p class="ex-tags"><span class="xt">৪৭তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>স্বরবর্ণের আগে</li><li class="ok"><span class="k">খ</span>স্বরবর্ণের শেষে</li><li><span class="k">গ</span>ব্যঞ্জনবর্ণের শেষে</li><li><span class="k">ঘ</span>এদের নির্দিষ্ট অবস্থান নেই</li></ol><div class="sol"><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১০</span><span>স্বরবর্ণের সংক্ষিপ্ত রূপকে কি বলে?</span></p><p class="ex-tags"><span class="xt">১৪তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>ফলা</li><li class="ok"><span class="k">খ</span>কার</li><li><span class="k">গ</span>ধ্বনি</li><li><span class="k">ঘ</span>অক্ষর</li></ol><div class="sol"><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১১</span><span>ব্যঞ্জন ধ্বনির সংক্ষিপ্ত রূপকে বলে-</span></p><p class="ex-tags"><span class="xt">৪১তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>রেফ</li><li><span class="k">খ</span>হসন্ত</li><li><span class="k">গ</span>কার</li><li class="ok"><span class="k">ঘ</span>ফলা</li></ol><div class="sol"><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১২</span><span>'ই' এর মাত্রার উপরের অংশের নাম কী?</span></p><p class="ex-tags"><span class="xt">৫০তম বিসিএস</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>চৈতন</li><li><span class="k">খ</span>আঁকড়ি</li><li><span class="k">গ</span>পাগড়ি</li><li><span class="k">ঘ</span>জোড় আঁকড়ি</li></ol><div class="sol"><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৩</span><span>নিচের কোনটি শুদ্ধ?</span></p><p class="ex-tags"><span class="xt">১৪তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>ষ্ণ = ষ্‌ + ণ</li><li><span class="k">খ</span>ষ্ণ = ষ্‌ + ঞ</li><li><span class="k">গ</span>ষ্ণ = ষ্‌ + ন</li><li><span class="k">ঘ</span>ষ্ণ = ষ্‌ + ঙ</li></ol><div class="sol"><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৪</span><span>'উষ্ণ' শব্দের যুক্তাক্ষরটি কোন কোন বর্ণের সমন্বয়ে গঠিত?</span></p><p class="ex-tags"><span class="xt">১৬তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>ষ্‌ + ণ</li><li><span class="k">খ</span>ষ + ন</li><li><span class="k">গ</span>ষ + ঞ</li><li><span class="k">ঘ</span>ষ + ঙ</li></ol><div class="sol"><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৫</span><span>‘হ্ম’ এর সঠিক বিশ্লেষণ কোনটি?</span></p><p class="ex-tags"><span class="xt">১৫তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>ক্‌ + ষ</li><li class="ok"><span class="k">খ</span>হ্‌ + ম</li><li><span class="k">গ</span>হ্‌ + ন</li><li><span class="k">ঘ</span>ষ্‌ + ণ</li></ol><div class="sol"><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৬</span><span>‘ঙ’ ধ্বনিটির সঠিক উচ্চারণ হলো-</span></p><p class="ex-tags"><span class="xt">১৫তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>উম্য</li><li><span class="k">খ</span>উমো</li><li><span class="k">গ</span>ইয়ো</li><li class="ok"><span class="k">ঘ</span>উয়ো</li></ol><div class="sol"><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article></div>
+    <h3 class="group">স্বর ও ব্যঞ্জনধ্বনি <span class="group-n">১৭–২৯</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">১৭</span><span>কোনটি মৌলিক স্বরধ্বনি?</span></p><p class="ex-tags"><span class="xt">১৩তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>ঔ</li><li><span class="k">খ</span>ঈ</li><li><span class="k">গ</span>ঐ</li><li class="ok"><span class="k">ঘ</span>এ</li></ol><div class="sol"><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৮</span><span>বাংলা বর্ণমালায় যৌগিক স্বর কয়টি?</span></p><p class="ex-tags"><span class="xt">৪৬তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>১টি</li><li class="ok"><span class="k">খ</span>২টি</li><li><span class="k">গ</span>৩টি</li><li><span class="k">ঘ</span>৪টি</li></ol><div class="sol"><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">১৯</span><span>নিম্নবিবৃত স্বরধ্বনি কোনটি?</span></p><p class="ex-tags"><span class="xt">৪৩তম বিসিএস</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>আ</li><li><span class="k">খ</span>ই</li><li><span class="k">গ</span>এ</li><li><span class="k">ঘ</span>অ্যা</li></ol><div class="sol"><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২০</span><span>উচ্চারণের রীতি অনুযায়ী নিচের কোনটি উচ্চমধ্য-সম্মুখ স্বরধ্বনি?</span></p><p class="ex-tags"><span class="xt">৪৫তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>অ</li><li><span class="k">খ</span>আ</li><li><span class="k">গ</span>ও</li><li class="ok"><span class="k">ঘ</span>এ</li></ol><div class="sol"><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২১</span><span>বাংলা ভাষায় কোন স্বরধ্বনি উচ্চারণকালে জিহ্বা উচ্চ অবস্থানে থাকে?</span></p><p class="ex-tags"><span class="xt">৪৬তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>আ</li><li><span class="k">খ</span>এ</li><li class="ok"><span class="k">গ</span>উ</li><li><span class="k">ঘ</span>ও</li></ol><div class="sol"><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২২</span><span>বিবৃত স্বরধ্বনি বলতে বোঝায় -</span></p><p class="ex-tags"><span class="xt">৪৭তম বিসিএস</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>যে স্বরধ্বনি উচ্চারণে ঠোঁট বেশি খোলে</li><li><span class="k">খ</span>যে স্বরধ্বনি উচ্চারণে জিভ উঁচু হয়</li><li><span class="k">গ</span>যে স্বরধ্বনি অবিকৃতভাবে উচ্চারিত হয়</li><li><span class="k">ঘ</span>যে স্বরধ্বনি উচ্চারণে বিকৃতি ঘটে</li></ol><div class="sol"><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৩</span><span>কণ্ঠ্য থেকে উচ্চারিত ধ্বনি-</span></p><p class="ex-tags"><span class="xt">১০ম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>ক</li><li class="ok"><span class="k">খ</span>ঙ</li><li><span class="k">গ</span>হ</li><li><span class="k">ঘ</span>ঝ</li></ol><div class="sol"><p class="ans">উত্তর <b>খ</b></p><p class="hint"><span class="nb">নোট:</span> ক-ও কণ্ঠ্য ধ্বনি (ক, খ, গ, ঘ, ঙ সবই কণ্ঠ্য), তাই ক ও খ দুটোই ঠিক বলা যায়। Biddabari ঙ ধরেছে।</p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৪</span><span>কোনটি দন্ত্য ধ্বনি?</span></p><p class="ex-tags"><span class="xt">১১তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>ণ</li><li><span class="k">খ</span>প</li><li class="ok"><span class="k">গ</span>ত</li><li><span class="k">ঘ</span>চ</li></ol><div class="sol"><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৫</span><span>কোনগুলো দন্ত্য ধ্বনি?</span></p><p class="ex-tags"><span class="xt">১৩তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>ক খ গ ঘ</li><li><span class="k">খ</span>প ফ ব ভ</li><li class="ok"><span class="k">গ</span>ত থ দ ধ</li><li><span class="k">ঘ</span>ট ঠ ড ঢ</li></ol><div class="sol"><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৬</span><span>কোনটি ওষ্ঠ্য ধ্বনি?</span></p><p class="ex-tags"><span class="xt">১৩তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>ম</li><li><span class="k">খ</span>ঙ</li><li><span class="k">গ</span>চ</li><li><span class="k">ঘ</span>র</li></ol><div class="sol"><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৭</span><span>নিচের কোনটি ঘোষ অল্পপ্রাণ বর্ণ?</span></p><p class="ex-tags"><span class="xt">১৫তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>ট</li><li><span class="k">খ</span>থ</li><li class="ok"><span class="k">গ</span>ড</li><li><span class="k">ঘ</span>ভ</li></ol><div class="sol"><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৮</span><span>অঘোষ অল্পপ্রাণ ধ্বনি কোনটি?</span></p><p class="ex-tags"><span class="xt">১৭তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>'চ' ধ্বনি</li><li><span class="k">খ</span>'ছ' ধ্বনি</li><li><span class="k">গ</span>'জ' ধ্বনি</li><li><span class="k">ঘ</span>'ঝ' ধ্বনি</li></ol><div class="sol"><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">২৯</span><span>পূর্ববঙ্গীয় উচ্চারণে 'স্মরণ' শব্দের ক্ষেত্রে কোনটি ঘটে?</span></p><p class="ex-tags"><span class="xt">৪৭তম বিসিএস</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>স-এর উচ্চারণ শ হয়ে যায়</li><li><span class="k">খ</span>ণ-এর উচ্চারণ ন হয়ে যায়</li><li><span class="k">গ</span>ম-ফলার উচ্চারণ ম হয়ে যায়</li><li><span class="k">ঘ</span>শুরুতে নাসিক্য উচ্চারণ হয় না</li></ol><div class="sol"><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article></div>
+    <h3 class="group">ধ্বনি পরিবর্তন ও ধ্বনিতত্ত্ব <span class="group-n">৩০–৩৯</span></h3>
+    <div class="exgrid"><article class="ex"><p class="ex-q"><span class="ex-n">৩০</span><span>কোনটি ধ্বনি বিপর্যয়ের উদাহরণ?</span></p><p class="ex-tags"><span class="xt">১৩তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>শরীর > শরীল</li><li><span class="k">খ</span>হংস > হাঁস</li><li class="ok"><span class="k">গ</span>লাফ > ফাল</li><li><span class="k">ঘ</span>দুর্গা > দুগগা</li></ol><div class="sol"><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩১</span><span>কোনটি ধ্বনি বিপর্যয়ের উদাহরণ?</span></p><p class="ex-tags"><span class="xt">১৬তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>বড় দাদা &gt; বড়দা</li><li><span class="k">খ</span>কিছু &gt; কিচ্ছু</li><li class="ok"><span class="k">গ</span>পিশাচ &gt; পিচাশ</li><li><span class="k">ঘ</span>মুক্তা &gt; মুকুতা</li></ol><div class="sol"><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩২</span><span>ধ্বনি-পরিবর্তনের নিয়মে কোনটি বর্ণ-বিপর্যয়-এর দৃষ্টান্ত?</span></p><p class="ex-tags"><span class="xt">৪৪তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>রতন</li><li><span class="k">খ</span>কবাট</li><li class="ok"><span class="k">গ</span>পিচাশ</li><li><span class="k">ঘ</span>মুলুক</li></ol><div class="sol"><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৩</span><span>শরীর > শরীল- শব্দটিতে ধ্বনি পরিবর্তনের কোন ধরনের নিয়ম প্রযোজ্য?</span></p><p class="ex-tags"><span class="xt">১৪তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li><span class="k">ক</span>সমীভবন</li><li class="ok"><span class="k">খ</span>বিষমীভবন</li><li><span class="k">গ</span>অসমীভবন</li><li><span class="k">ঘ</span>ধ্বনিবিপর্যয়</li></ol><div class="sol"><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৪</span><span>দুটি সমবর্ণের একটি পরিবর্তনকে কী বলে?</span></p><p class="ex-tags"><span class="xt">১৮তম নিবন্ধন · স্কুল</span></p><ol class="ex-o"><li><span class="k">ক</span>অপগত</li><li><span class="k">খ</span>পরাগত</li><li><span class="k">গ</span>সমীভবন</li><li class="ok"><span class="k">ঘ</span>বিষমীভবন</li></ol><div class="sol"><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৫</span><span>একটি স্বরধ্বনির প্রভাবে শব্দে অপর স্বরের পরিবর্তন ঘটলে তাকে বলে-</span></p><p class="ex-tags"><span class="xt">৫০তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>অভিশ্রুতি</li><li><span class="k">খ</span>অপিনিহিতি</li><li><span class="k">গ</span>সমীভবন</li><li class="ok"><span class="k">ঘ</span>স্বরসঙ্গতি</li></ol><div class="sol"><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৬</span><span>অপিনিহিতির উদাহরণ কোনটি?</span></p><p class="ex-tags"><span class="xt">৪১তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>জন্ম > জম্ম</li><li class="ok"><span class="k">খ</span>আজি > আইজ</li><li><span class="k">গ</span>ডেস্ক > ডেস্‌ক</li><li><span class="k">ঘ</span>অলাবু > লাবু > লাউ</li></ol><div class="sol"><p class="ans">উত্তর <b>খ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৭</span><span>বড় > বড্ড – এটি কোন ধরনের পরিবর্তন?</span></p><p class="ex-tags"><span class="xt">৪৩তম বিসিএস</span></p><ol class="ex-o"><li><span class="k">ক</span>বিষমীভবন</li><li><span class="k">খ</span>সমীভবন</li><li class="ok"><span class="k">গ</span>ব্যঞ্জনদ্বিত্ব</li><li><span class="k">ঘ</span>ব্যঞ্জন-বিকৃতি</li></ol><div class="sol"><p class="ans">উত্তর <b>গ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৮</span><span>পাশাপাশি দুটি ধ্বনি বা বর্ণের মিলনকে কি বলে?</span></p><p class="ex-tags"><span class="xt">১১তম নিবন্ধন · স্কুল</span><span class="xt">১৪তম নিবন্ধন · স্কুল-২</span></p><ol class="ex-o"><li><span class="k">ক</span>উপসর্গ</li><li><span class="k">খ</span>অনুসর্গ</li><li><span class="k">গ</span>সমাস</li><li class="ok"><span class="k">ঘ</span>সন্ধি</li></ol><div class="sol"><p class="ans">উত্তর <b>ঘ</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article><article class="ex"><p class="ex-q"><span class="ex-n">৩৯</span><span>বাংলা ব্যাকরণের ধ্বনিতত্ত্ব অংশে কোন বিষয়টি আলোচনা করা হয়?</span></p><p class="ex-tags"><span class="xt">১২তম নিবন্ধন · কলেজ</span></p><ol class="ex-o"><li class="ok"><span class="k">ক</span>সন্ধি</li><li><span class="k">খ</span>সমাস</li><li><span class="k">গ</span>কারক</li><li><span class="k">ঘ</span>প্রত্যয়</li></ol><div class="sol"><p class="ans">উত্তর <b>ক</b></p></div><button class="reveal" type="button">উত্তর দেখুন</button></article></div>
+  </section>
+</div>
+
+<script>
+(function(){
+  var btn = document.getElementById('mode');
+  function set(on){
+    document.body.classList.toggle('practice', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.textContent = on ? 'উত্তর দেখান' : 'অনুশীলন মোড';
+    if(!on){
+      var s = document.querySelectorAll('.ex.shown');
+      for(var i = 0; i < s.length; i++){ s[i].classList.remove('shown'); }
+    }
+    try{ localStorage.setItem('dhvani-notes-practice', on ? '1' : '0'); }catch(e){}
+  }
+  btn.addEventListener('click', function(){
+    set(!document.body.classList.contains('practice'));
+  });
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.reveal') : null;
+    if(b){ b.closest('.ex').classList.add('shown'); }
+  });
+  try{ if(localStorage.getItem('dhvani-notes-practice') === '1'){ set(true); } }catch(e){}
+})();
+</script>
+<!-- top-button --><style>.to-top{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:50;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;padding:0;cursor:pointer;border:1px solid var(--line,#D9E3DB);background:var(--card,#fff);color:var(--accent,#14624A);box-shadow:0 2px 10px rgba(0,0,0,.14);opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .2s,transform .2s,visibility .2s,background .15s,color .15s}.to-top.show{opacity:1;visibility:visible;transform:none}.to-top:hover{background:var(--accent,#14624A);color:var(--card,#fff);border-color:var(--accent,#14624A)}.to-top:focus-visible{outline:2px solid var(--accent,#14624A);outline-offset:2px}.to-top svg{width:20px;height:20px}@media print{.to-top{display:none}}</style><button class="to-top" type="button" aria-label="উপরে যান" title="উপরে যান"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button><script>(function(){var b=document.currentScript.previousElementSibling;function f(){b.classList.toggle('show',window.scrollY>window.innerHeight*1.5)}window.addEventListener('scroll',f,{passive:true});f();b.addEventListener('click',function(){var r=window.matchMedia('(prefers-reduced-motion: reduce)').matches;window.scrollTo({top:0,behavior:r?'auto':'smooth'})})})();</script><!-- /top-button -->
+</body>
+</html>
