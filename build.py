@@ -14,8 +14,8 @@ What it does:
        বিগত বছরের প্রশ্ন   one card per folder previous/ntrca-*/ (e.g. previous/ntrca-18/),
                           newest exam first, listing that exam's papers
        বিসিএস প্রিলিমিনারি one card per folder previous/bcs-*/ (e.g. previous/bcs-50/)
-  2. Adds the home button to every page, or brings an existing one up to the
-     current design.
+  2. Adds the home button and a back-to-top button to every page, or brings
+     existing ones up to the current design.
 
 A previous-year page's <title> is "<exam> — <paper>", e.g.
 "১৮তম শিক্ষক নিবন্ধন — স্কুল পর্যায়": the part before " — " names the card and
@@ -26,10 +26,14 @@ A notes page can be designed any way you like. If it has a
 name on index.html.
 
 Files are listed in file-name order. To control the order, start the file
-name with a number, e.g. "01 বীজগণিত.html", "02 জ্যামিতি.html".
+name with a number, e.g. "01 বীজগণিত.html", "02 জ্যামিতি.html". Notes follow
+NOTE_ORDER below instead (study order); a new note not named there goes last.
+On index.html a note shows one line of its description (the part before " — ")
+and its exercise count; subjects with no notes are left out of the নোট part.
 """
 import html
 import re
+import unicodedata
 from pathlib import Path
 from urllib.parse import quote
 
@@ -42,6 +46,17 @@ SUBJECTS = [
     ("bengali", "বাংলা", "Bengali"),
     ("english", "ইংরেজি", "English"),
 ]
+
+# The notes part shows English second, where most of the notes are; other parts use SUBJECTS as is.
+SUBJECT_ORDER = {"notes": ["math", "english", "bengali", "gk"]}
+
+# Notes are listed in study order (file names without .html); notes not named here follow in file-name order.
+NOTE_ORDER = {
+    "math": ["সংখ্যা ও ভগ্নাংশ", "বীজগণিতের সূত্র ও উৎপাদক", "সূচক ও করণী", "লগারিদম", "শতকরা, লাভ-ক্ষতি ও সুদ",
+             "অনুপাত, ল.সা.গু-গ.সা.গু ও ঐকিক নিয়ম", "গড়", "জ্যামিতি ও বৃত্ত", "পরিমিতি", "ত্রিকোণমিতি"],
+    "english": ["Parts of Speech", "Article ও Preposition", "Right Form of Verbs", "Voice ও Narration",
+                "Transformation of Sentences", "Synonym ও Antonym", "Idioms ও Phrases"],
+}
 
 # The two parts of index.html, in order:
 # (id, heading, one-line description, folder for each subject, text for an empty
@@ -88,6 +103,43 @@ HOME_ICON = (
 )
 HOME_BLOCK = re.compile(re.escape(HOME_START) + ".*?" + re.escape(HOME_END), re.S)
 
+TOP_START = "<!-- top-button -->"
+TOP_END = "<!-- /top-button -->"
+# A round "↑" button fixed at the bottom right. It appears after about one and a
+# half screens of scrolling and scrolls smoothly back to the top. Like the home
+# button, it uses the page's colour tokens with the site's green as fallback.
+TOP_HTML = (
+    TOP_START + "<style>"
+    ".to-top{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));"
+    "z-index:50;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;padding:0;cursor:pointer;"
+    "border:1px solid var(--line,#D9E3DB);background:var(--card,#fff);color:var(--accent,#14624A);"
+    "box-shadow:0 2px 10px rgba(0,0,0,.14);opacity:0;visibility:hidden;transform:translateY(8px);"
+    "transition:opacity .2s,transform .2s,visibility .2s,background .15s,color .15s}"
+    ".to-top.show{opacity:1;visibility:visible;transform:none}"
+    ".to-top:hover{background:var(--accent,#14624A);color:var(--card,#fff);border-color:var(--accent,#14624A)}"
+    ".to-top:focus-visible{outline:2px solid var(--accent,#14624A);outline-offset:2px}"
+    ".to-top svg{width:20px;height:20px}"
+    "@media print{.to-top{display:none}}"
+    "</style>"
+    '<button class="to-top" type="button" aria-label="উপরে যান" title="উপরে যান">'
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+    'stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button>'
+    "<script>(function(){var b=document.currentScript.previousElementSibling;"
+    "function f(){b.classList.toggle('show',window.scrollY>window.innerHeight*1.5)}"
+    "window.addEventListener('scroll',f,{passive:true});f();"
+    "b.addEventListener('click',function(){var r=window.matchMedia('(prefers-reduced-motion: reduce)').matches;"
+    "window.scrollTo({top:0,behavior:r?'auto':'smooth'})})})();</script>" + TOP_END
+)
+TOP_BLOCK = re.compile(re.escape(TOP_START) + ".*?" + re.escape(TOP_END), re.S)
+
+
+def with_top_button(text):
+    """The page with the back-to-top button just before </body> (replacing an older one)."""
+    if TOP_START in text:
+        return TOP_BLOCK.sub(lambda _: TOP_HTML, text, count=1)
+    i = text.lower().rfind("</body>")
+    return text if i < 0 else text[:i] + TOP_HTML + "\n" + text[i:]
+
 
 def home_block(text, href):
     """The home button for a page. Pages with a sticky top bar get it first in
@@ -119,6 +171,15 @@ def natural_key(path):
     return [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\d+)", path.name)]
 
 
+def note_key(folder):
+    """Sort key for a notes folder: NOTE_ORDER first, then the rest in file-name order."""
+    order = [unicodedata.normalize("NFC", s) for s in NOTE_ORDER.get(folder, [])]
+    def key(path):
+        stem = unicodedata.normalize("NFC", path.stem)
+        return (order.index(stem) if stem in order else len(order), natural_key(path))
+    return key
+
+
 def read_page(path):
     try:
         return path.read_bytes().decode("utf-8")
@@ -127,7 +188,7 @@ def read_page(path):
 
 
 def add_home_link(path, text):
-    """Insert the home button, or replace an older one. Returns what changed."""
+    """Insert the home and back-to-top buttons, or replace older ones. Returns what changed."""
     if not text:
         return None
     # "../index.html" from math/x.html, "../../index.html" from notes/math/x.html.
@@ -142,6 +203,7 @@ def add_home_link(path, text):
         if not m:
             return None
         new, status = text[: m.end()] + block + text[m.end() :], "added"
+    new = with_top_button(new)
     if new == text:
         return None
     path.write_bytes(new.encode("utf-8"))
@@ -163,12 +225,13 @@ def page_info(path, text):
 
 def render_subject(sid, name_bn, name_en, files, empty, noun):
     items = []
-    for i, (rel, title, detail) in enumerate(files, 1):
+    for i, (rel, title, detail, *badge) in enumerate(files, 1):
         sub = f'<span class="file-meta">{html.escape(detail)}</span>' if detail else ""
+        tag = f'<span class="file-q">{badge[0]}</span>' if badge and badge[0] else ""
         items.append(
             f'<li><a class="file" href="{html.escape(quote(rel))}">'
             f'<span class="file-n">{bn(i)}</span>'
-            f'<span class="file-text"><span class="file-name">{html.escape(title)}</span>{sub}</span>'
+            f'<span class="file-text"><span class="file-name">{html.escape(title)}{tag}</span>{sub}</span>'
             f'<span class="file-go" aria-hidden="true">→</span></a></li>'
         )
     body = f'<ol class="files">{"".join(items)}</ol>' if items else f'<p class="empty">{empty}</p>'
@@ -193,24 +256,33 @@ def main():
     groups, counts, total_q, linked = [], {}, 0, []
     for gid, heading, blurb, folder_pattern, empty, noun in GROUPS:
         cards, count = [], 0
-        for folder, name_bn, name_en in SUBJECTS:
+        order = SUBJECT_ORDER.get(gid)
+        subjects = sorted(SUBJECTS, key=lambda s: order.index(s[0])) if order else SUBJECTS
+        for folder, name_bn, name_en in subjects:
             rel = folder_pattern.format(folder)
             d = ROOT / rel
             d.mkdir(parents=True, exist_ok=True)
             files = []
-            for path in sorted(d.glob("*.html"), key=natural_key):
+            for path in sorted(d.glob("*.html"), key=note_key(folder) if gid == "notes" else natural_key):
                 text = read_page(path)
                 status = add_home_link(path, text)
                 if status:
                     linked.append(f"{status}: {rel}/{path.name}")
                 title, detail, q = page_info(path, text)
-                files.append((f"{rel}/{path.name}", title, detail))
+                if gid == "notes":
+                    # One line of topics (the part before " — "), plus a badge with the page's exercise count.
+                    exercises = len(re.findall(r'<article class="ex"', text))
+                    files.append((f"{rel}/{path.name}", title, detail.split(" — ")[0], f"{bn(exercises)}টি প্রশ্ন" if exercises else ""))
+                else:
+                    files.append((f"{rel}/{path.name}", title, detail))
                 total_q += q
             count += len(files)
+            print(f"  {rel:<14} {len(files)} file(s)")
+            if gid == "notes" and not files:
+                continue   # an empty notes subject would only say "no notes yet"
             # MCQ cards keep their old ids (#math, #gk, …); notes cards get #notes-math, …
             sid = folder if gid == "mcq" else f"{gid}-{folder}"
             cards.append(render_subject(sid, name_bn, name_en, files, empty, noun))
-            print(f"  {rel:<14} {len(files)} file(s)")
         counts[gid] = count
         groups.append(render_group(gid, heading, blurb, cards))
 
@@ -312,6 +384,10 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,40px);lin
 #notes .file-n{color:var(--gold)}
 #notes .file:hover{border-color:var(--gold);background:var(--gold-soft)}
 #notes .file:hover .file-go{color:var(--gold)}
+#notes .file-meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#notes .files li{min-width:0}
+.file-q{display:inline-block;margin-left:8px;padding:0 8px;border-radius:999px;font-size:12px;font-weight:600;
+  line-height:1.6;color:var(--gold);background:var(--gold-soft);vertical-align:1px;white-space:nowrap}
 
 .subjects{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));
   gap:16px;align-items:start}
