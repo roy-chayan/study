@@ -15,10 +15,14 @@ What it does:
        বিসিএস প্রিলিমিনারি one card per folder previous/bcs-*/ (e.g. previous/bcs-50/)
        MCQ অনুশীলন       every .html file in math/, gk/, bengali/ and english/
   2. Adds the home button and a back-to-top button to every page, or brings
-     existing ones up to the current design.
+     existing ones up to the current design. Also adds the lines that make the
+     site installable and readable offline (manifest, icons, offline.js).
   3. Writes search-index.js for the search box on index.html: every line of the
      notes (except their practice cards) and every question with its answer from
      the MCQ and previous-year pages. The box loads it only when someone searches.
+  4. Writes the list of all site files, each with a fingerprint of its contents,
+     into sw.js. Phones that saved the site download only what changed. Run
+     build.py before every push, even after editing a single page.
 
 A previous-year page's <title> is "<exam> — <paper>", e.g.
 "১৮তম শিক্ষক নিবন্ধন — স্কুল পর্যায়": the part before " — " names the card and
@@ -144,6 +148,39 @@ TOP_HTML = (
 )
 TOP_BLOCK = re.compile(re.escape(TOP_START) + ".*?" + re.escape(TOP_END), re.S)
 
+OFFLINE_START = "<!-- offline -->"
+OFFLINE_END = "<!-- /offline -->"
+OFFLINE_BLOCK = re.compile(re.escape(OFFLINE_START) + ".*?" + re.escape(OFFLINE_END), re.S)
+# Files saved for offline reading (see sw.js); build.py, sw.js itself and hidden folders are left out.
+OFFLINE_TYPES = {".html", ".js", ".css", ".json", ".webmanifest", ".png", ".jpg", ".svg", ".webp"}
+SW_FILE = "sw.js"
+SW_FILES = re.compile(r"(/\* <files>[^\n]*\*/\n).*?(/\* </files> \*/)", re.S)
+
+
+def offline_head(depth):
+    """The lines at the end of <head> that make the site installable and readable offline.
+    Paths go up one folder per level, like the home button's link."""
+    up = "../" * depth
+    return (
+        OFFLINE_START
+        + f'<link rel="manifest" href="{up}manifest.webmanifest">'
+        '<meta name="theme-color" content="#F5F8F4" media="(prefers-color-scheme: light)">'
+        '<meta name="theme-color" content="#0E1411" media="(prefers-color-scheme: dark)">'
+        f'<link rel="apple-touch-icon" href="{up}icons/apple-touch-icon.png">'
+        '<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">'
+        '<meta name="apple-mobile-web-app-title" content="পড়াশোনা">'
+        f'<script src="{up}offline.js" defer></script>'
+        + OFFLINE_END
+    )
+
+
+def with_offline(text, depth):
+    """The page with the offline lines just before </head> (replacing older ones)."""
+    if OFFLINE_START in text:
+        return OFFLINE_BLOCK.sub(lambda _: offline_head(depth), text, count=1)
+    i = text.lower().find("</head>")
+    return text if i < 0 else text[:i] + offline_head(depth) + "\n" + text[i:]
+
 
 def with_top_button(text):
     """The page with the back-to-top button just before </body> (replacing an older one)."""
@@ -200,7 +237,7 @@ def read_page(path):
 
 
 def add_home_link(path, text):
-    """Insert the home and back-to-top buttons, or replace older ones. Returns what changed."""
+    """Insert the home and back-to-top buttons and the offline lines, or replace older ones. Returns what changed."""
     if not text:
         return None
     # "../index.html" from math/x.html, "../../index.html" from notes/math/x.html.
@@ -215,7 +252,7 @@ def add_home_link(path, text):
         if not m:
             return None
         new, status = text[: m.end()] + block + text[m.end() :], "added"
-    new = with_top_button(new)
+    new = with_offline(with_top_button(new), depth)
     if new == text:
         return None
     path.write_bytes(new.encode("utf-8"))
@@ -366,6 +403,26 @@ def write_search_index():
     return len(entries), hashlib.sha1(data.encode("utf-8")).hexdigest()[:10]
 
 
+def write_offline_list():
+    """Every site file with a fingerprint of its contents, written into sw.js (see the top of sw.js)."""
+    files = {}
+    for path in sorted(ROOT.rglob("*")):
+        rel = path.relative_to(ROOT)
+        if (path.is_file() and path.suffix in OFFLINE_TYPES and rel.as_posix() != SW_FILE
+                and not any(part.startswith((".", "__")) for part in rel.parts)):
+            files[rel.as_posix()] = hashlib.sha1(path.read_bytes()).hexdigest()[:10]
+    sw = ROOT / SW_FILE
+    text = sw.read_text(encoding="utf-8") if sw.exists() else ""
+    if not SW_FILES.search(text):
+        print(f"{SW_FILE} not updated: its /* <files> */ … /* </files> */ markers are missing")
+        return 0
+    listing = "const FILES = " + json.dumps(files, ensure_ascii=False, indent=0) + ";\n"
+    new = SW_FILES.sub(lambda m: m.group(1) + listing + m.group(2), text, count=1)
+    if new != text:
+        sw.write_text(new, encoding="utf-8")
+    return len(files)
+
+
 def main():
     groups, headings, counts, total_q, linked = {}, {}, {}, 0, []
     for gid, heading, blurb, folder_pattern, empty, noun in GROUPS:
@@ -436,14 +493,16 @@ def main():
     jump = "".join(f'<a href="#{gid}">{headings[gid]} <span>↓</span></a>' for gid in order)
     searchable, version = write_search_index()
     page = (TEMPLATE.replace("{{META}}", meta).replace("{{JUMP}}", jump).replace("{{GROUPS}}", "\n".join(groups[gid] for gid in order))
-            .replace("{{SEARCH}}", f"{SEARCH_FILE}?v={version}"))
+            .replace("{{SEARCH}}", f"{SEARCH_FILE}?v={version}").replace("{{OFFLINE}}", offline_head(0)))
     (ROOT / "index.html").write_text(page, encoding="utf-8")
+    offline = write_offline_list()
 
     for change in linked:
-        print(f"  home button {change}")
+        print(f"  page {change}")
     print(f"{SEARCH_FILE} updated: {searchable} searchable lines and questions")
     print(f"index.html updated: {counts['mcq']} MCQ file(s), {counts['notes']} note(s), "
           f"{counts['previous']} previous-year paper(s), {counts['bcs']} BCS paper(s)")
+    print(f"{SW_FILE} updated: {offline} file(s) saved for offline reading")
 
 
 TEMPLATE = """<!doctype html>
@@ -455,6 +514,7 @@ TEMPLATE = """<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700&family=Hind+Siliguri:wght@400;500;600&display=swap">
+{{OFFLINE}}
 <!-- Generated by build.py. Edit build.py, not this file: changes here are overwritten. -->
 <style>
 /* Same palette and type as the question pages. */
@@ -531,6 +591,22 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,40px);lin
 .empty{margin:0;padding:16px;text-align:center;font-size:14px;color:var(--muted);
   border:1px dashed var(--line);border-radius:8px}
 
+/* Offline status in the meta line, and the install offer (offline.js fills both in). */
+.meta .offline-state{color:var(--accent);font-weight:600}
+.meta .offline-state.off{color:var(--gold)}
+.install{display:flex;align-items:center;gap:12px;margin-top:18px;padding:12px 14px;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.install[hidden]{display:none}
+.install img{width:40px;height:40px;border-radius:9px;flex:none}
+.install-text{flex:1;min-width:0;font-size:14px;line-height:1.45}
+.install-text b{display:block;font-size:15px}
+.install-hint{color:var(--muted)}
+.install-btns{display:flex;gap:6px;flex:none}
+.install button{font:inherit;font-size:14px;font-weight:600;border-radius:999px;padding:5px 14px;cursor:pointer}
+.install-go{color:var(--card);background:var(--accent);border:1px solid var(--accent)}
+.install-later{color:var(--muted);background:none;border:1px solid var(--line)}
+@media (max-width:520px){.install{flex-wrap:wrap}.install-text{flex-basis:calc(100% - 52px)}.install-btns{margin-left:52px}}
+
 /* Search box: results from the notes and every question page, loaded on first use. */
 .search{margin-top:20px}
 .search-box{position:relative}
@@ -570,7 +646,12 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:va
   <header class="top">
     <h1>পড়াশোনা</h1>
     <p class="lede">বিষয় বেছে নিন, তারপর যে ফাইলটি পড়তে চান তার নামে ক্লিক করুন। প্রতিটি ফাইলে অনুশীলন মোড আছে।</p>
-    <p class="meta">{{META}}</p>
+    <p class="meta">{{META}}<span class="offline-state" id="offline-state" hidden></span></p>
+    <div class="install" id="install" hidden>
+      <img src="icons/icon-192.png" alt="">
+      <div class="install-text"><b>ফোনে অ্যাপের মতো রাখুন</b><span class="install-hint"></span></div>
+      <div class="install-btns"><button class="install-go" type="button">ইনস্টল</button><button class="install-later" type="button">পরে</button></div>
+    </div>
     <nav class="jump" aria-label="অংশ">{{JUMP}}</nav>
     <div class="search" role="search">
       <div class="search-box">
