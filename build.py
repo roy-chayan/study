@@ -7,15 +7,22 @@ Usage (run inside this folder):
     python3 build.py
 
 What it does:
-  1. Lists the pages on index.html in three parts:
-       MCQ অনুশীলন       every .html file in math/, gk/, bengali/ and english/
+  1. Lists the pages on index.html in four parts, in this order (PAGE_ORDER):
        নোট                every .html file in notes/math/, notes/gk/, notes/bengali/
                           and notes/english/
        বিগত বছরের প্রশ্ন   one card per folder previous/ntrca-*/ (e.g. previous/ntrca-18/),
                           newest exam first, listing that exam's papers
        বিসিএস প্রিলিমিনারি one card per folder previous/bcs-*/ (e.g. previous/bcs-50/)
+       MCQ অনুশীলন       every .html file in math/, gk/, bengali/ and english/
   2. Adds the home button and a back-to-top button to every page, or brings
-     existing ones up to the current design.
+     existing ones up to the current design. Also adds the lines that make the
+     site installable and readable offline (manifest, icons, offline.js).
+  3. Writes search-index.js for the search box on index.html: every line of the
+     notes (except their practice cards) and every question with its answer from
+     the MCQ and previous-year pages. The box loads it only when someone searches.
+  4. Writes the list of all site files, each with a fingerprint of its contents,
+     into sw.js. Phones that saved the site download only what changed. Run
+     build.py before every push, even after editing a single page.
 
 A previous-year page's <title> is "<exam> — <paper>", e.g.
 "১৮তম শিক্ষক নিবন্ধন — স্কুল পর্যায়": the part before " — " names the card and
@@ -31,7 +38,9 @@ NOTE_ORDER below instead (study order); a new note not named there goes last.
 On index.html a note shows one line of its description (the part before " — ")
 and its exercise count; subjects with no notes are left out of the নোট part.
 """
+import hashlib
 import html
+import json
 import re
 import unicodedata
 from pathlib import Path
@@ -62,7 +71,10 @@ NOTE_ORDER = {
            "আন্তর্জাতিক সংস্থা, চুক্তি ও দিবস", "বিশ্ব পরিচিতি ও সমসাময়িক ঘটনা", "সাধারণ বিজ্ঞান", "কম্পিউটার ও তথ্যপ্রযুক্তি"],
 }
 
-# The two parts of index.html, in order:
+# Order of the parts on index.html (and of the jump links at the top).
+PAGE_ORDER = ["notes", "previous", "bcs", "mcq"]
+
+# The two subject-folder parts of index.html:
 # (id, heading, one-line description, folder for each subject, text for an empty
 # subject, word used in each card's count).
 GROUPS = [
@@ -136,6 +148,39 @@ TOP_HTML = (
 )
 TOP_BLOCK = re.compile(re.escape(TOP_START) + ".*?" + re.escape(TOP_END), re.S)
 
+OFFLINE_START = "<!-- offline -->"
+OFFLINE_END = "<!-- /offline -->"
+OFFLINE_BLOCK = re.compile(re.escape(OFFLINE_START) + ".*?" + re.escape(OFFLINE_END), re.S)
+# Files saved for offline reading (see sw.js); build.py, sw.js itself and hidden folders are left out.
+OFFLINE_TYPES = {".html", ".js", ".css", ".json", ".webmanifest", ".png", ".jpg", ".svg", ".webp"}
+SW_FILE = "sw.js"
+SW_FILES = re.compile(r"(/\* <files>[^\n]*\*/\n).*?(/\* </files> \*/)", re.S)
+
+
+def offline_head(depth):
+    """The lines at the end of <head> that make the site installable and readable offline.
+    Paths go up one folder per level, like the home button's link."""
+    up = "../" * depth
+    return (
+        OFFLINE_START
+        + f'<link rel="manifest" href="{up}manifest.webmanifest">'
+        '<meta name="theme-color" content="#F5F8F4" media="(prefers-color-scheme: light)">'
+        '<meta name="theme-color" content="#0E1411" media="(prefers-color-scheme: dark)">'
+        f'<link rel="apple-touch-icon" href="{up}icons/apple-touch-icon.png">'
+        '<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">'
+        '<meta name="apple-mobile-web-app-title" content="পড়াশোনা">'
+        f'<script src="{up}offline.js" defer></script>'
+        + OFFLINE_END
+    )
+
+
+def with_offline(text, depth):
+    """The page with the offline lines just before </head> (replacing older ones)."""
+    if OFFLINE_START in text:
+        return OFFLINE_BLOCK.sub(lambda _: offline_head(depth), text, count=1)
+    i = text.lower().find("</head>")
+    return text if i < 0 else text[:i] + offline_head(depth) + "\n" + text[i:]
+
 
 def with_top_button(text):
     """The page with the back-to-top button just before </body> (replacing an older one)."""
@@ -192,7 +237,7 @@ def read_page(path):
 
 
 def add_home_link(path, text):
-    """Insert the home and back-to-top buttons, or replace older ones. Returns what changed."""
+    """Insert the home and back-to-top buttons and the offline lines, or replace older ones. Returns what changed."""
     if not text:
         return None
     # "../index.html" from math/x.html, "../../index.html" from notes/math/x.html.
@@ -207,7 +252,7 @@ def add_home_link(path, text):
         if not m:
             return None
         new, status = text[: m.end()] + block + text[m.end() :], "added"
-    new = with_top_button(new)
+    new = with_offline(with_top_button(new), depth)
     if new == text:
         return None
     path.write_bytes(new.encode("utf-8"))
@@ -256,8 +301,130 @@ def render_group(gid, heading, blurb, cards):
     )
 
 
+# ---- Search index -------------------------------------------------------------------------------
+# search-index.js holds {"p": pages, "s": sections, "e": entries}:
+#   page    [url, title, kind]  kind "n" note, "p" previous-year paper, "m" MCQ file
+#   section [id, heading]
+#   entry   [page, section or -1, text, answer, fragment]  fragment is [start, length] inside text, or a
+#           string; the result link jumps to that text on the page (#:~:text=…).
+SEARCH_FILE = "search-index.js"
+SEARCH_SKIP = ("overview", "practice", "past")   # note sections that only repeat past questions
+SEP = "\x00"                                      # marks a cell or meaning boundary inside one line
+SHOWN_ONLY = "\x01"                               # what follows is shown in the result but is not page text to jump to
+ZERO_WIDTH = re.compile("[‌‍]")
+SEARCH_DROP = re.compile(r'<(script|style|svg|button|template)\b.*?</\1>|<span class="(?:xt|yr|ex-n)">.*?</span>'
+                         r'|<p class="ex-tags">.*?</p>|<article class="ex">.*?</article>'
+                         r'|<header class="sec-head">.*?</header>|<thead>.*?</thead>', re.S)
+SEARCH_BLOCK = re.compile(r"</(?:tr|li|p|h[1-6]|div|dd|dt|blockquote|figcaption|caption|table|ul|ol)>|<br\s*/?>"
+                          r'|<(?:span|div) class="(?:w|pi)">|</span>(?=\s*<span>)', re.I)
+
+
+def plain(s):
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", s))).strip()
+
+
+def shown(s):
+    """Text as stored in the index: NFC, no zero-width joiners, one space between words."""
+    return re.sub(r"\s+", " ", ZERO_WIDTH.sub("", unicodedata.normalize("NFC", s.replace(SEP, " ").replace(SHOWN_ONLY, " ")))).strip()
+
+
+def jump_text(raw):
+    """A distinctive run of page text to jump to: the first cell, or the longest one if the first is a short label."""
+    parts = [p.strip(" —") for p in raw.split(SHOWN_ONLY)[0].split(SEP) if p.strip(" —")]
+    part = parts[0] if len(parts[0]) >= 12 else max(parts, key=len)
+    if len(part) > 48:
+        cut = part[:48].rsplit(" ", 1)[0]
+        part = cut if len(cut) >= 12 else part[:48]
+    return part
+
+
+def search_entry(page, section, raw, answer=""):
+    text, jump = shown(raw), jump_text(raw)
+    at = text.find(jump)
+    entry = [page, section, text, shown(answer)]
+    if at < 0:
+        entry.append(jump)                  # the page spells it differently (e.g. য + nukta); keep the page's form
+    elif not (at == 0 and len(jump) == len(text)):
+        entry.append([at, len(jump)])
+    elif not answer:
+        entry.pop()                         # whole text, no answer: [page, section, text]
+    return entry
+
+
+def write_search_index():
+    pages, sections, entries = [], [], []
+
+    def add_page(path, title, kind):
+        pages.append([quote(str(path.relative_to(ROOT))), title, kind])
+        return len(pages) - 1
+
+    def add_section(sid, body):
+        h2 = re.search(r"<h2[^>]*>(.*?)</h2>", body, re.S)
+        sections.append([sid, plain(h2.group(1)) if h2 else ""])
+        return len(sections) - 1
+
+    notes = [p for folder, *_ in SUBJECTS for p in sorted((ROOT / "notes" / folder).glob("*.html"), key=note_key(folder))]
+    for path in notes:
+        text = read_page(path)
+        page = add_page(path, first(r"<h1[^>]*>(.*?)</h1>", text) or path.stem, "n")
+        seen = set()
+        for sid, body in re.findall(r'<section class="sec" id="([^"]+)">(.*?)</section>', text, re.S):
+            if sid in SEARCH_SKIP:
+                continue
+            section = add_section(sid, body)
+            body = SEARCH_DROP.sub(" ", body)
+            # "Common mistakes" pairs become one line, "ভুল: … → ঠিক: …", so a wrong form never reads like a fact.
+            body = re.sub(r'<p class="bad(?: en)?">(.*?)</p>\s*<p class="good(?: en)?">(.*?)</p>',
+                          lambda m: f"<p>ভুল:{SEP} {m.group(1)}{SHOWN_ONLY} → ঠিক: {m.group(2)}</p>", body, flags=re.S)
+            body = re.sub(r"</t[dh]>\s*<t[dh][^>]*>|<small[^>]*>", SEP + " — ", body)
+            for line in SEARCH_BLOCK.split(body):
+                raw = plain(line).strip(" —")
+                if len(raw.replace(SEP, "").strip()) >= 4 and raw not in seen:
+                    seen.add(raw)
+                    entries.append(search_entry(page, section, raw))
+
+    papers = [p for folder, *_ in SUBJECTS for p in sorted((ROOT / folder).glob("*.html"), key=natural_key)]
+    papers += sorted((ROOT / PREVIOUS).glob("*/*.html"), key=lambda p: (natural_key(p.parent), natural_key(p)))
+    for path in papers:
+        text = read_page(path)
+        page = add_page(path, first(r"<title[^>]*>(.*?)</title>", text) or path.stem, "p" if path.parent.parent.name == PREVIOUS else "m")
+        parts = re.split(r'<section[^>]*\bid="([^"]+)"[^>]*>', text)
+        for i, body in enumerate(parts[::2]):
+            section = add_section(parts[2 * i - 1], body) if i else -1
+            for q in re.findall(r'<article class="q">(.*?)</article>', body, re.S):
+                head = re.search(r"<h3[^>]*>(.*?)</h3>", q, re.S).group(1)
+                qt = re.search(r'<span class="qt">(.*?)</span>\s*$', head, re.S)
+                question = plain(qt.group(1) if qt else re.sub(r'<span class="num">.*?</span>', "", head, flags=re.S))
+                ok = [plain(re.sub(r'<span class="k">.*?</span>', "", o, flags=re.S)) for o in re.findall(r'<li class="ok">(.*?)</li>', q, re.S)]
+                entries.append(search_entry(page, section, question, " / ".join(ok) or "অপশনে নেই"))
+
+    data = json.dumps({"p": pages, "s": sections, "e": entries}, ensure_ascii=False, separators=(",", ":"))
+    (ROOT / SEARCH_FILE).write_text(f"window.SEARCH_INDEX={data};\n", encoding="utf-8")
+    return len(entries), hashlib.sha1(data.encode("utf-8")).hexdigest()[:10]
+
+
+def write_offline_list():
+    """Every site file with a fingerprint of its contents, written into sw.js (see the top of sw.js)."""
+    files = {}
+    for path in sorted(ROOT.rglob("*")):
+        rel = path.relative_to(ROOT)
+        if (path.is_file() and path.suffix in OFFLINE_TYPES and rel.as_posix() != SW_FILE
+                and not any(part.startswith((".", "__")) for part in rel.parts)):
+            files[rel.as_posix()] = hashlib.sha1(path.read_bytes()).hexdigest()[:10]
+    sw = ROOT / SW_FILE
+    text = sw.read_text(encoding="utf-8") if sw.exists() else ""
+    if not SW_FILES.search(text):
+        print(f"{SW_FILE} not updated: its /* <files> */ … /* </files> */ markers are missing")
+        return 0
+    listing = "const FILES = " + json.dumps(files, ensure_ascii=False, indent=0) + ";\n"
+    new = SW_FILES.sub(lambda m: m.group(1) + listing + m.group(2), text, count=1)
+    if new != text:
+        sw.write_text(new, encoding="utf-8")
+    return len(files)
+
+
 def main():
-    groups, counts, total_q, linked = [], {}, 0, []
+    groups, headings, counts, total_q, linked = {}, {}, {}, 0, []
     for gid, heading, blurb, folder_pattern, empty, noun in GROUPS:
         cards, count = [], 0
         order = SUBJECT_ORDER.get(gid)
@@ -288,7 +455,7 @@ def main():
             sid = folder if gid == "mcq" else f"{gid}-{folder}"
             cards.append(render_subject(sid, name_bn, name_en, files, empty, noun))
         counts[gid] = count
-        groups.append(render_group(gid, heading, blurb, cards))
+        groups[gid], headings[gid] = render_group(gid, heading, blurb, cards), heading
 
     pid = PREVIOUS
     (ROOT / pid).mkdir(exist_ok=True)
@@ -313,23 +480,29 @@ def main():
             print(f"  {pid}/{exam_dir.name:<8} {len(files)} file(s)")
         counts[gid] = papers
         if cards:
-            groups.append(render_group(gid, heading, blurb, cards))
+            groups[gid], headings[gid] = render_group(gid, heading, blurb, cards), heading
 
-    meta = f"<span>বিষয় <b>{bn(len(SUBJECTS))}</b></span><span>MCQ ফাইল <b>{bn(counts['mcq'])}</b></span>"
-    if total_q:
-        meta += f"<span>প্রশ্ন <b>{bn(total_q)}</b></span>"
-    meta += f"<span>নোট <b>{bn(counts['notes'])}</b></span>"
+    meta = f"<span>বিষয় <b>{bn(len(SUBJECTS))}</b></span><span>নোট <b>{bn(counts['notes'])}</b></span>"
     meta += f"<span>বিগত প্রশ্নপত্র <b>{bn(counts['previous'])}</b></span>"
-    jump = "".join(f'<a href="#{gid}">{heading} <span>↓</span></a>' for gid, heading, *_ in PREVIOUS_GROUPS if counts[gid])
     if counts["bcs"]:
         meta += f"<span>বিসিএস <b>{bn(counts['bcs'])}</b></span>"
-    page = TEMPLATE.replace("{{META}}", meta).replace("{{JUMP}}", jump).replace("{{GROUPS}}", "\n".join(groups))
+    meta += f"<span>MCQ ফাইল <b>{bn(counts['mcq'])}</b></span>"
+    if total_q:
+        meta += f"<span>MCQ প্রশ্ন <b>{bn(total_q)}</b></span>"
+    order = [gid for gid in PAGE_ORDER if gid in groups]
+    jump = "".join(f'<a href="#{gid}">{headings[gid]} <span>↓</span></a>' for gid in order)
+    searchable, version = write_search_index()
+    page = (TEMPLATE.replace("{{META}}", meta).replace("{{JUMP}}", jump).replace("{{GROUPS}}", "\n".join(groups[gid] for gid in order))
+            .replace("{{SEARCH}}", f"{SEARCH_FILE}?v={version}").replace("{{OFFLINE}}", offline_head(0)))
     (ROOT / "index.html").write_text(page, encoding="utf-8")
+    offline = write_offline_list()
 
     for change in linked:
-        print(f"  home button {change}")
+        print(f"  page {change}")
+    print(f"{SEARCH_FILE} updated: {searchable} searchable lines and questions")
     print(f"index.html updated: {counts['mcq']} MCQ file(s), {counts['notes']} note(s), "
           f"{counts['previous']} previous-year paper(s), {counts['bcs']} BCS paper(s)")
+    print(f"{SW_FILE} updated: {offline} file(s) saved for offline reading")
 
 
 TEMPLATE = """<!doctype html>
@@ -341,6 +514,7 @@ TEMPLATE = """<!doctype html>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700&family=Hind+Siliguri:wght@400;500;600&display=swap">
+{{OFFLINE}}
 <!-- Generated by build.py. Edit build.py, not this file: changes here are overwritten. -->
 <style>
 /* Same palette and type as the question pages. */
@@ -417,6 +591,45 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,40px);lin
 .empty{margin:0;padding:16px;text-align:center;font-size:14px;color:var(--muted);
   border:1px dashed var(--line);border-radius:8px}
 
+/* Offline status in the meta line, and the install offer (offline.js fills both in). */
+.meta .offline-state{color:var(--accent);font-weight:600}
+.meta .offline-state.off{color:var(--gold)}
+.install{display:flex;align-items:center;gap:12px;margin-top:18px;padding:12px 14px;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.install[hidden]{display:none}
+.install img{width:40px;height:40px;border-radius:9px;flex:none}
+.install-text{flex:1;min-width:0;font-size:14px;line-height:1.45}
+.install-text b{display:block;font-size:15px}
+.install-hint{color:var(--muted)}
+.install-btns{display:flex;gap:6px;flex:none}
+.install button{font:inherit;font-size:14px;font-weight:600;border-radius:999px;padding:5px 14px;cursor:pointer}
+.install-go{color:var(--card);background:var(--accent);border:1px solid var(--accent)}
+.install-later{color:var(--muted);background:none;border:1px solid var(--line)}
+@media (max-width:520px){.install{flex-wrap:wrap}.install-text{flex-basis:calc(100% - 52px)}.install-btns{margin-left:52px}}
+
+/* Search box: results from the notes and every question page, loaded on first use. */
+.search{margin-top:20px}
+.search-box{position:relative}
+.search-box svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.search input{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:10px 14px 10px 40px;box-shadow:var(--shadow);-webkit-appearance:none;appearance:none}
+.search input:focus{outline:none;border-color:var(--accent)}
+.search-status{margin:8px 2px 0;font-size:13.5px;color:var(--muted)}
+.search-status:empty{display:none}
+.results{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.hit{display:block;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:10px 14px}
+.hit:hover{border-color:var(--accent)}
+.hit-src{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;font-size:12.5px;color:var(--muted);line-height:1.5}
+.hit-kind{font-weight:600;border-radius:999px;padding:0 8px;color:var(--accent);background:var(--accent-soft)}
+.hit-kind.n{color:var(--gold);background:var(--gold-soft)}
+.hit-text{display:block;margin-top:4px;line-height:1.55;overflow-wrap:anywhere}
+.hit-ans{display:block;margin-top:2px;font-size:14px;font-weight:600;color:var(--accent)}
+.hit mark{color:inherit;background:var(--gold-soft);box-shadow:inset 0 -2px 0 var(--gold);border-radius:2px}
+.more{margin-top:10px;font:inherit;font-size:14px;font-weight:600;color:var(--accent);background:var(--card);
+  border:1px solid var(--line);border-radius:999px;padding:6px 16px;cursor:pointer}
+.more:hover{border-color:var(--accent)}
+
 .foot{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:14px;
   display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
 .foot p{margin:0}
@@ -433,8 +646,22 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:va
   <header class="top">
     <h1>পড়াশোনা</h1>
     <p class="lede">বিষয় বেছে নিন, তারপর যে ফাইলটি পড়তে চান তার নামে ক্লিক করুন। প্রতিটি ফাইলে অনুশীলন মোড আছে।</p>
-    <p class="meta">{{META}}</p>
-    <nav class="jump" aria-label="অংশ"><a href="#mcq">MCQ অনুশীলন <span>↓</span></a><a href="#notes">নোট <span>↓</span></a>{{JUMP}}</nav>
+    <p class="meta">{{META}}<span class="offline-state" id="offline-state" hidden></span></p>
+    <div class="install" id="install" hidden>
+      <img src="icons/icon-192.png" alt="">
+      <div class="install-text"><b>ফোনে অ্যাপের মতো রাখুন</b><span class="install-hint"></span></div>
+      <div class="install-btns"><button class="install-go" type="button">ইনস্টল</button><button class="install-later" type="button">পরে</button></div>
+    </div>
+    <nav class="jump" aria-label="অংশ">{{JUMP}}</nav>
+    <div class="search" role="search">
+      <div class="search-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="নোট ও প্রশ্নে খুঁজুন — যেমন: পুণ্ড্র, সংবিধান, synonym" autocomplete="off" spellcheck="false" aria-label="নোট ও প্রশ্নে খুঁজুন">
+      </div>
+      <p class="search-status" id="search-status" aria-live="polite"></p>
+      <ol class="results" id="results"></ol>
+      <button class="more" id="more" type="button" hidden>আরও দেখুন</button>
+    </div>
   </header>
 
   <main>
@@ -446,6 +673,110 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:va
     <code>python3 build.py</code>
   </footer>
 </div>
+<script>
+/* Search: loads search-index.js on first use. A line or question matches when it contains every word typed;
+   notes come first, then previous-year questions, then MCQ files. A result opens the page at that text. */
+(function () {
+  var box = document.getElementById("q"), list = document.getElementById("results"),
+      status = document.getElementById("search-status"), more = document.getElementById("more");
+  var KIND = {n: "নোট", p: "বিগত প্রশ্ন", m: "MCQ"}, RANK = {n: 0, p: 1, m: 2}, STEP = 30;
+  var data = null, keys = null, hits = [], words = [], shown = 0, timer = 0, waiting = false;
+
+  // ণ/ন, ী/ি and ূ/ু count as the same letter, so a near spelling still finds the text (one letter for one, so positions stay).
+  function fold(s) { return s.toLowerCase().replace(/ণ/g, "ন").replace(/ী/g, "ি").replace(/ূ/g, "ু"); }
+  function norm(s) { return fold(s.normalize("NFC").replace(/[\\u200c\\u200d]/g, "")).replace(/\\s+/g, " ").trim(); }
+  function bn(n) { return String(n).replace(/\\d/g, function (d) { return "০১২৩৪৫৬৭৮৯"[d]; }); }
+  function esc(s) { return s.replace(/[&<>"]/g, function (c) { return {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]; }); }
+
+  function load(done) {
+    if (data) return done();
+    if (waiting) return;
+    waiting = true;
+    status.textContent = "খোঁজার তথ্য আনা হচ্ছে…";
+    var s = document.createElement("script");
+    s.src = "{{SEARCH}}";
+    s.onload = function () {
+      data = window.SEARCH_INDEX;
+      keys = data.e.map(function (e) { return norm(e[2] + " " + (e[3] || "")); });
+      waiting = false;
+      done();
+    };
+    s.onerror = function () { waiting = false; status.textContent = "খোঁজার তথ্য আনা যায়নি — ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।"; };
+    document.head.appendChild(s);
+  }
+
+  // Wrap every typed word in <mark>; the stored text is already NFC, so positions match its folded form.
+  function mark(text) {
+    var low = fold(text), spans = [], out = "", at = 0;
+    words.forEach(function (w) {
+      for (var i = low.indexOf(w); i >= 0; i = low.indexOf(w, i + w.length)) spans.push([i, i + w.length]);
+    });
+    spans.sort(function (a, b) { return a[0] - b[0]; }).forEach(function (s) {
+      if (s[1] <= at) return;
+      var from = Math.max(s[0], at);
+      out += esc(text.slice(at, from)) + "<mark>" + esc(text.slice(from, s[1])) + "</mark>";
+      at = s[1];
+    });
+    return out + esc(text.slice(at));
+  }
+
+  // The page, its section, and the text to jump to (#section:~:text=…).
+  function href(e) {
+    var f = e[4], sec = e[1] >= 0 ? data.s[e[1]][0] : "";
+    var jump = f == null ? e[2] : typeof f === "string" ? f : e[2].substr(f[0], f[1]);
+    return data.p[e[0]][0] + "#" + sec + ":~:text=" + encodeURIComponent(jump).replace(/-/g, "%2D");
+  }
+
+  function item(e) {
+    var page = data.p[e[0]], sec = e[1] >= 0 ? data.s[e[1]][1] : "";
+    return '<li><a class="hit" href="' + esc(href(e)) + '"><span class="hit-src"><span class="hit-kind ' + page[2] + '">' +
+      KIND[page[2]] + "</span>" + esc(page[1]) + (sec ? " › " + esc(sec) : "") + "</span>" +
+      '<span class="hit-text">' + mark(e[2]) + "</span>" + (e[3] ? '<span class="hit-ans">উত্তর: ' + mark(e[3]) + "</span>" : "") + "</a></li>";
+  }
+
+  function showMore() {
+    list.insertAdjacentHTML("beforeend", hits.slice(shown, shown + STEP).map(function (i) { return item(data.e[i]); }).join(""));
+    shown = Math.min(shown + STEP, hits.length);
+    more.hidden = shown >= hits.length;
+    more.textContent = "আরও দেখুন (বাকি " + bn(hits.length - shown) + "টি)";
+  }
+
+  function search() {
+    var q = norm(box.value);
+    words = q ? q.split(" ") : [];
+    hits = []; shown = 0; list.innerHTML = ""; more.hidden = true;
+    if (q.length < 2) { status.textContent = ""; return; }
+    var count = {n: 0, p: 0, m: 0};
+    for (var i = 0; i < keys.length; i++) {
+      for (var j = 0, ok = true; ok && j < words.length; j++) ok = keys[i].indexOf(words[j]) >= 0;
+      if (ok) { hits.push(i); count[data.p[data.e[i][0]][2]]++; }
+    }
+    hits.sort(function (a, b) { return RANK[data.p[data.e[a][0]][2]] - RANK[data.p[data.e[b][0]][2]] || a - b; });
+    status.textContent = hits.length
+      ? "নোটে " + bn(count.n) + " · বিগত প্রশ্নে " + bn(count.p) + " · MCQ-তে " + bn(count.m) + " — মোট " + bn(hits.length) + "টি"
+      : "“" + box.value.trim() + "” কোথাও পাওয়া যায়নি।";
+    showMore();
+  }
+
+  box.addEventListener("input", function () {
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      var q = box.value.trim();
+      history.replaceState(null, "", q ? "?q=" + encodeURIComponent(q) : location.pathname);
+      load(search);
+    }, 180);
+  });
+  box.addEventListener("focus", function () { load(search); });
+  more.addEventListener("click", showMore);
+  document.addEventListener("keydown", function (e) {
+    var t = e.target.tagName;
+    if (e.key === "/" && t !== "INPUT" && t !== "TEXTAREA") { e.preventDefault(); box.focus(); }
+  });
+  // ?q=… (also kept while typing, so Back from a result brings the results back).
+  var start = new URLSearchParams(location.search).get("q");
+  if (start) { box.value = start; load(search); }
+})();
+</script>
 </body>
 </html>
 """
