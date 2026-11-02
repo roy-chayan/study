@@ -16,7 +16,9 @@ What it does:
        MCQ অনুশীলন       every .html file in math/, gk/, bengali/ and english/
   2. Adds the home button and a back-to-top button to every page, or brings
      existing ones up to the current design. Also adds the lines that make the
-     site installable and readable offline (manifest, icons, offline.js).
+     site installable and readable offline (manifest, icons, offline.js), and at
+     the end of each page a card that opens the practice site (EXAM_URL) on that
+     page's subject, or on that previous-year paper as a timed exam.
   3. Writes search-index.js for the search box on index.html: every line of the
      notes (except their practice cards) and every question with its answer from
      the MCQ and previous-year pages. The box loads it only when someone searches.
@@ -148,6 +150,62 @@ TOP_HTML = (
 )
 TOP_BLOCK = re.compile(re.escape(TOP_START) + ".*?" + re.escape(TOP_END), re.S)
 
+EXAM_START = "<!-- exam-link -->"
+EXAM_END = "<!-- /exam-link -->"
+EXAM_BLOCK = re.compile(re.escape(EXAM_START) + ".*?" + re.escape(EXAM_END) + "\n?", re.S)
+# The practice site (NTRCA Practice) next to this one on roy-chayan.github.io: …/study/ and …/exams/.
+EXAM_URL = "exams/"
+# Like the home button, the card carries its own styles and uses the page's colour tokens.
+EXAM_STYLE = (
+    "<style>"
+    ".exam-cta{box-sizing:border-box;max-width:min(760px,calc(100% - 32px));margin:40px auto 64px;padding:16px 18px;"
+    "display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;border:1px solid var(--line,#D9E3DB);border-radius:12px;"
+    "background:var(--card,#fff);font-family:inherit}"
+    ".exam-cta p{margin:0;flex:1 1 220px;line-height:1.5;color:var(--ink,#18231C)}"
+    ".exam-cta b{display:block;font-size:16px}"
+    ".exam-cta span{font-size:14px;color:var(--muted,#5B6D61)}"
+    ".exam-cta a{display:inline-flex;align-items:center;padding:8px 18px;border-radius:999px;font-size:14px;font-weight:600;"
+    "text-decoration:none;white-space:nowrap;color:var(--card,#fff);background:var(--accent,#14624A)}"
+    ".exam-cta a:hover{filter:brightness(1.08)}"
+    "@media print{.exam-cta{display:none}}"
+    "</style>"
+)
+
+
+def exam_card(path):
+    """The card at the end of a page that opens the practice site on it, or "" when it fits no subject or paper.
+    A previous-year paper ("previous/ntrca-18/2 স্কুল পর্যায়-২.html") opens as that paper (?sets=school2-18);
+    a notes or MCQ page opens on its subject (?subject=bengali)."""
+    rel = path.relative_to(ROOT)
+    up = "../" * len(rel.parts)            # from the page up to roy-chayan.github.io/
+    if rel.parts[0] == PREVIOUS and len(rel.parts) == 3:
+        exam, stem = rel.parts[1], path.stem
+        no = exam.rsplit("-", 1)[-1]
+        level = ("bcs" if exam.startswith("bcs-") else "school2" if "স্কুল" in stem and "-২" in stem
+                 else "school" if "স্কুল" in stem else "college" if "কলেজ" in stem else "")
+        if not level:
+            return ""
+        query, title, sub = f"sets={level}-{no}", "এই প্রশ্নপত্রে পরীক্ষা দিন", "উত্তর না দেখে, টাইমারসহ, NTRCA Practice-এ।"
+    else:
+        folder = rel.parts[1] if rel.parts[0] == "notes" else rel.parts[0]
+        name = next((bn for f, bn, _ in SUBJECTS if f == folder), "")
+        if not name:
+            return ""
+        query, title, sub = f"subject={folder}", "নিজেকে যাচাই করুন", f"বিষয়: {name} · আসল NTRCA প্রশ্নে টাইমারসহ পরীক্ষা, NTRCA Practice-এ।"
+    return (EXAM_START + EXAM_STYLE + f'<div class="exam-cta"><p><b>{title}</b><span>{sub}</span></p>'
+            f'<a href="{up}{EXAM_URL}?{query}">পরীক্ষা দিন →</a></div>' + EXAM_END)
+
+
+def with_exam_card(text, path):
+    """The page with its exam card just before the back-to-top button (replacing an older one)."""
+    card = exam_card(path)
+    text = EXAM_BLOCK.sub("", text)
+    i = text.find(TOP_START)
+    if i < 0:
+        i = text.lower().rfind("</body>")
+    return text if i < 0 or not card else text[:i] + card + "\n" + text[i:]
+
+
 OFFLINE_START = "<!-- offline -->"
 OFFLINE_END = "<!-- /offline -->"
 OFFLINE_BLOCK = re.compile(re.escape(OFFLINE_START) + ".*?" + re.escape(OFFLINE_END), re.S)
@@ -237,7 +295,7 @@ def read_page(path):
 
 
 def add_home_link(path, text):
-    """Insert the home and back-to-top buttons and the offline lines, or replace older ones. Returns what changed."""
+    """Insert the home and back-to-top buttons, the exam card and the offline lines, or replace older ones. Returns what changed."""
     if not text:
         return None
     # "../index.html" from math/x.html, "../../index.html" from notes/math/x.html.
@@ -252,7 +310,7 @@ def add_home_link(path, text):
         if not m:
             return None
         new, status = text[: m.end()] + block + text[m.end() :], "added"
-    new = with_offline(with_top_button(new), depth)
+    new = with_offline(with_exam_card(with_top_button(new), path), depth)
     if new == text:
         return None
     path.write_bytes(new.encode("utf-8"))
@@ -551,6 +609,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,40px);lin
   color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 14px}
 .jump a:hover{border-color:var(--accent);color:var(--accent)}
 .jump span{color:var(--muted)}
+.jump a.out{color:var(--accent);border-color:var(--accent)}
 
 /* Two parts (MCQ, notes), each a grid of subject cards. */
 .group+.group{margin-top:48px}
@@ -652,7 +711,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:va
       <div class="install-text"><b>ফোনে অ্যাপের মতো রাখুন</b><span class="install-hint"></span></div>
       <div class="install-btns"><button class="install-go" type="button">ইনস্টল</button><button class="install-later" type="button">পরে</button></div>
     </div>
-    <nav class="jump" aria-label="অংশ">{{JUMP}}</nav>
+    <nav class="jump" aria-label="অংশ">{{JUMP}}<a class="out" href="../exams/">টাইমারসহ পরীক্ষা <span>↗</span></a></nav>
     <div class="search" role="search">
       <div class="search-box">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -772,9 +831,51 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:va
     var t = e.target.tagName;
     if (e.key === "/" && t !== "INPUT" && t !== "TEXTAREA") { e.preventDefault(); box.focus(); }
   });
+  /* ?about=<question>&ans=<answer>&s=<subject>: the practice site's "Read related notes" link.
+     Shows the note lines that share the most uncommon words with the question and its answer (a word
+     found in many lines counts little, the answer's words count more), from that subject's notes first. */
+  var SUFFIX = /(গুলো|গুলি|দের|েরা|ের|কে|টি|টা|তে|য়|রা|র|এ|ে)$/;
+  function terms(s) {
+    var seen = {}, out = [];
+    norm(s).split(/[^\p{L}\p{M}\p{N}]+/u).forEach(function (w) {
+      if (w.length >= 4) w = w.replace(SUFFIX, "");   // "কারকে" also finds "কারক"
+      if (w.length >= 2 && !(/^\\p{N}+$/u.test(w) && w.length < 4) && !seen[w]) { seen[w] = 1; out.push(w); }   // numbers below 1000 say little
+    });
+    return out;
+  }
+  function related(question, answer, subject) {
+    var n = keys.length, aw = terms(answer), use = [], weight = {};
+    terms(question).concat(aw).forEach(function (w) {
+      if (weight[w] !== undefined) return;
+      for (var i = 0, df = 0; i < n; i++) if (keys[i].indexOf(w) >= 0) df++;
+      weight[w] = Math.log((n + 1) / (df + 1)) * (aw.indexOf(w) >= 0 ? 1.5 : 1);
+      if (Math.log((n + 1) / (df + 1)) > 2) use.push(w);   // skip words found in more than about 1 line in 7
+    });
+    function pick(prefix) {
+      var out = [];
+      for (var i = 0; i < n; i++) {
+        var page = data.p[data.e[i][0]];
+        if (page[2] !== "n" || page[0].indexOf(prefix) !== 0) continue;
+        for (var j = 0, score = 0, m = 0; j < use.length; j++) if (keys[i].indexOf(use[j]) >= 0) { score += weight[use[j]]; m++; }
+        if (m >= 2) out.push([i, score]);
+      }
+      return out.sort(function (a, b) { return b[1] - a[1]; }).slice(0, 20).map(function (x) { return x[0]; });
+    }
+    var found = /^[a-z]+$/.test(subject) ? pick("notes/" + subject + "/") : [];
+    return { hits: found.length ? found : pick("notes/"), words: use };
+  }
+  function showRelated(question, answer, subject) {
+    var r = related(question, answer, subject), q = question.length > 110 ? question.slice(0, 110) + "…" : question;
+    hits = r.hits; words = r.words; shown = 0; list.innerHTML = ""; more.hidden = true;
+    status.textContent = "“" + q + "” — উত্তর: " + answer + " · " +
+      (hits.length ? "মিল আছে এমন নোট " + bn(hits.length) + "টি" : "এর সাথে মিলে যায় এমন নোট পাওয়া যায়নি।");
+    if (hits.length) showMore();
+  }
+
   // ?q=… (also kept while typing, so Back from a result brings the results back).
-  var start = new URLSearchParams(location.search).get("q");
-  if (start) { box.value = start; load(search); }
+  var params = new URLSearchParams(location.search), start = params.get("q"), about = params.get("about");
+  if (about) load(function () { showRelated(about, params.get("ans") || "", params.get("s") || ""); });
+  else if (start) { box.value = start; load(search); }
 })();
 </script>
 </body>

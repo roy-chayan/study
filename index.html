@@ -44,6 +44,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,6vw,40px);lin
   color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 14px}
 .jump a:hover{border-color:var(--accent);color:var(--accent)}
 .jump span{color:var(--muted)}
+.jump a.out{color:var(--accent);border-color:var(--accent)}
 
 /* Two parts (MCQ, notes), each a grid of subject cards. */
 .group+.group{margin-top:48px}
@@ -145,7 +146,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:va
       <div class="install-text"><b>ফোনে অ্যাপের মতো রাখুন</b><span class="install-hint"></span></div>
       <div class="install-btns"><button class="install-go" type="button">ইনস্টল</button><button class="install-later" type="button">পরে</button></div>
     </div>
-    <nav class="jump" aria-label="অংশ"><a href="#notes">নোট <span>↓</span></a><a href="#previous">বিগত বছরের প্রশ্ন <span>↓</span></a><a href="#bcs">বিসিএস প্রিলিমিনারি <span>↓</span></a><a href="#mcq">MCQ অনুশীলন <span>↓</span></a></nav>
+    <nav class="jump" aria-label="অংশ"><a href="#notes">নোট <span>↓</span></a><a href="#previous">বিগত বছরের প্রশ্ন <span>↓</span></a><a href="#bcs">বিসিএস প্রিলিমিনারি <span>↓</span></a><a href="#mcq">MCQ অনুশীলন <span>↓</span></a><a class="out" href="../exams/">টাইমারসহ পরীক্ষা <span>↗</span></a></nav>
     <div class="search" role="search">
       <div class="search-box">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -276,9 +277,51 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:va
     var t = e.target.tagName;
     if (e.key === "/" && t !== "INPUT" && t !== "TEXTAREA") { e.preventDefault(); box.focus(); }
   });
+  /* ?about=<question>&ans=<answer>&s=<subject>: the practice site's "Read related notes" link.
+     Shows the note lines that share the most uncommon words with the question and its answer (a word
+     found in many lines counts little, the answer's words count more), from that subject's notes first. */
+  var SUFFIX = /(গুলো|গুলি|দের|েরা|ের|কে|টি|টা|তে|য়|রা|র|এ|ে)$/;
+  function terms(s) {
+    var seen = {}, out = [];
+    norm(s).split(/[^\p{L}\p{M}\p{N}]+/u).forEach(function (w) {
+      if (w.length >= 4) w = w.replace(SUFFIX, "");   // "কারকে" also finds "কারক"
+      if (w.length >= 2 && !(/^\p{N}+$/u.test(w) && w.length < 4) && !seen[w]) { seen[w] = 1; out.push(w); }   // numbers below 1000 say little
+    });
+    return out;
+  }
+  function related(question, answer, subject) {
+    var n = keys.length, aw = terms(answer), use = [], weight = {};
+    terms(question).concat(aw).forEach(function (w) {
+      if (weight[w] !== undefined) return;
+      for (var i = 0, df = 0; i < n; i++) if (keys[i].indexOf(w) >= 0) df++;
+      weight[w] = Math.log((n + 1) / (df + 1)) * (aw.indexOf(w) >= 0 ? 1.5 : 1);
+      if (Math.log((n + 1) / (df + 1)) > 2) use.push(w);   // skip words found in more than about 1 line in 7
+    });
+    function pick(prefix) {
+      var out = [];
+      for (var i = 0; i < n; i++) {
+        var page = data.p[data.e[i][0]];
+        if (page[2] !== "n" || page[0].indexOf(prefix) !== 0) continue;
+        for (var j = 0, score = 0, m = 0; j < use.length; j++) if (keys[i].indexOf(use[j]) >= 0) { score += weight[use[j]]; m++; }
+        if (m >= 2) out.push([i, score]);
+      }
+      return out.sort(function (a, b) { return b[1] - a[1]; }).slice(0, 20).map(function (x) { return x[0]; });
+    }
+    var found = /^[a-z]+$/.test(subject) ? pick("notes/" + subject + "/") : [];
+    return { hits: found.length ? found : pick("notes/"), words: use };
+  }
+  function showRelated(question, answer, subject) {
+    var r = related(question, answer, subject), q = question.length > 110 ? question.slice(0, 110) + "…" : question;
+    hits = r.hits; words = r.words; shown = 0; list.innerHTML = ""; more.hidden = true;
+    status.textContent = "“" + q + "” — উত্তর: " + answer + " · " +
+      (hits.length ? "মিল আছে এমন নোট " + bn(hits.length) + "টি" : "এর সাথে মিলে যায় এমন নোট পাওয়া যায়নি।");
+    if (hits.length) showMore();
+  }
+
   // ?q=… (also kept while typing, so Back from a result brings the results back).
-  var start = new URLSearchParams(location.search).get("q");
-  if (start) { box.value = start; load(search); }
+  var params = new URLSearchParams(location.search), start = params.get("q"), about = params.get("about");
+  if (about) load(function () { showRelated(about, params.get("ans") || "", params.get("s") || ""); });
+  else if (start) { box.value = start; load(search); }
 })();
 </script>
 </body>
