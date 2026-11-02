@@ -4,8 +4,9 @@
      and offers to install it like an app (#install).
    - On any page: offers a "Refresh" when a newer version of that page has just been saved. */
 (function () {
-  if (location.protocol === "file:" || !("serviceWorker" in navigator)) return;
-  var sw = navigator.serviceWorker, root = new URL(".", document.currentScript.src).href;
+  if (location.protocol === "file:") return;
+  // Some built-in app browsers (e.g. Messenger's on iPhone) have no offline support; the install card still works there.
+  var sw = navigator.serviceWorker || null, root = new URL(".", document.currentScript.src).href;
   var state = document.getElementById("offline-state"), install = document.getElementById("install");
   var saving = null, failed = false, prompt = null, HIDE = "study_install_hidden";
 
@@ -24,7 +25,7 @@
     var text = !navigator.onLine ? "অফলাইন — ফোনে রাখা কপি দেখাচ্ছে"
       : saving ? "অফলাইনের জন্য রাখা হচ্ছে…" + (saving.total ? " " + bn(saving.done) + "/" + bn(saving.total) : "")
       : failed ? "সব পাতা রাখা যায়নি — পরের বার আবার চেষ্টা হবে"
-      : sw.controller ? "✓ ইন্টারনেট ছাড়াও পড়া যাবে" : "";
+      : sw && sw.controller ? "✓ ইন্টারনেট ছাড়াও পড়া যাবে" : "";
     state.textContent = text;
     state.hidden = !text;
     state.classList.toggle("off", !navigator.onLine || (failed && !saving));
@@ -47,37 +48,46 @@
     document.body.appendChild(bar);
   }
 
-  sw.onmessage = function (e) {
-    var d = e.data || {};
-    if (d.type === "progress") { saving = d; failed = false; }
-    else if (d.type === "saved") saving = null;
-    else if (d.type === "failed") { saving = null; failed = true; }
-    else if (d.type === "updated" && d.files.indexOf(keyFor(location.href)) >= 0) showUpdate();
-    showState();
-  };
-  sw.addEventListener("controllerchange", showState);
+  if (sw) {
+    sw.onmessage = function (e) {
+      var d = e.data || {};
+      if (d.type === "progress") { saving = d; failed = false; }
+      else if (d.type === "saved") saving = null;
+      else if (d.type === "failed") { saving = null; failed = true; }
+      else if (d.type === "updated" && d.files.indexOf(keyFor(location.href)) >= 0) showUpdate();
+      showState();
+    };
+    sw.addEventListener("controllerchange", showState);
+    sw.register(root + "sw.js").then(function (reg) {
+      if (!sw.controller && reg.installing && !saving) { saving = { done: 0, total: 0 }; showState(); }
+    }).catch(function () {});
+  }
   addEventListener("online", showState);
   addEventListener("offline", showState);
-  sw.register(root + "sw.js").then(function (reg) {
-    if (!sw.controller && reg.installing && !saving) { saving = { done: 0, total: 0 }; showState(); }
-  }).catch(function () {});
   showState();
 
   /* Install offer, on index.html only. Android Chrome lets the page show its own button;
-     on iPhone, Safari's Share menu is the only way, so the card says how. */
+     on iPhone, Safari's Share menu is the only way, so the card says how. Messenger, Facebook and
+     Instagram open links in their own built-in browser, which can't install: the card sends you to a real browser. */
   if (!install) return;
   function hidden() { try { return localStorage.getItem(HIDE) === "1"; } catch (e) { return false; } }
   function hide() { try { localStorage.setItem(HIDE, "1"); } catch (e) {} }
   var standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var ua = navigator.userAgent;
+  var ios = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var inApp = /Orca-Android|MessengerForiOS/i.test(ua) ? "Messenger" : /FB_IAB|FBAN|FBAV/i.test(ua) ? "Facebook"
+    : /Instagram/i.test(ua) ? "Instagram" : "";
   function showInstall() {
-    var on = !standalone && !hidden() && !!(prompt || ios);
+    var on = !standalone && !hidden() && !!(inApp || prompt || ios);
     install.hidden = !on;
     if (!on) return;
-    install.querySelector(".install-hint").textContent = prompt
-      ? "হোম স্ক্রিন থেকে এক চাপে খুলবে, ইন্টারনেট ছাড়াও।"
+    install.querySelector(".install-hint").textContent = inApp
+      ? inApp + "-এর নিজের ব্রাউজারে ইনস্টল করা যায় না। " + (ios
+        ? "⋯ চেপে “Open in Safari” (বা “Open in browser”) বেছে নিন, তারপর Share → “Add to Home Screen”।"
+        : "ওপরে ডানে ⋮ চেপে “Open in Chrome” (বা “Open in browser”) বেছে নিন, তারপর সেখান থেকে ইনস্টল করুন।")
+      : prompt ? "হোম স্ক্রিন থেকে এক চাপে খুলবে, ইন্টারনেট ছাড়াও।"
       : "Safari-তে Share বোতাম চাপুন, তারপর “Add to Home Screen”। হোম স্ক্রিন থেকে এক চাপে খুলবে, ইন্টারনেট ছাড়াও।";
-    install.querySelector(".install-go").hidden = !prompt;
+    install.querySelector(".install-go").hidden = !prompt || !!inApp;
   }
   addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); prompt = e; showInstall(); });
   addEventListener("appinstalled", function () { prompt = null; hide(); showInstall(); });
