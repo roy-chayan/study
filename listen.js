@@ -7,7 +7,10 @@
    - Bangla gets a Bangla voice and English sentences an English voice. Maths symbols are read as words
      (2³ → "২ এর ঘাত ৩"), and forms shown crossed out or with ✗/✓ are announced as "ভুল:" / "ঠিক:".
    - The voices come from the device: Android (Google), Microsoft Edge and others have Bangla ones. Where there
-     is none, the player says how to get one. */
+     is none, the player says how to get one.
+   - Quiz (কুইজ, the switch above the player on pages with questions): each question and its options are read
+     with the answer hidden, a countdown gives time to think, then the answer is said. Tapping an option answers
+     and is scored. Settings (thinking time, explanation, shuffle) are kept on the device. */
 (function () {
   var synth = window.speechSynthesis;
   if (!synth || !window.SpeechSynthesisUtterance || !document.body) return;
@@ -103,6 +106,7 @@
       .replace(/[₀-₉]+/g, function (m) {
         return SUB + m.replace(/./g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0x2050); }) + SUB_END;
       })
+      .replace(/[¼-¾⅐-⅞]/g, " $&")   // ৩৩⅓ → ৩৩ 1/3, not "৩৩1/3"
       // What is left: ℕ ℝ → N R, ᶜ ᵣ ₙ → c r n, ⁄ → / (so no voice reads out a symbol's long name).
       .normalize("NFKC").replace(/⁄/g, "/")
       .replace(/[ \t\r\f\v\u00A0]+/g, " ");
@@ -258,13 +262,14 @@
     return out.filter(function (s) { return /[\p{L}\p{N}]/u.test(s); });
   }
 
-  function speechOf(seg) {
+  function speechText(text) {
     var out = [];
-    parts(textOf(seg)).forEach(function (p) {
+    parts(text).forEach(function (p) {
       pieces(speakable(p.t, p.k)).forEach(function (s) { out.push({ lang: p.k, text: s }); });
     });
     return out;
   }
+  function speechOf(seg) { return speechText(textOf(seg)); }
 
   /* ---- Voices --------------------------------------------------------------------------------- */
   var voices = [], broken = [];
@@ -288,10 +293,21 @@
   function noBangla() { return voices.length > 0 && !voiceFor("bn"); }
 
   /* ---- Player --------------------------------------------------------------------------------- */
-  var RATES = [1, 1.25, 1.5, 0.75], RATE_KEY = "study_listen_rate", HINT_KEY = "study_listen_hint";
-  var state = "off", seg = null, list = [], at = 0, gen = 0, utt = null, begun = false, started = 0, errors = 0, retried = false, quiet = 0;
-  var rate = 1, lit = null, msgTimer = 0;
-  try { rate = RATES.indexOf(+localStorage.getItem(RATE_KEY)) >= 0 ? +localStorage.getItem(RATE_KEY) : 1; } catch (e) {}
+  var RATES = [1, 1.25, 1.5, 0.75], TIMES = [5, 10, 3];
+  var RATE_KEY = "study_listen_rate", HINT_KEY = "study_listen_hint", QUIZ_KEY = "study_quiz", QUIZ_HINT_KEY = "study_quiz_hint";
+  var state = "off", mode = "read", seg = null, list = [], at = 0, gen = 0, utt = null, begun = false, started = 0, errors = 0,
+      retried = false, quiet = 0, waiting = false, rate = 1, lit = null, msgTimer = 0, gearOpen = false;
+  var opts = { time: 5, explain: false, mix: false };   // the quiz settings, kept on the device
+  try {
+    if (RATES.indexOf(+localStorage.getItem(RATE_KEY)) >= 0) rate = +localStorage.getItem(RATE_KEY);
+    var kept = JSON.parse(localStorage.getItem(QUIZ_KEY) || "{}") || {};
+    if (TIMES.indexOf(kept.time) >= 0) opts.time = kept.time;
+    opts.explain = kept.explain === true;
+    opts.mix = kept.mix === true;
+  } catch (e) {}
+  function keep(key, value) { try { localStorage.setItem(key, value); } catch (e) {} }
+  function firstTime(key) { var s = false; try { s = localStorage.getItem(key) === "1"; } catch (e) {} keep(key, "1"); return !s; }
+  var QSEL = "article.q,article.ex", hasQuiz = !!root.querySelector(QSEL);
 
   function bn(n) { return String(n).replace(/\d/g, function (d) { return "০১২৩৪৫৬৭৮৯"[d]; }); }
   function svg(body, filled) {
@@ -304,7 +320,8 @@
     pause: svg('<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>', true),
     prev: svg('<path d="M18 19 9 12l9-7v14z"/><path d="M5 19V5"/>'),
     next: svg('<path d="m6 5 9 7-9 7V5z"/><path d="M19 5v14"/>'),
-    close: svg('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>')
+    close: svg('<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'),
+    gear: svg('<path d="M20 7h-9M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>')
   };
 
   var ui = document.createElement("div");
@@ -319,8 +336,8 @@
     ".tts-open{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;padding:0;" +
     "border:1px solid var(--line,#D9E3DB);background:var(--card,#fff);color:var(--accent,#14624A);box-shadow:0 2px 10px rgba(0,0,0,.14)}" +
     ".tts-open:hover{background:var(--accent,#14624A);color:var(--card,#fff);border-color:var(--accent,#14624A)}" +
-    ".tts-bar{display:flex;align-items:center;gap:2px;padding:4px;border-radius:999px;background:var(--card,#fff);" +
-    "border:1px solid var(--line,#D9E3DB);box-shadow:0 4px 18px rgba(0,0,0,.18)}" +
+    ".tts-bar,.tts-card{background:var(--card,#fff);border:1px solid var(--line,#D9E3DB);box-shadow:0 4px 18px rgba(0,0,0,.18)}" +
+    ".tts-bar{display:flex;align-items:center;gap:2px;padding:4px;border-radius:999px}" +
     ".tts-bar button{width:40px;height:40px;flex:none;border-radius:50%;display:grid;place-items:center;padding:0;border:0;" +
     "background:none;color:var(--ink,#18231C)}" +
     ".tts-bar button:hover{background:var(--accent-soft,#E4EFE7)}" +
@@ -329,33 +346,97 @@
     ".tts button:focus-visible{outline:2px solid var(--accent,#14624A);outline-offset:2px}" +
     ".tts-msg{margin:0;max-width:300px;padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.5;" +
     "background:var(--ink,#18231C);color:var(--paper,#F5F8F4);box-shadow:0 4px 18px rgba(0,0,0,.2)}" +
+    /* The card above the bar: read / quiz switch, the quiz's progress and countdown, and its settings. */
+    ".tts-card{display:flex;flex-direction:column;gap:8px;padding:6px;border-radius:18px;font-size:14px;line-height:1.4;" +
+    "color:var(--ink,#18231C);max-width:100%;box-sizing:border-box}" +
+    ".tts-row{display:flex;align-items:center;gap:6px}" +
+    ".tts-modes{display:flex;padding:3px;border-radius:999px;background:var(--accent-soft,#E4EFE7)}" +
+    ".tts-modes button{border:0;background:none;padding:4px 14px;border-radius:999px;font-size:14px;font-weight:600;color:var(--muted,#5B6D61)}" +
+    ".tts-modes button[aria-pressed=true]{background:var(--card,#fff);color:var(--accent,#14624A);box-shadow:0 1px 3px rgba(0,0,0,.14)}" +
+    ".tts-gear{margin-left:auto;width:34px;height:34px;flex:none;border-radius:50%;border:0;background:none;padding:0;" +
+    "display:grid;place-items:center;color:var(--muted,#5B6D61)}" +
+    ".tts-gear:hover,.tts-gear[aria-expanded=true]{background:var(--accent-soft,#E4EFE7);color:var(--accent,#14624A)}" +
+    ".tts-status{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:0 6px 2px}" +
+    ".tts-prog{font-weight:600}" +
+    ".tts-think{display:flex;align-items:center;gap:8px}" +
+    ".tts-ring{position:relative;width:30px;height:30px;flex:none}" +
+    ".tts-ring svg{width:30px;height:30px;transform:rotate(-90deg)}" +
+    ".tts-ring circle{fill:none;stroke-width:3}" +
+    ".tts-ring .tts-track{stroke:var(--line,#D9E3DB)}" +
+    ".tts-ring .tts-arc{stroke:var(--accent,#14624A);stroke-dasharray:94.25;stroke-linecap:round}" +
+    ".tts-ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:13px}" +
+    ".tts-now{border:1px solid var(--accent,#14624A);background:none;color:var(--accent,#14624A);border-radius:999px;" +
+    "padding:3px 12px;font-size:13px;font-weight:600}" +
+    ".tts-set{display:flex;flex-wrap:wrap;gap:6px;padding:0 2px 2px}" +
+    ".tts-set button{border:1px solid var(--line,#D9E3DB);background:none;border-radius:999px;padding:3px 10px;font-size:13px;" +
+    "color:var(--ink,#18231C)}" +
+    ".tts-set button[aria-pressed=true]{border-color:var(--accent,#14624A);color:var(--accent,#14624A);background:var(--accent-soft,#E4EFE7)}" +
     ".tts [hidden]{display:none}" +
     ".tts-on{background:rgba(20,98,74,.12)!important;background:color-mix(in srgb,var(--accent,#14624A) 14%,transparent)!important;" +
     "box-shadow:0 0 0 4px color-mix(in srgb,var(--accent,#14624A) 14%,transparent);border-radius:4px}" +
+    /* Quiz marks on the page: options can be tapped while a question is asked; the tapped one is ringed. */
+    ".tts-asking li{cursor:pointer}" +
+    ".tts-right,.tts-wrong{outline:2px solid var(--accent,#14624A)!important;outline-offset:2px;border-radius:6px}" +
+    ".tts-wrong{outline-color:var(--bad,#C0392B)!important}" +
     "@media print{.tts{display:none}}" +
     "</style>" +
     '<p class="tts-msg" role="status" hidden></p>' +
     '<button class="tts-open" type="button" aria-label="পাতাটি শুনুন" title="পাতাটি শুনুন">' + ICON.listen + "</button>" +
+    '<div class="tts-card" hidden>' +
+    '<div class="tts-row"><div class="tts-modes" role="group" aria-label="ধরন">' +
+    '<button type="button" data-mode="read">শুনুন</button><button type="button" data-mode="quiz">কুইজ</button></div>' +
+    '<button class="tts-gear" type="button" aria-label="কুইজের নিয়ম" title="কুইজের নিয়ম">' + ICON.gear + "</button></div>" +
+    '<div class="tts-status" aria-live="polite"><span class="tts-prog"></span>' +
+    '<span class="tts-think" hidden><span class="tts-ring"><svg viewBox="0 0 36 36" aria-hidden="true">' +
+    '<circle class="tts-track" cx="18" cy="18" r="15"/><circle class="tts-arc" cx="18" cy="18" r="15"/></svg><b></b></span>' +
+    '<button class="tts-now" type="button">উত্তর দেখাও</button></span></div>' +
+    '<div class="tts-set"><button class="tts-time" type="button"></button>' +
+    '<button class="tts-exp" type="button"></button><button class="tts-mix" type="button"></button></div>' +
+    "</div>" +
     '<div class="tts-bar" role="group" aria-label="শোনা" hidden>' +
-    '<button class="tts-prev" type="button" aria-label="আগের অংশ" title="আগের অংশ">' + ICON.prev + "</button>" +
+    '<button class="tts-prev" type="button"></button>' +
     '<button class="tts-play" type="button"></button>' +
-    '<button class="tts-next" type="button" aria-label="পরের অংশ" title="পরের অংশ">' + ICON.next + "</button>" +
+    '<button class="tts-next" type="button"></button>' +
     '<button class="tts-rate" type="button" title="পড়ার গতি"></button>' +
     '<button class="tts-close" type="button" aria-label="বন্ধ করুন" title="বন্ধ করুন">' + ICON.close + "</button>" +
     "</div>";
   document.body.appendChild(ui);
   var $ = function (c) { return ui.querySelector(".tts-" + c); };
-  var openBtn = $("open"), bar = $("bar"), playBtn = $("play"), rateBtn = $("rate"), msg = $("msg");
+  var openBtn = $("open"), bar = $("bar"), playBtn = $("play"), prevBtn = $("prev"), nextBtn = $("next"), rateBtn = $("rate"),
+      msg = $("msg"), card = $("card"), gearBtn = $("gear"), statusRow = $("status"), prog = $("prog"), think = $("think"),
+      ring = ui.querySelector(".tts-ring b"), arc = $("arc"), setRow = $("set"), timeBtn = $("time"), expBtn = $("exp"),
+      mixBtn = $("mix"), modeBtns = [].slice.call(ui.querySelectorAll(".tts-modes button"));
 
   function render() {
+    var on = state === "on", quiz = mode === "quiz", label = on ? "থামান" : "চালান";
     openBtn.hidden = state !== "off";
     bar.hidden = state === "off";
-    var on = state === "on", label = on ? "থামান" : "চালান";
+    card.hidden = state === "off" || !hasQuiz;
     playBtn.innerHTML = on ? ICON.pause : ICON.play;
     playBtn.setAttribute("aria-label", label);
     playBtn.title = label;
+    prevBtn.innerHTML = ICON.prev;
+    nextBtn.innerHTML = ICON.next;
+    prevBtn.title = quiz ? "আগের প্রশ্ন" : "আগের অংশ";
+    nextBtn.title = quiz ? "পরের প্রশ্ন" : "পরের অংশ";
+    prevBtn.setAttribute("aria-label", prevBtn.title);
+    nextBtn.setAttribute("aria-label", nextBtn.title);
     rateBtn.textContent = bn(rate) + "×";
     rateBtn.setAttribute("aria-label", "পড়ার গতি " + bn(rate) + " গুণ");
+    modeBtns.forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === mode)); });
+    gearBtn.hidden = !quiz;
+    gearBtn.setAttribute("aria-expanded", String(gearOpen));
+    statusRow.hidden = !quiz || !Q;
+    setRow.hidden = !quiz || !gearOpen;
+    if (Q) prog.textContent = Q.phase === "done"
+      ? "শেষ! " + (Q.answered ? "ঠিক " + bn(Q.right) + "/" + bn(Q.answered) + " · " : "") + bn(Q.asked) + "টি প্রশ্ন"
+      : "প্রশ্ন " + bn(Q.i + 1) + "/" + bn(Q.list.length) + (Q.answered ? " · ঠিক " + bn(Q.right) + "/" + bn(Q.answered) : "");
+    timeBtn.textContent = "ভাবার সময়: " + bn(opts.time) + " সে.";
+    expBtn.textContent = "ব্যাখ্যা: " + (opts.explain ? "চালু" : "বন্ধ");
+    mixBtn.textContent = "এলোমেলো: " + (opts.mix ? "চালু" : "বন্ধ");
+    expBtn.setAttribute("aria-pressed", String(opts.explain));
+    mixBtn.setAttribute("aria-pressed", String(opts.mix));
+    keepAwake(on);
   }
   function say(text, ms) {
     clearTimeout(msgTimer);
@@ -371,15 +452,23 @@
     return b && getComputedStyle(b).position === "sticky" ? Math.max(0, b.getBoundingClientRect().bottom) : 0;
   }
   function visible(el) { var r = el.getBoundingClientRect(); return r.bottom > topEdge() && r.top < innerHeight; }
+  // Scrolls el into the space between the top bar and the player (its top, if it is taller than that).
+  function fit(el) {
+    var r = el.getBoundingClientRect(), top = topEdge() + 12, bottom = innerHeight - 80;
+    if (state !== "off") { var p = ui.getBoundingClientRect().top - 12; if (p - top > 160) bottom = Math.min(bottom, p); }
+    if (r.top >= top && r.bottom <= bottom) return;
+    var by = r.height > bottom - top ? r.top - top : r.top - (top + bottom - r.height) / 2;
+    // A long jump (e.g. from the top of a note to its exercises) is made at once, not as a long glide.
+    var glide = Math.abs(by) < innerHeight * 2 && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollBy({ top: by, behavior: glide ? "smooth" : "auto" });
+  }
+  // follow: true scrolls to it, false never does, unset follows only if the last highlight was on screen.
   function mark(s, follow) {
-    var following = follow || !lit || visible(lit);
+    var following = follow === true || (follow !== false && (!lit || visible(lit)));
     if (lit) lit.classList.remove("tts-on");
     lit = s.block;
     lit.classList.add("tts-on");
-    var r = lit.getBoundingClientRect(), top = topEdge() + 12, bottom = innerHeight - 80;
-    if (!following || (r.top >= top && r.bottom <= bottom)) return;
-    var by = r.height > bottom - top ? r.top - top : r.top - (top + bottom - r.height) / 2;
-    window.scrollBy({ top: by, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    if (following) fit(lit);
   }
   function unmark() { if (lit) lit.classList.remove("tts-on"); lit = null; }
 
@@ -394,12 +483,13 @@
     u.onend = function () { if (g === gen) advance(); };
     u.onerror = function (e) { if (g === gen) failed(e.error, v); };
     utt = u;   // kept, or some browsers drop it before it ends
-    begun = false; started = Date.now(); quiet = 0;
+    begun = false; started = Date.now(); quiet = 0; waiting = false;
     synth.speak(u);
   }
   function advance() {
     retried = false;
     if (++at < list.length) return speak();
+    if (mode === "quiz") return quizNext();
     var n = seg && after(seg);
     if (n) load(n, true);
     else stop("পাতা শেষ।");
@@ -443,6 +533,7 @@
 
   function play(from) {
     if (noBangla()) { state = "paused"; render(); return say(NO_BANGLA); }
+    if (mode === "quiz") { state = "on"; render(); say(""); return quizResume(); }
     var t = from || (seg && root.contains(seg.first) ? null : firstOnScreen());
     if (!t && !seg) return stop();
     state = "on"; render(); say("");
@@ -451,9 +542,13 @@
       else { mark(seg, true); current(); }
     });
   }
-  function pause() { state = "paused"; hush(); render(); }
+  function pause() {
+    state = "paused"; hush(); waiting = false;
+    if (Q) { clearQ(); think.hidden = true; }
+    render();
+  }
   function stop(text) {
-    state = "off"; hush(); unmark(); seg = null; list = [];
+    state = "off"; hush(); quizStop(); unmark(); seg = null; list = [];
     render(); say(text || "", 3000);
   }
   // Moves at once, so quick taps add up; when playing, the new part is said after the same short wait as restart().
@@ -466,21 +561,287 @@
     else if (on) current();
   }
 
+  /* ---- Quiz ------------------------------------------------------------------------------------
+     Each question in turn: its text and options are read with the answer hidden ("ask"), a countdown
+     gives time to think ("think"), then the answer is shown and said ("answer"), with the explanation
+     if that setting is on ("explain"), and a short pause ("gap") before the next. Tapping an option
+     answers at once and is scored. Answers are hidden with the page's own practice mode, which the
+     quiz turns on and, when it ends, back off. */
+  var Q = null, pageMode = document.getElementById("mode"), turnedOn = false, audio = null, lock = null, locking = false;
+
+  function questions() { return [].slice.call(root.querySelectorAll(QSEL)).filter(function (a) { return shown(a); }); }
+  function firstQuestionOnScreen(all) {
+    if (window.scrollY < 40) return 0;
+    var top = topEdge() + 4;
+    for (var i = 0; i < all.length; i++) if (all[i].getBoundingClientRect().bottom > top) return i;
+    return 0;
+  }
+  // From the start question to the end of the page; shuffled ("এলোমেলো"): the start question, then all the rest at random.
+  function order(all, start) {
+    if (!opts.mix) return all.slice(start);
+    var rest = all.filter(function (a, i) { return i !== start; });
+    for (var i = rest.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), x = rest[i]; rest[i] = rest[j]; rest[j] = x; }
+    return [all[start]].concat(rest);
+  }
+  function segmentsIn(el, skip) {
+    var out = [], w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), n;
+    while ((n = w.nextNode())) {
+      if (!readable(n)) continue;
+      var s = segmentAt(n);
+      if (!(skip && skip.contains(s.block))) out.push(s);
+      if (el.contains(s.last)) w.currentNode = s.last;
+    }
+    return out;
+  }
+  function firstSeg(el) {
+    var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), n;
+    while ((n = w.nextNode())) if (readable(n)) return segmentAt(n);
+    return null;
+  }
+  function answerLine(art) { return art.querySelector(".ans-line,.sol .ans"); }
+  function okOptions(art) {
+    return [].slice.call(art.querySelectorAll("li.ok")).filter(function (li) { return !li.closest(".ans,.sol"); });
+  }
+  // "উত্তর: গ, ৩.৩২ কি.মি." from the correct option(s); without one, the page's own answer line.
+  function answerText(art) {
+    var said = okOptions(art).map(function (li) {
+      var s = firstSeg(li), t = s ? textOf(s) : "", i = t.indexOf(BREAK), rest = t.slice(i + 1);
+      // An English option after the Bangla letter keeps its English voice.
+      return i < 0 ? t : t.slice(0, i) + BREAK + (EN_L.test(rest) && !BN_L.test(rest) ? EN : "") + rest;
+    }).filter(Boolean);
+    if (said.length) return "উত্তর: " + said.join(" অথবা ");
+    var line = answerLine(art), s = line && firstSeg(line), t = s ? textOf(s).replace(/^\s*উত্তর[\s:।]*/, "") : "";
+    return t ? "উত্তর: " + t : "";
+  }
+  function explanation(art) {
+    var area = art.querySelector(".ans,.sol");
+    return area ? segmentsIn(area, answerLine(art)) : [];
+  }
+  function practice(on) {
+    if (!pageMode) return;
+    var isOn = document.body.classList.contains("practice");
+    if (on && !isOn) { pageMode.click(); turnedOn = true; }
+    else if (!on && turnedOn) { if (isOn) pageMode.click(); turnedOn = false; }
+  }
+  function clearQ() { if (Q) { clearInterval(Q.timer); clearTimeout(Q.timer); } }
+  function clearMarks() {
+    [].forEach.call(document.querySelectorAll(".tts-right,.tts-wrong,.tts-asking"), function (x) {
+      x.classList.remove("tts-right", "tts-wrong", "tts-asking");
+    });
+  }
+
+  // A soft tick each second of the countdown, made by the browser (no sound file).
+  function unlockAudio() {
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === "suspended") audio.resume();
+    } catch (e) { audio = null; }
+  }
+  function tick() {
+    if (!audio) return;
+    try {
+      var t = audio.currentTime, o = audio.createOscillator(), g = audio.createGain();
+      o.type = "sine"; o.frequency.value = 880;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.06, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+      o.connect(g); g.connect(audio.destination);
+      o.start(t); o.stop(t + 0.15);
+    } catch (e) {}
+  }
+  // While reading or quizzing, the screen stays on: most phones stop speaking when the screen locks.
+  function keepAwake(on) {
+    try {
+      if (on && !lock && !locking && navigator.wakeLock && document.visibilityState === "visible") {
+        locking = true;
+        navigator.wakeLock.request("screen").then(function (l) {
+          locking = false; lock = l;
+          l.addEventListener("release", function () { if (lock === l) lock = null; });
+          if (state !== "on") { lock = null; l.release(); }
+        }, function () { locking = false; });
+      } else if (!on && lock) { var l = lock; lock = null; l.release(); }
+    } catch (e) { locking = false; }
+  }
+
+  function quizStart(art) {
+    var all = questions();
+    if (!all.length) return stop();
+    clearMarks();
+    var start = art ? all.indexOf(art) : firstQuestionOnScreen(all);
+    Q = { list: order(all, start < 0 ? 0 : start), i: 0, phase: "", segs: [], si: -1, right: 0, answered: 0, asked: 0, timer: 0 };
+    unlockAudio();
+    if (firstTime(QUIZ_HINT_KEY)) say("অপশনে চাপ দিয়ে উত্তর দিন। না দিলে সময় শেষে উত্তর বলে দেবে।", 6000);
+    render();
+    restart(quizAsk);
+  }
+  function quizAsk() {
+    var art = Q.list[Q.i];
+    practice(true);
+    art.classList.remove("shown");
+    art.classList.add("tts-asking");
+    [].forEach.call(art.querySelectorAll(".tts-right,.tts-wrong"), function (x) { x.classList.remove("tts-right", "tts-wrong"); });
+    Q.phase = "ask"; Q.segs = segmentsIn(art); Q.si = -1;
+    render();
+    fit(art);
+    if (state === "on") quizNext();
+    else if (Q.segs[0]) { seg = Q.segs[0]; list = []; at = 0; mark(seg, false); }
+  }
+  // Called whenever a piece of speech ends in quiz mode: the next segment, or the next step.
+  function quizNext() {
+    if (!Q || state !== "on") return;
+    var p = Q.phase;
+    if (p === "ask" || p === "explain") {
+      if (++Q.si < Q.segs.length) return load(Q.segs[Q.si], true, p === "ask" ? false : undefined);
+      return p === "ask" ? quizThink() : quizGap();
+    }
+    if (p === "answer") {
+      if (!opts.explain) return quizGap();
+      Q.phase = "explain"; Q.segs = explanation(Q.list[Q.i]); Q.si = -1;
+      return quizNext();
+    }
+    if (p === "done") { state = "paused"; render(); }
+  }
+  function quizThink() {
+    var left = opts.time;
+    Q.phase = "think"; waiting = true;
+    think.hidden = false;
+    ring.textContent = bn(left);
+    arc.style.transition = "none";
+    arc.style.strokeDashoffset = "0";
+    arc.getBoundingClientRect();
+    arc.style.transition = "stroke-dashoffset " + left + "s linear";
+    arc.style.strokeDashoffset = "94.25";
+    tick();
+    clearQ();
+    Q.timer = setInterval(function () {
+      if (--left > 0) { ring.textContent = bn(left); tick(); return; }
+      quizReveal(null);
+    }, 1000);
+  }
+  // Shows and says the answer; pick is the option tapped (or null when the time ran out or "উত্তর দেখাও").
+  function quizReveal(pick) {
+    if (!Q || (Q.phase !== "ask" && Q.phase !== "think")) return;
+    clearQ(); waiting = false; think.hidden = true;
+    var art = Q.list[Q.i], ok = okOptions(art), text = "";
+    art.classList.add("shown");
+    art.classList.remove("tts-asking");
+    Q.asked++;
+    if (pick) {
+      var right = pick.classList.contains("ok");
+      Q.answered++;
+      if (right) Q.right++;
+      pick.classList.add(right ? "tts-right" : "tts-wrong");
+      text = right ? "ঠিক! " : "হয়নি। ";
+    }
+    text += answerText(art);
+    Q.phase = "answer";
+    render();
+    var show = ok[0] || answerLine(art);
+    restart(function () {
+      list = speechText(text); at = 0;
+      if (show) mark({ block: show }, true);
+      if (state === "on") current();
+    });
+  }
+  function quizGap() {
+    Q.phase = "gap"; waiting = true;
+    clearQ();
+    Q.timer = setTimeout(function () { quizGo(Q.i + 1); }, 900);
+  }
+  function quizGo(i) {
+    if (!Q) return;
+    clearQ(); waiting = false; think.hidden = true;
+    var art = Q.list[Q.i];
+    if (art) art.classList.remove("tts-asking");
+    if (i >= Q.list.length) return restart(quizDone);
+    Q.i = Math.max(0, i);
+    if (state === "on") restart(quizAsk);
+    else { hush(); quizAsk(); }
+  }
+  function quizDone() {
+    Q.phase = "done";
+    practice(false);
+    unmark();
+    render();
+    list = speechText(Q.answered ? "কুইজ শেষ। " + bn(Q.answered) + "টির মধ্যে " + bn(Q.right) + "টি ঠিক।" : "কুইজ শেষ।");
+    at = 0;
+    if (state === "on") current();
+  }
+  function quizResume() {
+    if (!Q) return quizStart(null);
+    if (Q.phase === "done") return quizStart(questions()[0]);
+    var p = Q.phase;
+    if (p === "think") return restart(quizThink);
+    if (p === "gap") return quizGo(Q.i + 1);
+    if (p === "ask" && Q.si < 0) return restart(quizNext);
+    restart(function () { if (lit) mark({ block: lit }, true); current(); });
+  }
+  function quizStop() {
+    if (!Q) return;
+    clearQ(); waiting = false; think.hidden = true;
+    Q = null;
+    practice(false);
+    clearMarks();
+  }
+  // In quiz mode a tap on an option of the question being asked answers it; a tap on another question goes there.
+  function quizTap(el) {
+    var art = el.closest(QSEL), now = Q.list[Q.i];
+    if (!art) return;
+    if (art === now) {
+      if (Q.phase !== "ask" && Q.phase !== "think") return;
+      var li = el.closest(".reveal") ? null : el.closest("li");
+      if (li === null && !el.closest(".reveal")) return;
+      if (li && (li.closest(".ans,.sol") || el.closest("a"))) return;
+      if (state !== "on") { state = "on"; render(); }
+      return quizReveal(li);
+    }
+    if (el.closest("a,button")) return;
+    var s = window.getSelection && getSelection();
+    if (s && !s.isCollapsed) return;
+    var i = Q.list.indexOf(art);
+    if (i < 0) { var all = questions(); Q.list = order(all, Math.max(0, all.indexOf(art))); i = 0; }
+    state = "on"; render(); say("");
+    quizGo(i);
+  }
+  function setMode(m) {
+    if (m === mode) return;
+    var art = (Q && Q.list[Q.i]) || (lit && lit.closest(QSEL)) || null;
+    quizStop();
+    mode = m; gearOpen = false; seg = null; list = [];
+    if (noBangla()) { state = "paused"; render(); return say(NO_BANGLA); }
+    state = "on"; render(); say("");
+    if (m === "quiz") return quizStart(art);
+    var first = art && firstSeg(art);
+    play(first ? first.first : firstOnScreen());
+  }
+
   openBtn.onclick = function () {
-    play(firstOnScreen());
-    var hinted = false;
-    try { hinted = localStorage.getItem(HINT_KEY) === "1"; localStorage.setItem(HINT_KEY, "1"); } catch (e) {}
-    if (!hinted && state === "on") say("যেকোনো লাইনে চাপ দিলে সেখান থেকে পড়বে।", 5000);
+    play(mode === "quiz" ? null : firstOnScreen());
+    if (mode === "read" && state === "on" && firstTime(HINT_KEY)) say("যেকোনো লাইনে চাপ দিলে সেখান থেকে পড়বে।", 5000);
   };
   playBtn.onclick = function () { if (state === "on") pause(); else play(); };
-  $("prev").onclick = function () { skip(true); };
-  $("next").onclick = function () { skip(false); };
+  prevBtn.onclick = function () { if (mode === "quiz" && Q) quizGo(Q.phase === "done" ? Q.i : Q.i - 1); else skip(true); };
+  nextBtn.onclick = function () { if (mode === "quiz" && Q) { if (Q.phase !== "done") quizGo(Q.i + 1); } else skip(false); };
   $("close").onclick = function () { stop(); };
+  $("now").onclick = function () { if (state !== "on") { state = "on"; render(); } quizReveal(null); };
   rateBtn.onclick = function () {
     rate = RATES[(RATES.indexOf(rate) + 1) % RATES.length];
-    try { localStorage.setItem(RATE_KEY, String(rate)); } catch (e) {}
+    keep(RATE_KEY, String(rate));
     render();
-    if (state === "on") restart(speak);   // the current piece again, at the new speed
+    if (state === "on" && !waiting) restart(speak);   // the current piece again, at the new speed
+  };
+  modeBtns.forEach(function (b) { b.onclick = function () { setMode(b.getAttribute("data-mode")); }; });
+  gearBtn.onclick = function () { gearOpen = !gearOpen; render(); };
+  function saveOpts() { keep(QUIZ_KEY, JSON.stringify(opts)); render(); }
+  timeBtn.onclick = function () { opts.time = TIMES[(TIMES.indexOf(opts.time) + 1) % TIMES.length]; saveOpts(); };
+  expBtn.onclick = function () { opts.explain = !opts.explain; saveOpts(); };
+  mixBtn.onclick = function () {
+    opts.mix = !opts.mix;
+    if (Q && Q.phase !== "done") {   // the question being asked stays; the rest follow the new order
+      var all = questions(), now = all.indexOf(Q.list[Q.i]);
+      Q.list = order(all, now < 0 ? 0 : now); Q.i = 0;
+    }
+    saveOpts();
   };
 
   // While the player is open, a tap on any text reads from there (links, buttons and selecting text work as usual).
@@ -495,8 +856,9 @@
   }
   document.addEventListener("click", function (e) {
     var el = e.target;
-    if (state === "off" || e.defaultPrevented || !el.closest || !root.contains(el) ||
-        el.closest("a,button,input,select,textarea,label,summary,nav,.bar,.tts")) return;
+    if (state === "off" || e.defaultPrevented || !el.closest || !root.contains(el)) return;
+    if (mode === "quiz" && Q) return quizTap(el);
+    if (el.closest("a,button,input,select,textarea,label,summary,nav,.bar,.tts")) return;
     var s = window.getSelection && getSelection();
     if (s && !s.isCollapsed) return;
     var t = textAt(e.clientX, e.clientY, el);
@@ -506,14 +868,16 @@
 
   // Some browsers miss an "end" event now and then; if nothing is being said for 2 seconds, move on.
   setInterval(function () {
-    if (state !== "on" || document.hidden || synth.speaking || synth.pending) { quiet = 0; return; }
+    if (state !== "on" || waiting || document.hidden || synth.speaking || synth.pending) { quiet = 0; return; }
     if (++quiet < 2) return;
     quiet = 0;
     if (begun) advance();
     else if (Date.now() - started > 4000) { if (retried) advance(); else { retried = true; speak(); } }
   }, 1000);
 
-  addEventListener("pagehide", function () { synth.cancel(); });
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) keepAwake(state === "on"); });
+  // Leaving the page ends a quiz, so the page's practice mode is not left on for next time.
+  addEventListener("pagehide", function () { synth.cancel(); if (Q) stop(); });
   addEventListener("pageshow", function (e) { if (e.persisted && state === "on") pause(); });
   render();
 })();
