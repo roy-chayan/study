@@ -16,7 +16,8 @@ What it does:
        MCQ অনুশীলন       every .html file in math/, gk/, bengali/ and english/
   2. Adds the home button and a back-to-top button to every page, or brings
      existing ones up to the current design. Also adds the lines that make the
-     site installable and readable offline (manifest, icons, offline.js), and at
+     site installable and readable offline (manifest, icons, offline.js) and the
+     read-aloud player (listen.js, not on index.html), and at
      the end of each page a card that opens the practice site (EXAM_URL) on that
      page's subject, or on that previous-year paper as a timed exam.
   3. Writes search-index.js for the search box on index.html: every line of the
@@ -215,9 +216,9 @@ SW_FILE = "sw.js"
 SW_FILES = re.compile(r"(/\* <files>[^\n]*\*/\n).*?(/\* </files> \*/)", re.S)
 
 
-def offline_head(depth):
-    """The lines at the end of <head> that make the site installable and readable offline.
-    Paths go up one folder per level, like the home button's link."""
+def offline_head(depth, listen=True):
+    """The lines at the end of <head> that make the site installable and readable offline, and (with
+    listen) the read-aloud player, listen.js. Paths go up one folder per level, like the home button's link."""
     up = "../" * depth
     return (
         OFFLINE_START
@@ -228,6 +229,7 @@ def offline_head(depth):
         '<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">'
         '<meta name="apple-mobile-web-app-title" content="পড়াশোনা">'
         f'<script src="{up}offline.js" defer></script>'
+        + (f'<script src="{up}listen.js" defer></script>' if listen else "")
         + OFFLINE_END
     )
 
@@ -551,7 +553,7 @@ def main():
     jump = "".join(f'<a href="#{gid}">{headings[gid]} <span>↓</span></a>' for gid in order)
     searchable, version = write_search_index()
     page = (TEMPLATE.replace("{{META}}", meta).replace("{{JUMP}}", jump).replace("{{GROUPS}}", "\n".join(groups[gid] for gid in order))
-            .replace("{{SEARCH}}", f"{SEARCH_FILE}?v={version}").replace("{{OFFLINE}}", offline_head(0)))
+            .replace("{{SEARCH}}", f"{SEARCH_FILE}?v={version}").replace("{{OFFLINE}}", offline_head(0, listen=False)))
     (ROOT / "index.html").write_text(page, encoding="utf-8")
     offline = write_offline_list()
 
