@@ -25,7 +25,7 @@ const FILES = {
 "icons/icon-192.png": "fbba24f8de",
 "icons/icon-512.png": "debc915847",
 "icons/icon-maskable-512.png": "9f63cb53bf",
-"index.html": "4c78df33cf",
+"index.html": "56802063ea",
 "listen.js": "429301effb",
 "manifest.webmanifest": "07b37c9c70",
 "math/NTRCA গণিত — সব সূত্র MCQ.html": "12d2c26d05",
@@ -62,6 +62,14 @@ const FILES = {
 "notes/math/সংখ্যা ও ভগ্নাংশ.html": "d0e67328aa",
 "notes/math/সূচক ও করণী.html": "e43ae9f7bb",
 "offline.js": "e747e0fd15",
+"previous/bcs-33/1 প্রিলিমিনারি.html": "65e68444cc",
+"previous/bcs-34/1 প্রিলিমিনারি.html": "44e38db768",
+"previous/bcs-35/1 প্রিলিমিনারি.html": "c26e9e929e",
+"previous/bcs-36/1 প্রিলিমিনারি.html": "4d12dce71c",
+"previous/bcs-37/1 প্রিলিমিনারি.html": "d90b735421",
+"previous/bcs-38/1 প্রিলিমিনারি.html": "be23182c22",
+"previous/bcs-39/1 প্রিলিমিনারি.html": "2b5d68ab95",
+"previous/bcs-40/1 প্রিলিমিনারি.html": "433e8d8f32",
 "previous/bcs-41/1 প্রিলিমিনারি.html": "9137eec8b1",
 "previous/bcs-42/1 প্রিলিমিনারি.html": "10d6b6a117",
 "previous/bcs-43/1 প্রিলিমিনারি.html": "90267a4c6f",
@@ -103,7 +111,7 @@ const FILES = {
 "previous/ntrca-8/3 কলেজ পর্যায়.html": "263ff11945",
 "previous/ntrca-9/1 স্কুল পর্যায়.html": "077d114e9f",
 "previous/ntrca-9/3 কলেজ পর্যায়.html": "d71d0e3ddf",
-"search-index.js": "af14f17b72"
+"search-index.js": "58af48d930"
 };
 /* </files> */
 
