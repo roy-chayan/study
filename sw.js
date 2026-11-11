@@ -25,7 +25,7 @@ const FILES = {
 "icons/icon-192.png": "fbba24f8de",
 "icons/icon-512.png": "debc915847",
 "icons/icon-maskable-512.png": "9f63cb53bf",
-"index.html": "56802063ea",
+"index.html": "747a8afa9f",
 "listen.js": "429301effb",
 "manifest.webmanifest": "07b37c9c70",
 "math/NTRCA গণিত — সব সূত্র MCQ.html": "12d2c26d05",
