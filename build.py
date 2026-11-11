@@ -26,6 +26,8 @@ What it does:
   4. Writes the list of all site files, each with a fingerprint of its contents,
      into sw.js. Phones that saved the site download only what changed. Run
      build.py before every push, even after editing a single page.
+     flyby.js (the "Chayan Roy" name animation on index.html, once per visit)
+     is left out of that list on purpose: it plays only when online.
 
 A previous-year page's <title> is "<exam> — <paper>", e.g.
 "১৮তম শিক্ষক নিবন্ধন — স্কুল পর্যায়": the part before " — " names the card and
@@ -210,8 +212,10 @@ def with_exam_card(text, path):
 OFFLINE_START = "<!-- offline -->"
 OFFLINE_END = "<!-- /offline -->"
 OFFLINE_BLOCK = re.compile(re.escape(OFFLINE_START) + ".*?" + re.escape(OFFLINE_END), re.S)
-# Files saved for offline reading (see sw.js); build.py, sw.js itself and hidden folders are left out.
+# Files saved for offline reading (see sw.js); build.py, sw.js itself, OFFLINE_SKIP and hidden folders are left out.
 OFFLINE_TYPES = {".html", ".js", ".css", ".json", ".webmanifest", ".png", ".jpg", ".svg", ".webp"}
+# Online-only files: flyby.js is the home page's name animation, not needed without internet.
+OFFLINE_SKIP = {"flyby.js"}
 SW_FILE = "sw.js"
 SW_FILES = re.compile(r"(/\* <files>[^\n]*\*/\n).*?(/\* </files> \*/)", re.S)
 
@@ -469,6 +473,7 @@ def write_offline_list():
     for path in sorted(ROOT.rglob("*")):
         rel = path.relative_to(ROOT)
         if (path.is_file() and path.suffix in OFFLINE_TYPES and rel.as_posix() != SW_FILE
+                and rel.as_posix() not in OFFLINE_SKIP
                 and not any(part.startswith((".", "__")) for part in rel.parts)):
             files[rel.as_posix()] = hashlib.sha1(path.read_bytes()).hexdigest()[:10]
     sw = ROOT / SW_FILE
@@ -880,6 +885,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;color:va
   else if (start) { box.value = start; load(search); }
 })();
 </script>
+<script src="flyby.js" defer></script>
 </body>
 </html>
 """
