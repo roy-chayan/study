@@ -25,7 +25,7 @@ const FILES = {
 "icons/icon-192.png": "fbba24f8de",
 "icons/icon-512.png": "debc915847",
 "icons/icon-maskable-512.png": "9f63cb53bf",
-"index.html": "747a8afa9f",
+"index.html": "92df792ec4",
 "listen.js": "429301effb",
 "manifest.webmanifest": "07b37c9c70",
 "math/NTRCA গণিত — সব সূত্র MCQ.html": "12d2c26d05",
@@ -59,7 +59,7 @@ const FILES = {
 "notes/math/বীজগণিতের সূত্র ও উৎপাদক.html": "a728d92b24",
 "notes/math/লগারিদম.html": "67391493ae",
 "notes/math/শতকরা, লাভ-ক্ষতি ও সুদ.html": "3f665a3218",
-"notes/math/সংখ্যা ও ভগ্নাংশ.html": "d0e67328aa",
+"notes/math/সংখ্যা ও ভগ্নাংশ.html": "f1aad04dbc",
 "notes/math/সূচক ও করণী.html": "e43ae9f7bb",
 "offline.js": "e747e0fd15",
 "previous/bcs-33/1 প্রিলিমিনারি.html": "65e68444cc",
@@ -111,7 +111,7 @@ const FILES = {
 "previous/ntrca-8/3 কলেজ পর্যায়.html": "263ff11945",
 "previous/ntrca-9/1 স্কুল পর্যায়.html": "077d114e9f",
 "previous/ntrca-9/3 কলেজ পর্যায়.html": "d71d0e3ddf",
-"search-index.js": "58af48d930"
+"search-index.js": "c4990170c4"
 };
 /* </files> */
 
